@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "699546926535",
+    "firebase_url": "https://qanda-882f7.firebaseio.com",
+    "project_id": "qanda-882f7",
+    "storage_bucket": "qanda-882f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699546926535:android:df10303b7ca21d6858ede2",
+        "android_client_info": {
+          "package_name": "com.example.q_and_a"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "699546926535-6fkrmvkhohdpqcel124msp5dbrqs3dks.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.q_and_a",
+            "certificate_hash": "e288b21db4ec189f965432012dcb1519e82aaa8b"
+          }
+        },
+        {
+          "client_id": "699546926535-1mu1623viefo1jbdfv822dccfd8hrm6v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCac5chL3sYTIua5f9ofzbhNwKiJs7q44k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "699546926535-1mu1623viefo1jbdfv822dccfd8hrm6v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
