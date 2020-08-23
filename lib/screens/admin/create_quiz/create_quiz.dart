@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -33,23 +32,47 @@ class _CreateQuizState extends State<CreateQuiz> {
 
   String quizId = "";
   String userId = "";
-  String quizImageUrl;
   File quizImage;
+  String loadingText;
   bool _isLoading = false;
   bool isButtonEnabled = true;
 
   _createQuiz() async {
+    Map<String,String> quizData;
+
     if(_formKey.currentState.validate()) {
       setState(() {
         _isLoading = true;
+        loadingText = "Fetching image URL";
       });
 
-      Map<String,String> quizData = {
-        "quizId" : quizId,
-        "topic" : quizModel.topic,
-        "description" : quizModel.description,
-        "imgURL" : quizModel.imgURL,
-      };
+      if(quizImage != null) {
+        ImageUploader imageUploader = ImageUploader();
+        imageUploader.file = quizImage;
+        imageUploader.field = "quizzes";
+        imageUploader.quizId = quizId;
+        imageUploader.userId = userId;
+        imageUploader.isFromCreateQuiz = true;
+        await imageUploader.startUpload().then((value)  {
+          quizData = {
+            "quizId" : quizId,
+            "topic" : quizModel.topic,
+            "description" : quizModel.description,
+            "imgURL" : value,
+          };
+        });
+      } else {
+        quizData = {
+          "quizId" : quizId,
+          "topic" : quizModel.topic,
+          "description" : quizModel.description,
+          "imgURL" : null,
+        };
+      }
+
+      setState(() {
+        loadingText = "Adding Quiz to database";
+      });
 
       await databaseService.addQuizDetails(
           quizData: quizData,
@@ -71,20 +94,8 @@ class _CreateQuizState extends State<CreateQuiz> {
 
     if (pickedFile != null) {
       File croppedImage = await _cropImage(File(pickedFile.path));
-      ImageUploader imageUploader = ImageUploader();
-      imageUploader.file = croppedImage;
-      imageUploader.field = "quizzes";
-      imageUploader.quizId = quizId;
-      imageUploader.userId = userId;
-      imageUploader.isFromCreateQuiz = true;
       setState(() {
-        isButtonEnabled = false;
-      });
-      imageUploader.startUpload().then((value)  {
-        setState(() {
-          quizModel.imgURL = value;
-          isButtonEnabled = true;
-        });
+        quizImage = croppedImage;
       });
     } else {
       setState(() {
@@ -125,7 +136,6 @@ class _CreateQuizState extends State<CreateQuiz> {
 
     setState(() {
       quizImage = null;
-      quizModel.imgURL = null;
     });
   }
 
@@ -157,7 +167,7 @@ class _CreateQuizState extends State<CreateQuiz> {
           color: Colors.blue
         ),
       ),
-      body: _isLoading ? Loading() : SingleChildScrollView(
+      body: _isLoading ? Loading(loadingText: loadingText,) : SingleChildScrollView(
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
@@ -175,6 +185,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                     ),
                   ) : QuizDetailsTile(
                     quizModel: quizModel,
+                    quizImage: quizImage,
                     fromCreateQuiz: true,
                   )
                 ],
@@ -187,7 +198,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                     TextFormField(
                       validator: (val) => val.isEmpty ? "Enter Topic" : null,
                       decoration: InputDecoration(
-                          hintText: "Enter Quiz Topic"
+                          hintText: "Quiz Topic"
                       ),
                       onChanged: (val) {
                         setState(() {
@@ -199,7 +210,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                     TextFormField(
                       validator: (val) => val.isEmpty ? "Enter Description" : null,
                       decoration: InputDecoration(
-                          hintText: "Enter Quiz Description"
+                          hintText: "Quiz Description"
                       ),
                       onChanged: (val) {
                         setState(() {
@@ -208,7 +219,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                       },
                     ),
                     SizedBox(height: 25,),
-                    Text("Edit background image", style: TextStyle(fontSize: 20.0),),
+                    Text("Edit background image", style: TextStyle(fontSize: 20.0, color: Colors.black.withOpacity(0.7))),
                     SizedBox(height: 5,),
                     Container(
                       child: Row(
@@ -219,28 +230,28 @@ class _CreateQuizState extends State<CreateQuiz> {
                               _pickImage(ImageSource.gallery);
                             },
                             icon: FaIcon(FontAwesomeIcons.images, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
-                            label: Text("Gallery", style: TextStyle(fontSize: 15)),
+                            label: Text("Gallery", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
                           ),
                           quizImage != null ? FlatButton.icon(
                             onPressed: () {
                               _clearImage();
                             },
                             icon: FaIcon(FontAwesomeIcons.undoAlt, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
-                            label: Text("Undo", style: TextStyle(fontSize: 15)),
+                            label: Text("Undo", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
                           ) : Container(),
                           FlatButton.icon(
                             onPressed: () {
                               _pickImage(ImageSource.camera);
                             },
                             icon: FaIcon(FontAwesomeIcons.camera, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
-                            label: Text("Camera", style: TextStyle(fontSize: 15)),
+                            label: Text("Camera", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
                           ),
                         ],
                       ),
                     ),
 
                     quizModel.topic != "" ? Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10.0),
+                      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                       width: MediaQuery.of(context).size.width - 40,
                       child: FlatButton.icon(
                           onPressed: () async {
@@ -265,7 +276,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                           ),
                       ),
                     ) : Container(),
-                    SizedBox(height: 25,),
+                    SizedBox(height: 15,),
                     !isButtonEnabled ? Container(
                       height: 50,
                       width: (MediaQuery.of(context).size.width/2)-30,

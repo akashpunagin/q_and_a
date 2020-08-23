@@ -117,7 +117,7 @@ class _AddQuestionState extends State<AddQuestion> {
     }
   }
 
-  _submit() {
+  _done() {
     Navigator.pop(context);
   }
 
@@ -286,7 +286,7 @@ class _AddQuestionState extends State<AddQuestion> {
             color: Colors.blue
         ),
       ),
-      body: _isLoading ? Loading() : Column(
+      body: _isLoading ? Loading(loadingText: "Adding question",) : Column(
         children: [
           Expanded(
             flex: 0,
@@ -324,7 +324,7 @@ class _AddQuestionState extends State<AddQuestion> {
                   ),
                   SizedBox(height: 8,),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       !isButtonEnabled ? Container(
                         width: (MediaQuery.of(context).size.width/2)-30,
@@ -334,7 +334,7 @@ class _AddQuestionState extends State<AddQuestion> {
                       ) : blueButton(context: context, label: "Add This Question",
                           onPressed: _addQuestion,
                           width: (MediaQuery.of(context).size.width/2)-30),
-                      blueButton(context: context, label: "Submit", onPressed: _submit, width: (MediaQuery.of(context).size.width/2) - 30),
+                      blueButton(context: context, label: "Done", onPressed: _done, width: (MediaQuery.of(context).size.width/2) - 30),
                     ],
                   ),
                 ],

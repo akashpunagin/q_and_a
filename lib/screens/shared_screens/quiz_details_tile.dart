@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/screens/shared_screens/display_questions/display_quiz_questions.dart';
 import 'package:q_and_a/services/database.dart';
@@ -15,8 +17,8 @@ class QuizDetailsTile extends StatelessWidget {
   final QuizModel quizModel;
   final bool fromStudent;
   final bool fromCreateQuiz;
-
-  QuizDetailsTile({this.teacherId, this.quizModel, this.fromStudent, this.fromCreateQuiz});
+  final File quizImage;
+  QuizDetailsTile({this.teacherId, this.quizModel, this.fromStudent, this.fromCreateQuiz, this.quizImage});
 
   displayDeleteQuizAlert(BuildContext context) {
     Alert(
@@ -127,24 +129,25 @@ class QuizDetailsTile extends StatelessWidget {
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
-              child: CachedNetworkImage(
+              child: fromCreateQuiz == true  && quizImage != null ? Container(
+                width: MediaQuery.of(context).size.width - 20,
+                child: Image.file(
+                  quizImage,
+                  fit: BoxFit.cover,
+                ),
+              ) : CachedNetworkImage(
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.cover,
                 useOldImageOnUrlChange: false,
                 imageUrl: quizModel.imgURL == "" || quizModel.imgURL == null ? defaultQuizImageURL : quizModel.imgURL,
                 imageBuilder: (context, imageProvider) {
-
-                  try {
-                    return Container(
-                      width: MediaQuery.of(context).size.width - 20,
-                      child: Image(
-                        fit: BoxFit.cover,
-                        image: imageProvider,
-                      ),
-                    );
-                  } catch (e) {
-                    return Text("Error");
-                  }
+                  return Container(
+                    width: MediaQuery.of(context).size.width - 20,
+                    child: Image(
+                      fit: BoxFit.cover,
+                      image: imageProvider,
+                    ),
+                  );
                 },
                 placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, e) => Container(

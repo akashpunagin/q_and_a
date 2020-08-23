@@ -44,7 +44,7 @@ class _QuestionTileState extends State<QuestionTile> {
       style: alertStyle,
       type: AlertType.info,
       title: "Delete Question",
-      desc: "Are you sure you want to delete this question\n\"${widget.questionModel.question}\" ?",
+      desc: "Are you sure you want to delete question - \n\"${widget.questionModel.question}\" ?",
       buttons: [
         DialogButton(
           child: Text(

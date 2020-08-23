@@ -32,6 +32,7 @@ class _EditQuestionState extends State<EditQuestion> {
   DatabaseService databaseService = new DatabaseService();
   final picker = ImagePicker();
 
+  String loadingText;
   String userId;
   bool _isLoading = false;
   bool isButtonEnabled = true;
@@ -40,6 +41,7 @@ class _EditQuestionState extends State<EditQuestion> {
     if(_formKey.currentState.validate()){
       setState(() {
         _isLoading = true;
+        loadingText = "Editing question";
       });
 
       String questionId = widget.questionModel.questionId;
@@ -101,6 +103,7 @@ class _EditQuestionState extends State<EditQuestion> {
       imageUploader.userId = userId;
       setState(() {
         isButtonEnabled = false;
+        loadingText = "Fetching image URL";
       });
       imageUploader.startUpload().then((value)  {
         setState(() {
@@ -222,7 +225,7 @@ class _EditQuestionState extends State<EditQuestion> {
             color: Colors.blue
         ),
       ),
-      body: _isLoading || !isButtonEnabled ? Loading() : SingleChildScrollView(
+      body: _isLoading || !isButtonEnabled ? Loading(loadingText: loadingText,) : SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Container(
