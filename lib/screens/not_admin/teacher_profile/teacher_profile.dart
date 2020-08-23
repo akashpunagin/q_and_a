@@ -3,13 +3,12 @@ import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/services/send_email.dart';
-import 'package:q_and_a/shared/constants.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'change_teachers.dart';
 
 class TeacherProfile extends StatefulWidget {
 
@@ -20,10 +19,7 @@ class TeacherProfile extends StatefulWidget {
 class _TeacherProfileState extends State<TeacherProfile> {
 
   final DatabaseService databaseService = DatabaseService();
-  final _formKey = GlobalKey<FormState>();
-  String teacherEmail;
   String teacherEmailToStream = "";
-  bool _isLoading = false;
 
   Map<String, dynamic> studentDetails = {
     "nTotalQuizSubmitted" : 0,
@@ -32,53 +28,6 @@ class _TeacherProfileState extends State<TeacherProfile> {
     "nTotalNotAttempted" : 0,
     "studentName" : "",
   };
-
-  _showPopUp(BuildContext context, String userId) {
-    Alert(
-        context: context,
-        type: AlertType.none,
-        title: "Edit Teacher Email",
-        style: alertStyle,
-        content: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                validator: (val) => val.isEmpty ? "Enter email" : null,
-                onChanged: (val) {
-                    teacherEmail = val;
-                },
-                decoration: InputDecoration(
-                  icon: Icon(Icons.email),
-                  labelText: 'Email',
-                  hintText: "example@gmail.com"
-                ),
-              ),
-            ],
-          ),
-        ),
-        buttons: [
-          DialogButton(
-            onPressed: () {
-              setState(() {
-                _isLoading = true;
-              });
-              if(_formKey.currentState.validate()) {
-                databaseService.updateTeacherEmail(userId: userId, teacherEmail: teacherEmail.toString().trim()).then((val) {
-                });
-                setState(() {
-                  _isLoading = false;
-                });
-                Navigator.pop(context);
-              }
-            },
-            child: Text(
-              "Submit",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-          )
-        ]).show();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +54,8 @@ class _TeacherProfileState extends State<TeacherProfile> {
     });
 
     return Scaffold(
-      body: _isLoading ? Loading() : Container(
-        margin: EdgeInsets.symmetric(horizontal: 20.0),
+      body: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: FutureBuilder(
           future: isTeacherEmailExists,
           builder: (context, future) {
@@ -142,27 +91,28 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                   children: <Widget>[
                                     Text(
                                       "Your Teacher",
-                                      style: TextStyle(
-                                        fontSize: 35.0,
-                                      ),
+                                      style: TextStyle(fontSize: 25.0, color: Colors.black87),
                                     ),
-                                    Image.network(
-                                        snapshots.data.documents[0].data['photoUrl']
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          snapshots.data.documents[0].data['photoUrl']
+                                      ),
+                                      radius: 55,
                                     ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: <Widget>[
-                                        FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 20.0,),
-                                        SizedBox(width: 10,),
-                                        Text(snapshots.data.documents[0].data['displayName'], style: TextStyle(fontSize: 25.0),)
+                                        FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
+                                        SizedBox(width: 5,),
+                                        Text(snapshots.data.documents[0].data['displayName'], style: TextStyle(fontSize: 22.0),)
                                       ],
                                     ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: <Widget>[
-                                        Icon(Icons.email),
+                                        Icon(Icons.email, size: 20.0,),
                                         SizedBox(width: 5,),
-                                        Text(snapshots.data.documents[0].data['email'], style: TextStyle(fontSize: 20.0),)
+                                        Text(snapshots.data.documents[0].data['email'], style: TextStyle(fontSize: 18.0),)
                                       ],
                                     ),
                                     snapshots.hasData && snapshots.data.documents.length > 0 ? blueButton(context: context, label: "Send your progress to ${snapshots.data.documents[0].data['displayName']}", onPressed: (){
@@ -179,7 +129,8 @@ class _TeacherProfileState extends State<TeacherProfile> {
                               ),
                             ),
                             Image.asset(
-                              "assets/images/teacher_profile.png"
+                              "assets/images/teacher_profile.png",
+                              width: MediaQuery.of(context).size.height * 0.4,
                             ),
                           ],
                         ),
@@ -199,7 +150,9 @@ class _TeacherProfileState extends State<TeacherProfile> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showPopUp(context, user.uid);
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ChangeTeachers(userId: user.uid, currentTeacherEmail: teacherEmailToStream,)
+            ));
         },
         child: FaIcon(FontAwesomeIcons.userEdit, size: 20.0,),
       ),

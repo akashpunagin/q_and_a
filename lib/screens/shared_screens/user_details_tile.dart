@@ -3,17 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class StudentDetailsTile extends StatelessWidget {
+class UserDetailsTile extends StatelessWidget {
 
   final String displayName;
   final String email;
   final String photoUrl;
-  StudentDetailsTile({this.displayName, this.email, this.photoUrl});
+  final bool isHighlightTile;
+  UserDetailsTile({this.displayName, this.email, this.photoUrl, this.isHighlightTile});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: isHighlightTile ? BoxDecoration(
+        gradient: LinearGradient(
+            begin: Alignment.bottomLeft,
+            end: Alignment.bottomRight,
+            stops: [0.1, 0.5, 0.7],
+            colors: [
+              Colors.blue[300],
+              Colors.blue[500],
+              Colors.blue[600],
+            ]
+        ),
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(color: Colors.black45, width: 4)
+      ) : BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomLeft,
           end: Alignment.bottomRight,
@@ -24,7 +38,7 @@ class StudentDetailsTile extends StatelessWidget {
             Colors.blue[600],
           ]
         ),
-        borderRadius: BorderRadius.circular(10.0)
+        borderRadius: BorderRadius.circular(10.0),
       ),
       padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
       child : Row(

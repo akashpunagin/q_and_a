@@ -1,5 +1,5 @@
 import 'package:q_and_a/models/user_model.dart';
-import 'package:q_and_a/screens/admin/display_students/students_details_tile.dart';
+import 'package:q_and_a/screens/shared_screens/user_details_tile.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
@@ -62,10 +62,11 @@ class _StudentDetailsState extends State<StudentDetails> {
                           itemBuilder: (context, index) {
                             return Container(
                               margin: EdgeInsets.symmetric(vertical: 5.0),
-                              child: StudentDetailsTile(
+                              child: UserDetailsTile(
                                 displayName: snapshots.data.documents[index].data["displayName"],
                                 email: snapshots.data.documents[index].data["email"],
                                 photoUrl: snapshots.data.documents[index].data["photoUrl"],
+                                isHighlightTile: false,
                               ),
                             );
                           }

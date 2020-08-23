@@ -55,8 +55,11 @@ class _MyProfileAdminState extends State<MyProfileAdmin> {
                               fontSize: 35.0,
                             ),
                           ),
-                          Image.network(
-                            future.data['photoURL'],
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              future.data['photoURL'],
+                            ),
+                            radius: 60,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

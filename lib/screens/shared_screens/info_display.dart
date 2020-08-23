@@ -13,7 +13,8 @@ class InfoDisplay extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            "assets/images/warning.png"
+            "assets/images/warning.png",
+            scale: 1.7,
           ),
           SizedBox(height: 20.0,),
           Text(
