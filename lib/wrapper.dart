@@ -53,7 +53,9 @@ class _WrapperState extends State<Wrapper> {
                 title: appBar(context),
                 elevation: 0.0,
               ),
-              body: Loading(loadingText: "Logging you in",),
+              body:Loading(
+                loadingText: future.data == SignUpGoogle() ? "Signing you in" : "Logging you in",
+              ),
             );
           } else {
             return future.data;
