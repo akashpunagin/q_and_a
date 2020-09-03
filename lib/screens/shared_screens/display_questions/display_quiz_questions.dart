@@ -177,7 +177,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
           databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : widget.teacherId) :
           databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : user.uid),
         builder: (context, snapshots) {
-          return snapshots.data == null ? Loading() : SingleChildScrollView(
+          return snapshots.data == null ? Loading(loadingText: "Just a moment",) : SingleChildScrollView(
             physics: ScrollPhysics(),
             child: Column(
               children: <Widget>[

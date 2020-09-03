@@ -27,6 +27,7 @@ class _AdminState extends State<Admin> {
     List<Widget>_screens = [
       HomeAdmin(),
       StudentDetails(),
+      // StudentDetailsBackup(),
       MyProfileAdmin(),
     ];
 

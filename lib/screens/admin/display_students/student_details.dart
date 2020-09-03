@@ -20,6 +20,7 @@ class _StudentDetailsState extends State<StudentDetails> {
   @override
   Widget build(BuildContext context) {
 
+
     final user = Provider.of<User>(context);
 
     DocumentReference result = databaseService.getUserWithUserId(user.uid);
@@ -29,56 +30,55 @@ class _StudentDetailsState extends State<StudentDetails> {
       } else {
         return null;
       }
+
     });
 
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20.0),
-      child: FutureBuilder(
-        future: email,
-        builder: (context, future) {
-          return future.data == null ? Loading() : StreamBuilder(
-            stream: databaseService.getUserWithField(
-                fieldKey: "teacherEmail",
-                fieldValue: future.data,
-                limit: null),
-            builder: (context, snapshots) {
-              if( !snapshots.hasData) {
-                return Loading();
-              } else if (snapshots.data.documents.length == 0) {
-                return InfoDisplay(
-                  textToDisplay: "You don't have any students as of now",
-                );
-              } else {
-                return SingleChildScrollView(
-                  physics: ScrollPhysics(),
-                  child: Column(
+    return FutureBuilder(
+      future: email,
+      builder: (context, future){
+
+        if(future.data == null) {
+          return Loading(loadingText: "Fetching your email",);
+        } else {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20.0),
+            child: FutureBuilder(
+              future: databaseService.getStudents(teacherEmail: future.data),
+              builder: (context, future) {
+                if(future.data == null) {
+                  return Loading(loadingText: "Fetching latest data",);
+                } else {
+                  return Column(
                     children: [
-                      Text("Your Students", style: TextStyle(fontSize: 20.0),),
-                      SizedBox(height: 10.0,),
-                      ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: snapshots.data.documents.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              margin: EdgeInsets.symmetric(vertical: 5.0),
-                              child: UserDetailsTile(
-                                displayName: snapshots.data.documents[index].data["displayName"],
-                                email: snapshots.data.documents[index].data["email"],
-                                photoUrl: snapshots.data.documents[index].data["photoUrl"],
-                                isHighlightTile: false,
-                              ),
-                            );
-                          }
+                      Text("Your Students", style: TextStyle(fontSize: 20, color: Colors.black87),),
+                      SizedBox(height: 20,),
+                      SingleChildScrollView(
+                        physics: ScrollPhysics(),
+                        child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: future.data.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                margin: EdgeInsets.symmetric(vertical: 5.0,),
+                                child: UserDetailsTile(
+                                  displayName: future.data[index]["displayName"],
+                                  email: future.data[index]["email"],
+                                  photoUrl: future.data[index]["photoUrl"],
+                                  isHighlightTile: false,
+                                ),
+                              );
+                            }
+                        ),
                       ),
                     ],
-                  ),
-                );
-              }
-            },
+                  );
+                }
+              },
+            ),
           );
-        },
-      ),
+        }
+      },
     );
   }
 }

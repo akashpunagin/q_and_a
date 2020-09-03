@@ -73,6 +73,89 @@ class DatabaseService {
 
   // Get data from database
 
+  Future<List<Map<String,String>>> getStudents({String teacherEmail}) async {
+
+    // Map<String,String> student = {};
+    List<Map<String,String>> students = [];
+
+    var result =  await userDetailsCollection.getDocuments();
+    // print(result.documents);
+
+    for (DocumentSnapshot document in result.documents) {
+
+      if(document.data["isAdmin"] == false) {
+
+        // print("STUDENT: ${document.data['displayName']}");
+
+        var teachers = await userDetailsCollection
+          .document(document.data["uid"])
+          .collection(teachersCollectionTitle)
+          .where('email', isEqualTo: teacherEmail)
+          .getDocuments();
+
+
+        if(teachers.documents.length > 0) {
+          // print("STUDENT: ${document.data['email']} is teacher of $teacherEmail");
+
+          Map<String,String> student = {
+            'displayName' : document.data['displayName'],
+            'email' : document.data['email'],
+            'photoUrl' : document.data['photoUrl'],
+          };
+          students.add(student);
+
+
+          // return getUserWithUserId(document.data['uid']).snapshots();
+        }
+
+      }
+    }
+
+    // print(students);
+    return students;
+
+  }
+
+
+
+  // Stream<QuerySnapshot> getStudents(String teacherEmail) {
+  //   var result =  userDetailsCollection.getDocuments().then((result) {
+  //
+  //     for (DocumentSnapshot document in result.documents) {
+  //
+  //       if(document.data["isAdmin"] == false) {
+  //
+  //         // print("STUDENT: ${document.data['displayName']}");
+  //
+  //         var teachers = userDetailsCollection
+  //             .document(document.data["uid"])
+  //             .collection(teachersCollectionTitle)
+  //             .where('email', isEqualTo: teacherEmail)
+  //             .getDocuments().then((teachers) {
+  //
+  //           if(teachers.documents.length > 0) {
+  //             print("STUDENT: ${document.data['email']} is teacher of $teacherEmail");
+  //
+  //             return userDetailsCollection
+  //                 .document(document.data['uid'])
+  //                 .snapshots();
+  //           }
+  //         });
+  //         return teachers;
+  //       }
+  //     }
+  //
+  //   });
+  //
+  //   return result;
+  //
+  // }
+
+
+
+
+
+
   Stream<QuerySnapshot> getQuizDetails({String userId})  {
     return userDetailsCollection
         .document(userId)

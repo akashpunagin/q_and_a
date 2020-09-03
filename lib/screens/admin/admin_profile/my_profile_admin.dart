@@ -37,7 +37,7 @@ class _MyProfileAdminState extends State<MyProfileAdmin> {
         future: mapData,
         builder: (context, future) {
           if (future.connectionState == ConnectionState.waiting) {
-            return Loading();
+            return Loading(loadingText: "Just a moment",);
           } else {
             return Container(
               child: Column(

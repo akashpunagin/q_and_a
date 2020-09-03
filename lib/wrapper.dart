@@ -53,7 +53,7 @@ class _WrapperState extends State<Wrapper> {
                 title: appBar(context),
                 elevation: 0.0,
               ),
-              body: Loading(),
+              body: Loading(loadingText: "Logging you in",),
             );
           } else {
             return future.data;

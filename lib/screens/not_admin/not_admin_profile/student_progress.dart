@@ -44,7 +44,7 @@ class _StudentProgressState extends State<StudentProgress> {
           future: result,
           builder: (context, future) {
             if(!future.hasData || future.connectionState == ConnectionState.waiting) {
-              return Loading();
+              return Loading(loadingText: "Fetching your progress",);
             } else if(future.data.documents.length == 0) {
               return InfoDisplay(
                 textToDisplay: "You've not submitted any quiz yet. Start submitting now!",

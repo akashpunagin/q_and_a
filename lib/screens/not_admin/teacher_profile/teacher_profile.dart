@@ -60,7 +60,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
           future: isTeacherEmailExists,
           builder: (context, future) {
             if(future.data == null) {
-              return Loading();
+              return Loading(loadingText: "Just a moment");
             } else if (future.data == false) {
               return InfoDisplay(
                 textToDisplay: "Update your Teacher email",
@@ -73,7 +73,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
                       limit: 1),
                   builder: (context, snapshots) {
                     if ( !snapshots.hasData ) {
-                      return Loading();
+                      return Loading(loadingText: "Fetching information",);
                     } else if(snapshots.hasData && snapshots.data.documents.length !=0 && snapshots.data.documents[0].data['isAdmin'] == false) {
                       return InfoDisplay(
                         textToDisplay: "The email \"${snapshots.data.documents[0].data['email']}\" is not registered as teacher, edit your Teacher email",

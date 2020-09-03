@@ -111,7 +111,6 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                 if(result.documents.length > 0) {
                   if(result.documents[0].data.containsKey("isAdmin")) {
                     if(result.documents[0].data["isAdmin"] != true) {
-                      print("this is not teacher");
                       SnackBar snackBar = _snackBarWithText("Email \"$teacherEmail\" is not registered as Teacher, try again with different email");
                       _scaffoldKey.currentState.showSnackBar(snackBar);
                     } else {
@@ -123,18 +122,15 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                       };
 
                       databaseService.addTeacher(userId: widget.userId, teacherData: teacherMap).then((value) {
-                        print("added teacher");
                         SnackBar snackBar = _snackBarWithText("Teacher \"${teacherMap['displayName']}\" added successfully");
                         _scaffoldKey.currentState.showSnackBar(snackBar);
                       });
                     }
                   } else {
-                    print("user not found");
                     SnackBar snackBar = _snackBarWithText("Email \"$teacherEmail\" is not registered.");
                     _scaffoldKey.currentState.showSnackBar(snackBar);
                   }
                 } else {
-                  print("user not found");
                   SnackBar snackBar = _snackBarWithText("Email \"$teacherEmail\" is not registered.");
                   _scaffoldKey.currentState.showSnackBar(snackBar);
                 }
@@ -175,7 +171,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
           ),
         ],
       ),
-      body: _isLoading ? Loading() : Container(
+      body: _isLoading ? Loading(loadingText: "Just a moment",) : Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
         child: StreamBuilder(
           stream: databaseService.getTeachersOfUser(userId: widget.userId),
@@ -211,7 +207,13 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                                 databaseService.updateTeacherEmail(userId: widget.userId, teacherEmail: snapshots.data.documents[index].data["email"].toString().trim());
                                 Navigator.pop(context);
                               },
-                              onLongPress: () {
+                              onLongPress: isHighlightTile ? () {
+                                final snackBar = SnackBar(
+                                  content: Text("Cannot delete currently selected teacher", style: TextStyle(fontSize: 15.0),),
+                                  backgroundColor: Colors.blueAccent,
+                                );
+                                _scaffoldKey.currentState.showSnackBar(snackBar);
+                              } : () {
                                 _showDeleteTeacherAlert(
                                   context: context,
                                   displayName: snapshots.data.documents[index].data["displayName"],
