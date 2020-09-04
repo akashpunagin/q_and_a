@@ -68,7 +68,7 @@ class QuizDetailsTile extends StatelessWidget {
         DialogButton(
           child: Text(
             "I'm ready",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(color: Colors.white, fontSize: 18, letterSpacing: -1),
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -84,7 +84,7 @@ class QuizDetailsTile extends StatelessWidget {
         DialogButton(
           child: Text(
             "I'm not ready",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(color: Colors.white, fontSize: 18, letterSpacing: -1),
           ),
           onPressed: () => Navigator.pop(context),
           gradient: LinearGradient(colors: [
