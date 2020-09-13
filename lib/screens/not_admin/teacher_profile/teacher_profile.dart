@@ -115,14 +115,17 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                         Text(snapshots.data.documents[0].data['email'], style: TextStyle(fontSize: 18.0),)
                                       ],
                                     ),
-                                    snapshots.hasData && snapshots.data.documents.length > 0 ? blueButton(context: context, label: "Send your progress to ${snapshots.data.documents[0].data['displayName']}", onPressed: (){
-                                      displaySelectGmailAlert(context: context, onPressed: () {
-                                        SendEmail sendEmail = SendEmail();
-                                        sendEmail.teacherEmail = snapshots.data.documents[0].data['email'];
-                                        sendEmail.studentName = studentDetails['studentName'];
-                                        sendEmail.studentId = user.uid;
-                                        sendEmail.sendEmailProgress();
-                                      });
+                                    snapshots.hasData && snapshots.data.documents.length > 0 ?
+                                    blueButton(
+                                        context: context, label: "Send your progress to ${snapshots.data.documents[0].data['displayName']}",
+                                        onPressed: (){
+                                          displaySelectGmailAlert(context: context, onPressed: () {
+                                            SendEmail sendEmail = SendEmail();
+                                            sendEmail.teacherEmail = snapshots.data.documents[0].data['email'];
+                                            sendEmail.studentName = studentDetails['studentName'];
+                                            sendEmail.studentId = user.uid;
+                                            sendEmail.sendEmailProgress();
+                                          });
                                     }) : Container(),
                                   ],
                                 ),

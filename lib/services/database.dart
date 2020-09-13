@@ -6,8 +6,9 @@ class DatabaseService {
   static String userCollectionTitle = "users";
   static String quizCollectionTitle = "quizzes";
   static String questionsCollectionTitle = "questions";
-  static String studentProgressCollection = "student_progress";
+  static String studentProgressCollectionTitle = "student_progress";
   static String teachersCollectionTitle = "teachers";
+  static String quizResultSubmissionTitle = "quiz_submissions";
 
   //Collection Reference
   final CollectionReference userDetailsCollection = Firestore.instance.collection(userCollectionTitle);
@@ -55,13 +56,33 @@ class DatabaseService {
 
     await userDetailsCollection
         .document(userId)
-        .collection(studentProgressCollection)
+        .collection(studentProgressCollectionTitle)
         .document()
         .setData(progressData)
         .catchError((e){
       print(e.toString());
     });
   }
+
+
+
+
+
+  Future<void> addQuizSubmissionDetails({String teacherId, Map quizResultData}) async {
+    await userDetailsCollection
+        .document(teacherId)
+        .collection(quizResultSubmissionTitle)
+        .document()
+        .setData(quizResultData)
+        .catchError((e){
+      print(e.toString());
+    });
+  }
+
+
+
+
+
 
   Future<void> addTeacher({String userId, Map teacherData}) async {
     await userDetailsCollection
@@ -175,10 +196,21 @@ class DatabaseService {
   Future<QuerySnapshot> getStudentProgress({String userId}) {
     return userDetailsCollection
         .document(userId)
-        .collection(studentProgressCollection)
+        .collection(studentProgressCollectionTitle)
         .orderBy('createAt', descending: true)
         .getDocuments();
   }
+
+
+  Stream<QuerySnapshot> getQuizSubmissionDetails({String teacherId}) {
+    return userDetailsCollection
+        .document(teacherId)
+        .collection(quizResultSubmissionTitle)
+        .snapshots();
+  }
+
+
+
 
   // Get user from database
   DocumentReference getUserWithUserId(String userId) {

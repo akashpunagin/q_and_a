@@ -16,7 +16,7 @@ class Admin extends StatefulWidget {
 
 class _AdminState extends State<Admin> {
 
-  int navBarIndex = 0 ;
+  int navBarIndex = 2 ;
 
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();

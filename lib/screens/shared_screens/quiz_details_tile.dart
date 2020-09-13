@@ -57,7 +57,7 @@ class QuizDetailsTile extends StatelessWidget {
     ).show();
   }
 
-  displayTimerAlert(BuildContext context) {
+  displayMailSendAlert(BuildContext context) {
     Alert(
       context: context,
       style: alertStyle,
@@ -73,7 +73,12 @@ class QuizDetailsTile extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
             Navigator.pushReplacement(context, MaterialPageRoute(
-                builder: (context) => DisplayQuizQuestions(quizId: quizModel.quizId, teacherId: teacherId, quizModel: quizModel, fromStudent: true,)
+                builder: (context) => DisplayQuizQuestions(
+                  quizId: quizModel.quizId,
+                  teacherId: teacherId,
+                  quizModel: quizModel,
+                  fromStudent: true,
+                )
             ));
           },
           gradient: LinearGradient(colors: [
@@ -102,7 +107,7 @@ class QuizDetailsTile extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (fromStudent == true) {
-          displayTimerAlert(context);
+          displayMailSendAlert(context);
         } else {
           if(fromCreateQuiz != true) {
             Navigator.push(context, MaterialPageRoute(

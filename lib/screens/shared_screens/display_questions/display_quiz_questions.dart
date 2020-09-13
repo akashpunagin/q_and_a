@@ -59,24 +59,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
 
   }
 
-  @override
-  void initState() {
-    widget.quizModel.nTotal = 0;
-    widget.quizModel.nNotAttempted = 0;
-
-    if(widget.showQuestionEditedSnackBar == true) {
-      new Future<Null>.delayed(Duration(microseconds: 0), () {
-        final snackBar = SnackBar(
-          content: Text("Question was edited successfully", style: TextStyle(fontSize: 15.0),),
-          backgroundColor: Colors.blueAccent,
-        );
-        _scaffoldKey.currentState.showSnackBar(snackBar);
-      });
-    }
-
-    super.initState();
-  }
-
   _submitQuiz() async {
     SendEmail sendEmail = SendEmail();
 
@@ -136,95 +118,149 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
     setState(() { });
   }
 
+
+  @override
+  void initState() {
+    widget.quizModel.nTotal = 0;
+    widget.quizModel.nNotAttempted = 0;
+
+    if(widget.showQuestionEditedSnackBar == true) {
+      new Future<Null>.delayed(Duration(microseconds: 0), () {
+        final snackBar = SnackBar(
+          content: Text("Question was edited successfully", style: TextStyle(fontSize: 15.0),),
+          backgroundColor: Colors.blueAccent,
+        );
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      });
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
+    Future<String> studentName;
 
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: appBar(context),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        brightness: Brightness.light,
-        elevation: 0.0,
-        iconTheme: IconThemeData(
-          color: Colors.blue
-        ),
-        actions: <Widget>[
-          widget.fromStudent == true ? FlatButton.icon(
-            onPressed: () {
-              displaySelectGmailAlert(context: context, onPressed: _submitQuiz);
-            },
-            label: Text("Submit", style: TextStyle(fontSize: 17, color: Colors.black87),),
-            icon: FaIcon(FontAwesomeIcons.shareSquare, size: 17.0,),
-          ) :
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => AddQuestion(
-                  quizId: widget.quizModel.quizId,
-                  quizTopic: widget.quizModel.topic,
-                )
-              ));
-            },
-            icon: FaIcon(FontAwesomeIcons.plus, size: 17.0,),
-          ),
-        ],
-      ),
-      body: StreamBuilder(
-        stream: user.uid != widget.teacherId ?
-          databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : widget.teacherId) :
-          databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : user.uid),
-        builder: (context, snapshots) {
-          return snapshots.data == null ? Loading(loadingText: "Just a moment",) : SingleChildScrollView(
-            physics: ScrollPhysics(),
-            child: Column(
-              children: <Widget>[
-                // Display points
-                ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: snapshots.data.documents.length,
-                  itemBuilder: (context, index) {
-                    widget.quizModel.nTotal = snapshots.data.documents.length;
-                    widget.quizModel.nNotAttempted = snapshots.data.documents.length;
-                    return Column(
-                      children: [
-                        QuestionTile(
-                          questionModel: _getQuestionModelFromStream(snapshots.data.documents[index]),
-                          index: index,
-                          quizModel: widget.quizModel,
-                          fromStudent: widget.fromStudent,
-                          teacherId: widget.teacherId,
-                          setDisplayQuestionsState: setDisplayQuestionsState,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.bottomLeft,
-                                  end: Alignment.bottomRight,
-                                  stops: [0.2, 0.5, 0.8],
-                                  colors: [
-                                    Colors.blue[400],
-                                    Colors.blue[700],
-                                    Colors.blue[400],
-                                  ]
-                              ),
-                              borderRadius: BorderRadius.circular(5.0)
-                          ),
-                          height: 10.0,
-                          margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                        ),
-                      ],
-                    );
-                  }
+    if(user != null) {
+      DocumentReference result = databaseService.getUserWithUserId(user.uid);
+      studentName = result.get().then((result){
+        return result.data['displayName'].toString().trim();
+      });
+    }
+
+    return FutureBuilder(
+      future: studentName,
+      builder: (context, future) {
+
+        if(future.data == null) {
+          return Loading(loadingText: "Just a moment",);
+        } else {
+          return Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: appBar(context),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              brightness: Brightness.light,
+              elevation: 0.0,
+              iconTheme: IconThemeData(
+                  color: Colors.blue
+              ),
+              actions: <Widget>[
+                widget.fromStudent == true ? FlatButton.icon(
+                  onPressed: () {
+
+                    Map<String, dynamic> quizResult = {
+                      "student" : future.data,
+                      "nCorrect" : widget.quizModel.nCorrect,
+                      "nWrong" : widget.quizModel.nWrong,
+                      "nNotAttempted" : widget.quizModel.nNotAttempted,
+                      "topic" : widget.quizModel.topic,
+                      "nTotal" : widget.quizModel.nTotal,
+                      "createAt" : Timestamp.now(),
+                    };
+                    databaseService.addQuizSubmissionDetails(
+                      teacherId: widget.teacherId,
+                      quizResultData: quizResult,
+                    ).then((value) {
+                      displaySelectGmailAlert(context: context, onPressed: _submitQuiz);
+                    }).catchError((err) {
+                      print("ERROR $err");
+                    });
+                  },
+                  label: Text("Submit", style: TextStyle(fontSize: 17, color: Colors.black87),),
+                  icon: FaIcon(FontAwesomeIcons.shareSquare, size: 17.0,),
+                ) :
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => AddQuestion(
+                          quizId: widget.quizModel.quizId,
+                          quizTopic: widget.quizModel.topic,
+                        )
+                    ));
+                  },
+                  icon: FaIcon(FontAwesomeIcons.plus, size: 17.0,),
                 ),
               ],
             ),
+            body: StreamBuilder(
+              stream: user.uid != widget.teacherId ?
+              databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : widget.teacherId) :
+              databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : user.uid),
+              builder: (context, snapshots) {
+                return snapshots.data == null ? Loading(loadingText: "Just a moment",) : SingleChildScrollView(
+                  physics: ScrollPhysics(),
+                  child: Column(
+                    children: <Widget>[
+                      // Display points
+                      ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: snapshots.data.documents.length,
+                          itemBuilder: (context, index) {
+                            widget.quizModel.nTotal = snapshots.data.documents.length;
+                            widget.quizModel.nNotAttempted = snapshots.data.documents.length;
+                            return Column(
+                              children: [
+                                QuestionTile(
+                                  questionModel: _getQuestionModelFromStream(snapshots.data.documents[index]),
+                                  index: index,
+                                  quizModel: widget.quizModel,
+                                  fromStudent: widget.fromStudent,
+                                  teacherId: widget.teacherId,
+                                  setDisplayQuestionsState: setDisplayQuestionsState,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.bottomLeft,
+                                          end: Alignment.bottomRight,
+                                          stops: [0.2, 0.5, 0.8],
+                                          colors: [
+                                            Colors.blue[400],
+                                            Colors.blue[700],
+                                            Colors.blue[400],
+                                          ]
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0)
+                                  ),
+                                  height: 10.0,
+                                  margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                ),
+                              ],
+                            );
+                          }
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           );
-        },
-      ),
+        }
+      },
     );
   }
 }
