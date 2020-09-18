@@ -27,13 +27,13 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
     Future<String> teacherEmail;
 
     if(user != null) {
       DocumentReference result = databaseService.getUserWithUserId(user.uid);
       teacherEmail = result.get().then((result){
-        return result.data['teacherEmail'].toString().trim();
+        return result.data()['teacherEmail'].toString().trim();
       });
     }
 
@@ -57,7 +57,7 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
                     limit: null),
                 builder: (context, snapshots) {
                   try{
-                    teacherId = snapshots.hasData ? snapshots.data.documents[0].data['uid'] : null;
+                    teacherId = snapshots.hasData ? snapshots.data.documents[0].data()['uid'] : null;
                     return StreamBuilder(
                       stream: databaseService.getQuizDetails(userId : teacherId),
                       builder: (context, snapshots) {
@@ -65,10 +65,10 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
                             itemCount: snapshots.data.documents.length,
                             itemBuilder: (context, index) {
                               QuizModel quizModel =  QuizModel(
-                                imgURL: snapshots.data.documents[index].data["imgURL"],
-                                topic: snapshots.data.documents[index].data["topic"],
-                                description: snapshots.data.documents[index].data["description"],
-                                quizId: snapshots.data.documents[index].data["quizId"],
+                                imgURL: snapshots.data.documents[index].data()["imgURL"],
+                                topic: snapshots.data.documents[index].data()["topic"],
+                                description: snapshots.data.documents[index].data()["description"],
+                                quizId: snapshots.data.documents[index].data()["quizId"],
                                 nCorrect: 0,
                                 nWrong: 0,
                               );

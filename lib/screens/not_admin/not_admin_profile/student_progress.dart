@@ -1,4 +1,4 @@
-import 'package:q_and_a/screens/not_admin/not_admin_profile/student_progress_tile.dart';
+import 'package:q_and_a/screens/shared_screens/results_tile.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
@@ -61,17 +61,17 @@ class _StudentProgressState extends State<StudentProgress> {
                         shrinkWrap: true,
                         itemCount: future.data.documents.length,
                         itemBuilder: (context, index) {
-                          final String formattedDate = formatterDate.format(future.data.documents[index].data['createAt'].toDate());
-                          final String formattedTime = formatterTime.format(future.data.documents[index].data['createAt'].toDate());
-                          return StudentProgressTile(
+                          final String formattedDate = formatterDate.format(future.data.documents[index].data()['createAt'].toDate());
+                          final String formattedTime = formatterTime.format(future.data.documents[index].data()['createAt'].toDate());
+                          return ResultsTile(
                             index: (index+1).toString(),
                             date: "$formattedDate, $formattedTime",
-                            teacherName: future.data.documents[index].data['teacher'],
-                            topic: future.data.documents[index].data['topic'],
-                            nTotal: future.data.documents[index].data['nTotal'].toString(),
-                            nCorrect: future.data.documents[index].data['nCorrect'].toString(),
-                            nWrong: future.data.documents[index].data['nWrong'].toString(),
-                            nNotAttempted: future.data.documents[index].data['nNotAttempted'].toString(),
+                            teacherName: future.data.documents[index].data()['teacher'],
+                            topic: future.data.documents[index].data()['topic'],
+                            nTotal: future.data.documents[index].data()['nTotal'].toString(),
+                            nCorrect: future.data.documents[index].data()['nCorrect'].toString(),
+                            nWrong: future.data.documents[index].data()['nWrong'].toString(),
+                            nNotAttempted: future.data.documents[index].data()['nNotAttempted'].toString(),
                           );
                         }
                     ),

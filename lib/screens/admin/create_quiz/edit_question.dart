@@ -208,7 +208,7 @@ class _EditQuestionState extends State<EditQuestion> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
 
     setState(() {
       userId = user.uid;

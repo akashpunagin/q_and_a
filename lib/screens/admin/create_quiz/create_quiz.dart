@@ -150,7 +150,7 @@ class _CreateQuizState extends State<CreateQuiz> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
 
     setState(() {
       userId = user.uid;

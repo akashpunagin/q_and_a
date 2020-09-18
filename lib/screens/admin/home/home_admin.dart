@@ -24,7 +24,7 @@ class _HomeAdminState extends State<HomeAdmin> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
     if (user != null) {
       setState(() {
         userId = user.uid;
@@ -48,10 +48,10 @@ class _HomeAdminState extends State<HomeAdmin> {
                  itemCount: snapshots.data.documents.length,
                  itemBuilder: (context, index) {
                    QuizModel quizModel =  QuizModel(
-                     imgURL: snapshots.data.documents[index].data["imgURL"],
-                     topic: snapshots.data.documents[index].data["topic"],
-                     description: snapshots.data.documents[index].data["description"],
-                     quizId: snapshots.data.documents[index].data["quizId"],
+                     imgURL: snapshots.data.documents[index].data()["imgURL"],
+                     topic: snapshots.data.documents[index].data()["topic"],
+                     description: snapshots.data.documents[index].data()["description"],
+                     quizId: snapshots.data.documents[index].data()["quizId"],
                      nCorrect: 0,
                      nWrong: 0,
                    );

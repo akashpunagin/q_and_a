@@ -1,7 +1,7 @@
-class User {
+class UserModel {
 
   final String uid;
   final bool isAdmin;
 
-  User({this.uid, this.isAdmin});
+  UserModel({this.uid, this.isAdmin});
 }

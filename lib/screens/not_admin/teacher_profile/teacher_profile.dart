@@ -32,25 +32,25 @@ class _TeacherProfileState extends State<TeacherProfile> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
 
     DocumentReference result = databaseService.getUserWithUserId(user.uid);
     Future<bool> isTeacherEmailExists = result.get().then((result) async {
 
       setState(() {
-        studentDetails['nTotalCorrect'] = result.data.containsKey("nTotalCorrect") ?  result.data["nTotalCorrect"] : 0;
-        studentDetails['nTotalWrong'] = result.data.containsKey("nTotalWrong") ?  result.data["nTotalWrong"] : 0;
-        studentDetails['nTotalQuizSubmitted'] = result.data.containsKey("nTotalQuizSubmitted") ?  result.data["nTotalQuizSubmitted"] : 0;
-        studentDetails['nTotalNotAttempted'] = result.data.containsKey("nTotalNotAttempted") ?  result.data["nTotalNotAttempted"] : 0;
-        studentDetails['studentName'] = result.data['displayName'];
+        studentDetails['nTotalCorrect'] = result.data().containsKey("nTotalCorrect") ?  result.data()["nTotalCorrect"] : 0;
+        studentDetails['nTotalWrong'] = result.data().containsKey("nTotalWrong") ?  result.data()["nTotalWrong"] : 0;
+        studentDetails['nTotalQuizSubmitted'] = result.data().containsKey("nTotalQuizSubmitted") ?  result.data()["nTotalQuizSubmitted"] : 0;
+        studentDetails['nTotalNotAttempted'] = result.data().containsKey("nTotalNotAttempted") ?  result.data()["nTotalNotAttempted"] : 0;
+        studentDetails['studentName'] = result.data()['displayName'];
       });
 
-      if ( result.data.containsKey("teacherEmail") ) {
+      if ( result.data().containsKey("teacherEmail") ) {
         setState(() {
-          teacherEmailToStream = result.data['teacherEmail'];
+          teacherEmailToStream = result.data()['teacherEmail'];
         });
       }
-      return result.data.containsKey("teacherEmail");
+      return result.data().containsKey("teacherEmail");
     });
 
     return Scaffold(
@@ -74,9 +74,9 @@ class _TeacherProfileState extends State<TeacherProfile> {
                   builder: (context, snapshots) {
                     if ( !snapshots.hasData ) {
                       return Loading(loadingText: "Fetching information",);
-                    } else if(snapshots.hasData && snapshots.data.documents.length !=0 && snapshots.data.documents[0].data['isAdmin'] == false) {
+                    } else if(snapshots.hasData && snapshots.data.documents.length !=0 && snapshots.data.documents[0].data()['isAdmin'] == false) {
                       return InfoDisplay(
-                        textToDisplay: "The email \"${snapshots.data.documents[0].data['email']}\" is not registered as teacher, edit your Teacher email",
+                        textToDisplay: "The email \"${snapshots.data.documents[0].data()['email']}\" is not registered as teacher, edit your Teacher email",
                       );
                     } else if ( snapshots.hasData && snapshots.data.documents.length > 0) {
                       return Container(
@@ -95,7 +95,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                     ),
                                     CircleAvatar(
                                       backgroundImage: NetworkImage(
-                                          snapshots.data.documents[0].data['photoUrl']
+                                          snapshots.data.documents[0].data()['photoUrl']
                                       ),
                                       radius: 55,
                                     ),
@@ -104,7 +104,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                       children: <Widget>[
                                         FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
                                         SizedBox(width: 5,),
-                                        Text(snapshots.data.documents[0].data['displayName'], style: TextStyle(fontSize: 22.0),)
+                                        Text(snapshots.data.documents[0].data()['displayName'], style: TextStyle(fontSize: 22.0),)
                                       ],
                                     ),
                                     Row(
@@ -112,16 +112,16 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                       children: <Widget>[
                                         Icon(Icons.email, size: 20.0,),
                                         SizedBox(width: 5,),
-                                        Text(snapshots.data.documents[0].data['email'], style: TextStyle(fontSize: 18.0),)
+                                        Text(snapshots.data.documents[0].data()['email'], style: TextStyle(fontSize: 18.0),)
                                       ],
                                     ),
                                     snapshots.hasData && snapshots.data.documents.length > 0 ?
                                     blueButton(
-                                        context: context, label: "Send your progress to ${snapshots.data.documents[0].data['displayName']}",
+                                        context: context, label: "Send your progress to ${snapshots.data.documents[0].data()['displayName']}",
                                         onPressed: (){
                                           displaySelectGmailAlert(context: context, onPressed: () {
                                             SendEmail sendEmail = SendEmail();
-                                            sendEmail.teacherEmail = snapshots.data.documents[0].data['email'];
+                                            sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
                                             sendEmail.studentName = studentDetails['studentName'];
                                             sendEmail.studentId = user.uid;
                                             sendEmail.sendEmailProgress();

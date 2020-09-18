@@ -3,7 +3,9 @@ import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/admin/create_quiz/add_question.dart';
 import 'package:q_and_a/screens/not_admin/home/display_quiz_results.dart';
+import 'package:q_and_a/screens/not_admin/not_admin.dart';
 import 'package:q_and_a/screens/shared_screens/display_questions/question_tile.dart';
+import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/services/send_email.dart';
@@ -34,25 +36,25 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
   Question _getQuestionModelFromStream(DocumentSnapshot questionSnapshot) {
     Question questionModel = new Question();
 
-    questionModel.question = questionSnapshot.data["question"];
-    questionModel.option1 = questionSnapshot.data["option1"];
-    questionModel.option2 = questionSnapshot.data["option2"];
-    questionModel.option3 = questionSnapshot.data["option3"];
-    questionModel.option4 = questionSnapshot.data["option4"];
-    questionModel.correctOption = questionSnapshot.data["option1"];
-    questionModel.questionId = questionSnapshot.data["questionId"];
-    questionModel.isTrueOrFalseType = questionSnapshot.data["isTrueOrFalseType"];
-    questionModel.trueOrFalseAnswer = questionSnapshot.data["trueOrFalseAnswer"];
-    questionModel.questionImageUrl = questionSnapshot.data['questionImageUrl'];
-    questionModel.option1ImageUrl = questionSnapshot.data['option1ImageUrl'];
-    questionModel.option2ImageUrl = questionSnapshot.data['option2ImageUrl'];
-    questionModel.option3ImageUrl = questionSnapshot.data['option3ImageUrl'];
-    questionModel.option4ImageUrl = questionSnapshot.data['option4ImageUrl'];
-    questionModel.questionImageCaption = questionSnapshot.data['questionImageCaption'];
-    questionModel.option1ImageCaption = questionSnapshot.data['option1ImageCaption'];
-    questionModel.option2ImageCaption = questionSnapshot.data['option2ImageCaption'];
-    questionModel.option3ImageCaption = questionSnapshot.data['option3ImageCaption'];
-    questionModel.option4ImageCaption = questionSnapshot.data['option4ImageCaption'];
+    questionModel.question = questionSnapshot.data()["question"];
+    questionModel.option1 = questionSnapshot.data()["option1"];
+    questionModel.option2 = questionSnapshot.data()["option2"];
+    questionModel.option3 = questionSnapshot.data()["option3"];
+    questionModel.option4 = questionSnapshot.data()["option4"];
+    questionModel.correctOption = questionSnapshot.data()["option1"];
+    questionModel.questionId = questionSnapshot.data()["questionId"];
+    questionModel.isTrueOrFalseType = questionSnapshot.data()["isTrueOrFalseType"];
+    questionModel.trueOrFalseAnswer = questionSnapshot.data()["trueOrFalseAnswer"];
+    questionModel.questionImageUrl = questionSnapshot.data()['questionImageUrl'];
+    questionModel.option1ImageUrl = questionSnapshot.data()['option1ImageUrl'];
+    questionModel.option2ImageUrl = questionSnapshot.data()['option2ImageUrl'];
+    questionModel.option3ImageUrl = questionSnapshot.data()['option3ImageUrl'];
+    questionModel.option4ImageUrl = questionSnapshot.data()['option4ImageUrl'];
+    questionModel.questionImageCaption = questionSnapshot.data()['questionImageCaption'];
+    questionModel.option1ImageCaption = questionSnapshot.data()['option1ImageCaption'];
+    questionModel.option2ImageCaption = questionSnapshot.data()['option2ImageCaption'];
+    questionModel.option3ImageCaption = questionSnapshot.data()['option3ImageCaption'];
+    questionModel.option4ImageCaption = questionSnapshot.data()['option4ImageCaption'];
     questionModel.isAnswered = false;
 
     return questionModel;
@@ -62,13 +64,13 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
   _submitQuiz() async {
     SendEmail sendEmail = SendEmail();
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
 
     DocumentReference result = databaseService.getUserWithUserId(user.uid);
     Map<String, String> teacherData = await result.get().then((result){
       return {
-        "teacherEmail" : result.data['teacherEmail'],
-        "displayName" : result.data['displayName'],
+        "teacherEmail" : result.data()['teacherEmail'],
+        "displayName" : result.data()['displayName'],
       };
     });
 
@@ -139,13 +141,13 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
     Future<String> studentName;
 
     if(user != null) {
       DocumentReference result = databaseService.getUserWithUserId(user.uid);
       studentName = result.get().then((result){
-        return result.data['displayName'].toString().trim();
+        return result.data()['displayName'].toString().trim();
       });
     }
 
@@ -210,52 +212,76 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
               databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : widget.teacherId) :
               databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : user.uid),
               builder: (context, snapshots) {
-                return snapshots.data == null ? Loading(loadingText: "Just a moment",) : SingleChildScrollView(
-                  physics: ScrollPhysics(),
-                  child: Column(
-                    children: <Widget>[
-                      // Display points
-                      ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: snapshots.data.documents.length,
-                          itemBuilder: (context, index) {
-                            widget.quizModel.nTotal = snapshots.data.documents.length;
-                            widget.quizModel.nNotAttempted = snapshots.data.documents.length;
-                            return Column(
-                              children: [
-                                QuestionTile(
-                                  questionModel: _getQuestionModelFromStream(snapshots.data.documents[index]),
-                                  index: index,
-                                  quizModel: widget.quizModel,
-                                  fromStudent: widget.fromStudent,
-                                  teacherId: widget.teacherId,
-                                  setDisplayQuestionsState: setDisplayQuestionsState,
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          begin: Alignment.bottomLeft,
-                                          end: Alignment.bottomRight,
-                                          stops: [0.2, 0.5, 0.8],
-                                          colors: [
-                                            Colors.blue[400],
-                                            Colors.blue[700],
-                                            Colors.blue[400],
-                                          ]
-                                      ),
-                                      borderRadius: BorderRadius.circular(5.0)
-                                  ),
-                                  height: 10.0,
-                                  margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                                ),
-                              ],
-                            );
-                          }
+                if(snapshots.data == null) {
+                  return Loading(loadingText: "Just a moment",);
+                } else if(snapshots.data.documents.length == 0) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InfoDisplay(textToDisplay:
+                        widget.fromStudent ? "Wait for your teacher to add questions in this quiz" : "You haven't added any questions yet, add them now!",
+                      ),
+                      SizedBox(height: 10,),
+                      blueButton(
+                        width: MediaQuery.of(context).size.width - 40,
+                        label: "Go Back",
+                        context: context,
+                        onPressed: () {
+                          Navigator.pushReplacement(context, MaterialPageRoute(
+                            builder: (context) => NotAdmin()
+                          ));
+                        }
                       ),
                     ],
-                  ),
-                );
+                  );
+                } else {
+                  return SingleChildScrollView(
+                    physics: ScrollPhysics(),
+                    child: Column(
+                      children: <Widget>[
+                        // Display points
+                        ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: snapshots.data.documents.length,
+                            itemBuilder: (context, index) {
+                              widget.quizModel.nTotal = snapshots.data.documents.length;
+                              widget.quizModel.nNotAttempted = snapshots.data.documents.length;
+                              return Column(
+                                children: [
+                                  QuestionTile(
+                                    questionModel: _getQuestionModelFromStream(snapshots.data.documents[index]),
+                                    index: index,
+                                    quizModel: widget.quizModel,
+                                    fromStudent: widget.fromStudent,
+                                    teacherId: widget.teacherId,
+                                    setDisplayQuestionsState: setDisplayQuestionsState,
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                            begin: Alignment.bottomLeft,
+                                            end: Alignment.bottomRight,
+                                            stops: [0.2, 0.5, 0.8],
+                                            colors: [
+                                              Colors.blue[400],
+                                              Colors.blue[700],
+                                              Colors.blue[400],
+                                            ]
+                                        ),
+                                        borderRadius: BorderRadius.circular(5.0)
+                                    ),
+                                    height: 10.0,
+                                    margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                  ),
+                                ],
+                              );
+                            }
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
             ),
           );

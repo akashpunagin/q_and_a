@@ -26,11 +26,11 @@ class _UserRoleWrapperState extends State<UserRoleWrapper> {
     });
 
     Map<String, dynamic> userMap = {
-      "displayName" : widget.userSnapshot.data['displayName'],
-      "photoUrl" : widget.userSnapshot.data['photoUrl'],
-      "email" : widget.userSnapshot.data['email'],
+      "displayName" : widget.userSnapshot.data()['displayName'],
+      "photoUrl" : widget.userSnapshot.data()['photoUrl'],
+      "email" : widget.userSnapshot.data()['email'],
       "isAdmin" : true,
-      "uid" : widget.userSnapshot.data['uid'],
+      "uid" : widget.userSnapshot.data()['uid'],
     };
     await databaseService.addUserWithDetails(userData: userMap).then((val) {
       setState(() {
@@ -39,7 +39,7 @@ class _UserRoleWrapperState extends State<UserRoleWrapper> {
     });
 
     Navigator.pushReplacement(context, MaterialPageRoute(
-      builder: (context) => UserInstructions(isAdmin: true, displayName: widget.userSnapshot.data['displayName'],)
+      builder: (context) => UserInstructions(isAdmin: true, displayName: widget.userSnapshot.data()['displayName'],)
     ));
 
 
@@ -52,11 +52,11 @@ class _UserRoleWrapperState extends State<UserRoleWrapper> {
     });
 
     Map<String, dynamic> userMap = {
-      "displayName" : widget.userSnapshot.data['displayName'],
-      "photoUrl" : widget.userSnapshot.data['photoUrl'],
-      "email" : widget.userSnapshot.data['email'],
+      "displayName" : widget.userSnapshot.data()['displayName'],
+      "photoUrl" : widget.userSnapshot.data()['photoUrl'],
+      "email" : widget.userSnapshot.data()['email'],
       "isAdmin" : false,
-      "uid" : widget.userSnapshot.data['uid'],
+      "uid" : widget.userSnapshot.data()['uid'],
     };
     await databaseService.addUserWithDetails(userData: userMap).then((val) {
       setState(() {
@@ -65,7 +65,7 @@ class _UserRoleWrapperState extends State<UserRoleWrapper> {
     });
 
     Navigator.pushReplacement(context, MaterialPageRoute(
-        builder: (context) => UserInstructions(isAdmin: false, displayName: widget.userSnapshot.data['displayName'],)
+        builder: (context) => UserInstructions(isAdmin: false, displayName: widget.userSnapshot.data()['displayName'],)
     ));
 
   }

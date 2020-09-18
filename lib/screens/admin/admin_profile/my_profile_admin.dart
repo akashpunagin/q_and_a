@@ -22,20 +22,20 @@ class _MyProfileAdminState extends State<MyProfileAdmin> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
     Future<Map<String, dynamic>> mapData;
     if (user != null) {
       DocumentReference result = databaseService.getUserWithUserId(user.uid);
       mapData = result.get().then((result){
 
         // setState(() {
-          teacherId = result.data["uid"];
+          teacherId = result.data()["uid"];
         // });
 
         return {
-          "displayName" : result.data['displayName'],
-          "email" : result.data['email'],
-          "photoURL" : result.data['photoUrl'],
+          "displayName" : result.data()['displayName'],
+          "email" : result.data()['email'],
+          "photoURL" : result.data()['photoUrl'],
         };
       });
     }

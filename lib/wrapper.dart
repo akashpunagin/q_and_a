@@ -26,15 +26,15 @@ class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
 
     if (user == null){
       return SignUpGoogle(setWrapperState: setWrapperState,);
     } else {
       DocumentReference result = databaseService.getUserWithUserId(user.uid);
       Future<StatefulWidget> widget = result.get().then((result){
-        if (result.data.containsKey("isAdmin")) {
-          return result.data['isAdmin'] ? Admin() : NotAdmin();
+        if (result.data().containsKey("isAdmin")) {
+          return result.data()['isAdmin'] ? Admin() : NotAdmin();
         } else {
           return UserRoleWrapper(userSnapshot: result);
         }

@@ -108,17 +108,17 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                     fieldValue: teacherEmail,
                     limit: 1,
                 );
-                if(result.documents.length > 0) {
-                  if(result.documents[0].data.containsKey("isAdmin")) {
-                    if(result.documents[0].data["isAdmin"] != true) {
+                if(result.docs.length > 0) {
+                  if(result.docs[0].data().containsKey("isAdmin")) {
+                    if(result.docs[0].data()["isAdmin"] != true) {
                       SnackBar snackBar = _snackBarWithText("Email \"$teacherEmail\" is not registered as Teacher, try again with different email");
                       _scaffoldKey.currentState.showSnackBar(snackBar);
                     } else {
 
                       Map<String, String> teacherMap = {
-                        "displayName" : result.documents[0].data["displayName"],
-                        "email" : result.documents[0].data['email'],
-                        "photoUrl" : result.documents[0].data['photoUrl']
+                        "displayName" : result.docs[0].data()["displayName"],
+                        "email" : result.docs[0].data()['email'],
+                        "photoUrl" : result.docs[0].data()['photoUrl']
                       };
 
                       databaseService.addTeacher(userId: widget.userId, teacherData: teacherMap).then((value) {
@@ -178,7 +178,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
           builder: (context, snapshots) {
             if( !snapshots.hasData) {
               return Loading();
-            } else if (snapshots.data.documents.length == 0) {
+            } else if (snapshots.data.docs.length == 0) {
               return InfoDisplay(
                 textToDisplay: "You don't have any teachers stored, add your teachers now !",
               );
@@ -192,11 +192,11 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                     ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: snapshots.data.documents.length,
+                        itemCount: snapshots.data.docs.length,
                         itemBuilder: (context, index) {
 
                           bool isHighlightTile = false;
-                          if(snapshots.data.documents[index].data["email"] == widget.currentTeacherEmail) {
+                          if(snapshots.data.docs[index].data()["email"] == widget.currentTeacherEmail) {
                             isHighlightTile = true;
                           }
 
@@ -204,7 +204,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                             margin: EdgeInsets.symmetric(vertical: 5.0),
                             child: GestureDetector(
                               onTap: () {
-                                databaseService.updateTeacherEmail(userId: widget.userId, teacherEmail: snapshots.data.documents[index].data["email"].toString().trim());
+                                databaseService.updateTeacherEmail(userId: widget.userId, teacherEmail: snapshots.data.docs[index].data()["email"].toString().trim());
                                 Navigator.pop(context);
                               },
                               onLongPress: isHighlightTile ? () {
@@ -216,14 +216,14 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                               } : () {
                                 _showDeleteTeacherAlert(
                                   context: context,
-                                  displayName: snapshots.data.documents[index].data["displayName"],
-                                  email: snapshots.data.documents[index].data["email"],
+                                  displayName: snapshots.data.docs[index].data()["displayName"],
+                                  email: snapshots.data.docs[index].data()["email"],
                                 );
                               },
                               child: UserDetailsTile(
-                                displayName: snapshots.data.documents[index].data["displayName"],
-                                email: snapshots.data.documents[index].data["email"],
-                                photoUrl: snapshots.data.documents[index].data["photoUrl"],
+                                displayName: snapshots.data.docs[index].data()["displayName"],
+                                email: snapshots.data.docs[index].data()["email"],
+                                photoUrl: snapshots.data.docs[index].data()["photoUrl"],
                                 isHighlightTile: isHighlightTile,
                               ),
                             ),

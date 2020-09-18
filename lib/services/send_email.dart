@@ -111,26 +111,26 @@ class SendEmail {
     int nTotalCorrect = 0;
     int nTotalWrong = 0;
     int nTotalNotAttempted = 0;
-    for ( var index = 0; index < result.documents.length; index++) {
-      final String formattedDate = formatterDate.format(result.documents[index].data['createAt'].toDate());
-      final String formattedTime = formatterTime.format(result.documents[index].data['createAt'].toDate());
+    for ( var index = 0; index < result.docs.length; index++) {
+      final String formattedDate = formatterDate.format(result.docs[index].data()['createAt'].toDate());
+      final String formattedTime = formatterTime.format(result.docs[index].data()['createAt'].toDate());
 
       List<String> row = <String>[
         (index+1).toString(),
-        result.documents[index].data['teacher'],
-        result.documents[index].data['topic'],
-        result.documents[index].data['nTotal'].toString(),
-        result.documents[index].data['nCorrect'].toString(),
-        result.documents[index].data['nWrong'].toString(),
-        result.documents[index].data['nNotAttempted'].toString(),
+        result.docs[index].data()['teacher'],
+        result.docs[index].data()['topic'],
+        result.docs[index].data()['nTotal'].toString(),
+        result.docs[index].data()['nCorrect'].toString(),
+        result.docs[index].data()['nWrong'].toString(),
+        result.docs[index].data()['nNotAttempted'].toString(),
         "$formattedTime\n$formattedDate",
       ];
       titles.add(row);
 
-      nTotalQuestions = nTotalQuestions + result.documents[index].data['nTotal'];
-      nTotalCorrect = nTotalCorrect + result.documents[index].data['nCorrect'];
-      nTotalWrong = nTotalWrong + result.documents[index].data['nWrong'];
-      nTotalNotAttempted = nTotalNotAttempted + result.documents[index].data['nNotAttempted'];
+      nTotalQuestions = nTotalQuestions + result.docs[index].data()['nTotal'];
+      nTotalCorrect = nTotalCorrect + result.docs[index].data()['nCorrect'];
+      nTotalWrong = nTotalWrong + result.docs[index].data()['nWrong'];
+      nTotalNotAttempted = nTotalNotAttempted + result.docs[index].data()['nNotAttempted'];
     }
     titles.add(<String>["Total", " ", " ", nTotalQuestions.toString(), nTotalCorrect.toString(), nTotalWrong.toString(), nTotalNotAttempted.toString(), " "]);
 

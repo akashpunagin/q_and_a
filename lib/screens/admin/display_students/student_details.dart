@@ -21,12 +21,12 @@ class _StudentDetailsState extends State<StudentDetails> {
   Widget build(BuildContext context) {
 
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
 
     DocumentReference result = databaseService.getUserWithUserId(user.uid);
     Future<String> email = result.get().then((result){
-      if ( result.data.containsKey("email") ) {
-        return result.data['email'];
+      if ( result.data().containsKey("email") ) {
+        return result.data()['email'];
       } else {
         return null;
       }

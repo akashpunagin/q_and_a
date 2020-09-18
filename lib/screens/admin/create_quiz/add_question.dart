@@ -268,7 +268,7 @@ class _AddQuestionState extends State<AddQuestion> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
 
     setState(() {
       userId = user.uid;
@@ -294,6 +294,8 @@ class _AddQuestionState extends State<AddQuestion> {
               margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               child: Column(
                 children: [
+                  Text("Quiz - ${widget.quizTopic}", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                  SizedBox(height: 5,),
                   Container(
                     alignment: Alignment.center,
                     width: MediaQuery.of(context).size.width,

@@ -23,19 +23,19 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserModel>(context);
     Future<Map<String, dynamic>> mapData;
     if (user != null) {
       DocumentReference result = databaseService.getUserWithUserId(user.uid);
       mapData = result.get().then((result){
         return {
-          "displayName" : result.data['displayName'],
-          "email" : result.data['email'],
-          "photoURL" : result.data['photoUrl'],
-          "nTotalCorrect" : result.data.containsKey("nTotalCorrect") ? result.data['nTotalCorrect'] : 0,
-          "nTotalWrong" : result.data.containsKey("nTotalWrong") ? result.data['nTotalWrong'] : 0,
-          "nTotalNotAttempted" : result.data.containsKey("nTotalNotAttempted") ? result.data['nTotalNotAttempted'] : 0,
-          "nTotalQuizSubmitted" : result.data.containsKey("nTotalQuizSubmitted") ? result.data['nTotalQuizSubmitted'] : 0,
+          "displayName" : result.data()['displayName'],
+          "email" : result.data()['email'],
+          "photoURL" : result.data()['photoUrl'],
+          "nTotalCorrect" : result.data().containsKey("nTotalCorrect") ? result.data()['nTotalCorrect'] : 0,
+          "nTotalWrong" : result.data().containsKey("nTotalWrong") ? result.data()['nTotalWrong'] : 0,
+          "nTotalNotAttempted" : result.data().containsKey("nTotalNotAttempted") ? result.data()['nTotalNotAttempted'] : 0,
+          "nTotalQuizSubmitted" : result.data().containsKey("nTotalQuizSubmitted") ? result.data()['nTotalQuizSubmitted'] : 0,
         };
       });
     }

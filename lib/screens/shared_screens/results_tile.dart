@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class StudentProgressTile extends StatelessWidget {
+class ResultsTile extends StatelessWidget {
 
   final String teacherName;
   final String topic;
@@ -11,7 +11,7 @@ class StudentProgressTile extends StatelessWidget {
   final String nTotal;
   final String index;
   final String date;
-  StudentProgressTile({this.teacherName, this.topic, this.nCorrect, this.nWrong, this.nNotAttempted, this.nTotal, this.index, this.date});
+  ResultsTile({this.teacherName, this.topic, this.nCorrect, this.nWrong, this.nNotAttempted, this.nTotal, this.index, this.date});
 
   Widget _getColumnForLabel(String label, String value, Color color) {
     return Column(
