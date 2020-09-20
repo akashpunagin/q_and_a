@@ -62,42 +62,51 @@ class _MyProfileAdminState extends State<MyProfileAdmin> {
                             "My Profile",
                             style: TextStyle(fontSize: 35.0, color: Colors.black54),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  future.data['photoURL'],
-                                ),
-                                radius: 60,
-                              ),
-                              Column(
+                          Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10))
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
-                                      SizedBox(width: 10,),
-                                      Text(future.data['displayName'], style: TextStyle(fontSize: 20.0),),
-                                    ],
+                                  CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      future.data['photoURL'],
+                                    ),
+                                    radius: 50,
                                   ),
-                                  SizedBox(height: 15,),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(Icons.email, size: 20.0,),
-                                      SizedBox(width: 20,),
-                                      Column(
-                                        children: [
-                                          Text(future.data['email'].toString().split("@")[0], style: TextStyle(fontSize: 20.0, color: Colors.black),),
-                                          Text("@${future.data['email'].toString().split("@")[1]}", style: TextStyle(fontSize: 15.0, color: Colors.black54),),
+                                  Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
+                                          SizedBox(width: 10,),
+                                          Text(future.data['displayName'], style: TextStyle(fontSize: 20.0),),
+                                        ],
+                                      ),
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.email, size: 20.0,),
+                                          SizedBox(width: 20,),
+                                          Column(
+                                            children: [
+                                              Text(future.data['email'].toString().split("@")[0], style: TextStyle(fontSize: 20.0, color: Colors.black),),
+                                              Text("@${future.data['email'].toString().split("@")[1]}", style: TextStyle(fontSize: 15.0, color: Colors.black54),),
+                                            ],
+                                          ),
                                         ],
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
                           blueButton(
                             context: context,

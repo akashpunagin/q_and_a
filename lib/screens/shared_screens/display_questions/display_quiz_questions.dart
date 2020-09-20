@@ -1,6 +1,7 @@
 import 'package:q_and_a/models/question_model.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
+import 'package:q_and_a/screens/admin/admin.dart';
 import 'package:q_and_a/screens/admin/create_quiz/add_question.dart';
 import 'package:q_and_a/screens/not_admin/home/display_quiz_results.dart';
 import 'package:q_and_a/screens/not_admin/not_admin.dart';
@@ -222,7 +223,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                         widget.fromStudent ? "Wait for your teacher to add questions in this quiz" : "You haven't added any questions yet, add them now!",
                       ),
                       SizedBox(height: 10,),
-                      blueButton(
+                      widget.fromStudent ? blueButton(
                         width: MediaQuery.of(context).size.width - 40,
                         label: "Go Back",
                         context: context,
@@ -231,7 +232,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                             builder: (context) => NotAdmin()
                           ));
                         }
-                      ),
+                      ) : Container(),
                     ],
                   );
                 } else {

@@ -287,6 +287,17 @@ class DatabaseService {
     }
   }
 
+  Future<void> updateDeviceToken({String userId, String deviceToken}) {
+    return userDetailsCollection.doc(userId)
+        .update({"deviceToken": deviceToken})
+        .catchError((e) {
+      print(e.toString());
+    });
+  }
+
+
+
+
   // Delete from database
   deleteQuizDetails({String userId, String quizId}) {
 

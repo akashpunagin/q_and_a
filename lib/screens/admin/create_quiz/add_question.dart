@@ -336,7 +336,7 @@ class _AddQuestionState extends State<AddQuestion> {
                       ) : blueButton(context: context, label: "Add This Question",
                           onPressed: _addQuestion,
                           width: (MediaQuery.of(context).size.width/2)-30),
-                      blueButton(context: context, label: "Done", onPressed: _done, width: (MediaQuery.of(context).size.width/2) - 30),
+                      blueButton(context: context, label: "Go back", onPressed: _done, width: (MediaQuery.of(context).size.width/2) - 30),
                     ],
                   ),
                 ],

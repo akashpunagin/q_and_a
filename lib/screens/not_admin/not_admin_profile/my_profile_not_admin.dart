@@ -58,7 +58,7 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text("My Profile",style: TextStyle(fontSize: 40.0,),),
+                          Text("My Profile",style: TextStyle(fontSize: 40.0, color: Colors.black54),),
                           Text("Correct Answers : ${future.data['nTotalCorrect']}", style: TextStyle(fontSize: 18),),
                           Text("Wrong Answers : ${future.data['nTotalWrong']}", style: TextStyle(fontSize: 18),),
                           Text("Not Attempted : ${future.data['nTotalNotAttempted']}", style: TextStyle(fontSize: 18),),

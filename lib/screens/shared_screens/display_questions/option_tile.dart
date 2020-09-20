@@ -35,8 +35,11 @@ class _OptionTileState extends State<OptionTile> {
                   return Column(
                     children: [
                       Container(
-                        child: Image(
-                          image: imageProvider,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image(
+                            image: imageProvider,
+                          ),
                         ),
                       ),
                       widget.optionCaption != null ? Center(

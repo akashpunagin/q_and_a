@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/admin/admin.dart';
 import 'package:q_and_a/screens/not_admin/not_admin.dart';
@@ -20,12 +21,12 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   final DatabaseService databaseService = DatabaseService();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  // String deviceToken;
 
-  _getDeviceToken() async {
-    _firebaseMessaging.getToken().then((value) {
-      print("DEVICE TOKEN : $value");
-    });
+  Future<String> _getDeviceToken() async {
+     return await _firebaseMessaging.getToken();
   }
+
 
   _notificationTask() async {
     _firebaseMessaging.configure(
@@ -67,6 +68,13 @@ class _WrapperState extends State<Wrapper> {
       DocumentReference result = databaseService.getUserWithUserId(user.uid);
       Future<StatefulWidget> widget = result.get().then((result){
         if (result.data().containsKey("isAdmin")) {
+
+          _getDeviceToken().then((value) {
+            if(!result.data().containsKey('deviceToken') || value != result.data()['deviceToken']) {
+              databaseService.updateDeviceToken(userId: result.data()['uid'], deviceToken: value);
+            }
+          });
+
           return result.data()['isAdmin'] ? Admin() : NotAdmin();
         } else {
           return UserRoleWrapper(userSnapshot: result);
