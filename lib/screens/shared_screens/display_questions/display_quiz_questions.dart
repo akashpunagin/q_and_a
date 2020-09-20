@@ -1,7 +1,6 @@
 import 'package:q_and_a/models/question_model.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
-import 'package:q_and_a/screens/admin/admin.dart';
 import 'package:q_and_a/screens/admin/create_quiz/add_question.dart';
 import 'package:q_and_a/screens/not_admin/home/display_quiz_results.dart';
 import 'package:q_and_a/screens/not_admin/not_admin.dart';

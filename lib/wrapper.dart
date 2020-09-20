@@ -1,5 +1,4 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/admin/admin.dart';
 import 'package:q_and_a/screens/not_admin/not_admin.dart';

@@ -4,7 +4,6 @@ import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:q_and_a/shared/widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class QuizSubmissions extends StatefulWidget {
