@@ -35,6 +35,7 @@ class QuizDetailsTile extends StatelessWidget {
           ),
           onPressed: () {
             Navigator.pop(context);
+            // todo delete quiz questions in cloud storage
             databaseService.deleteQuizDetails(userId: teacherId, quizId: quizModel.quizId);
           },
           gradient: LinearGradient(colors: [

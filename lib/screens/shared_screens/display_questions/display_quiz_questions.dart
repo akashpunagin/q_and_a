@@ -21,8 +21,7 @@ class DisplayQuizQuestions extends StatefulWidget {
   final String teacherId;
   final QuizModel quizModel;
   final bool fromStudent;
-  final bool showQuestionEditedSnackBar;
-  DisplayQuizQuestions({this.quizId, this.teacherId, this.quizModel, this.fromStudent, this.showQuestionEditedSnackBar});
+  DisplayQuizQuestions({this.quizId, this.teacherId, this.quizModel, this.fromStudent});
 
   @override
   _DisplayQuizQuestionsState createState() => _DisplayQuizQuestionsState();
@@ -120,23 +119,21 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
     setState(() { });
   }
 
+  showEditedSnackBar(int index) {
+    final snackBar = SnackBar(
+      content: Text("Q${(index+1).toString()} was edited successfully", style: TextStyle(fontSize: 15.0),),
+      backgroundColor: Colors.blueAccent,
+    );
+    _scaffoldKey.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.remove);
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+
+  }
 
   @override
   void initState() {
+    super.initState();
     widget.quizModel.nTotal = 0;
     widget.quizModel.nNotAttempted = 0;
-
-    if(widget.showQuestionEditedSnackBar == true) {
-      new Future<Null>.delayed(Duration(microseconds: 0), () {
-        final snackBar = SnackBar(
-          content: Text("Question was edited successfully", style: TextStyle(fontSize: 15.0),),
-          backgroundColor: Colors.blueAccent,
-        );
-        _scaffoldKey.currentState.showSnackBar(snackBar);
-      });
-    }
-
-    super.initState();
   }
 
   @override
@@ -219,18 +216,18 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InfoDisplay(textToDisplay:
-                        widget.fromStudent ? "Wait for your teacher to add questions in this quiz" : "You haven't added any questions yet, add them now!",
+                      widget.fromStudent ? "Wait for your teacher to add questions in this quiz" : "You haven't added any questions yet, add them now!",
                       ),
                       SizedBox(height: 10,),
                       widget.fromStudent ? blueButton(
-                        width: MediaQuery.of(context).size.width - 40,
-                        label: "Go Back",
-                        context: context,
-                        onPressed: () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(
-                            builder: (context) => NotAdmin()
-                          ));
-                        }
+                          width: MediaQuery.of(context).size.width - 40,
+                          label: "Go Back",
+                          context: context,
+                          onPressed: () {
+                            Navigator.pushReplacement(context, MaterialPageRoute(
+                                builder: (context) => NotAdmin()
+                            ));
+                          }
                       ) : Container(),
                     ],
                   );
@@ -256,6 +253,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                                     fromStudent: widget.fromStudent,
                                     teacherId: widget.teacherId,
                                     setDisplayQuestionsState: setDisplayQuestionsState,
+                                    showEditSnackBar: showEditedSnackBar,
                                   ),
                                   Container(
                                     decoration: BoxDecoration(

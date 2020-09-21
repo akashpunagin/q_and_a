@@ -100,7 +100,6 @@ class _AddQuestionState extends State<AddQuestion> {
         setState(() {
           _isLoading = false;
         });
-
         final snackBar = SnackBar(
           content: Text("Question - \"$question\" was added to\nQuiz - \"${widget.quizTopic}\"", style: TextStyle(fontSize: 15.0),),
           backgroundColor: Colors.blueAccent,
@@ -112,6 +111,7 @@ class _AddQuestionState extends State<AddQuestion> {
             },
           ),
         );
+        _scaffoldKey.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.remove);
         _scaffoldKey.currentState.showSnackBar(snackBar);
       });
     }
@@ -172,16 +172,16 @@ class _AddQuestionState extends State<AddQuestion> {
 
   Future<File> _cropImage(File image, String field) async {
     File croppedImage = await ImageCropper.cropImage(
-        sourcePath: image.path,
-        compressFormat: ImageCompressFormat.jpg,
-        compressQuality: 50,
-        androidUiSettings: AndroidUiSettings(
+      sourcePath: image.path,
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 50,
+      androidUiSettings: AndroidUiSettings(
           toolbarColor: Colors.blueAccent,
           backgroundColor: Colors.black38,
           toolbarWidgetColor: Colors.black54,
           activeControlsWidgetColor: Colors.blueAccent,
           statusBarColor: Colors.black54
-        ),
+      ),
     );
 
     switch (field) {
@@ -261,7 +261,7 @@ class _AddQuestionState extends State<AddQuestion> {
   @override
   void initState() {
     selectedQuestionType = questionType[0];
-    questionId = uuid.v1();
+
     super.initState();
   }
 
@@ -272,6 +272,7 @@ class _AddQuestionState extends State<AddQuestion> {
 
     setState(() {
       userId = user.uid;
+      questionId = uuid.v1();
     });
 
     return Scaffold(
@@ -331,7 +332,7 @@ class _AddQuestionState extends State<AddQuestion> {
                       !isButtonEnabled ? Container(
                         width: (MediaQuery.of(context).size.width/2)-30,
                         child: Center(
-                            child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(),
                         ),
                       ) : blueButton(context: context, label: "Add This Question",
                           onPressed: _addQuestion,

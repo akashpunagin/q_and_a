@@ -4,6 +4,7 @@ import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/screens/admin/create_quiz/edit_question.dart';
 import 'package:q_and_a/screens/shared_screens/display_questions/option_tile.dart';
 import 'package:q_and_a/services/database.dart';
+import 'package:q_and_a/services/image_uploader.dart';
 import 'package:q_and_a/shared/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,7 +20,8 @@ class QuestionTile extends StatefulWidget {
   final bool fromStudent;
   final String teacherId;
   final Function setDisplayQuestionsState;
-  QuestionTile({this.questionModel, this.index, this.quizModel, this.fromStudent, this.teacherId, this.setDisplayQuestionsState});
+  final Function showEditSnackBar;
+  QuestionTile({this.showEditSnackBar, this.questionModel, this.index, this.quizModel, this.fromStudent, this.teacherId, this.setDisplayQuestionsState});
 
   @override
   _QuestionTileState createState() => _QuestionTileState();
@@ -52,6 +54,37 @@ class _QuestionTileState extends State<QuestionTile> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
+            ImageUploader imageUploader = ImageUploader();
+            imageUploader.userId = widget.teacherId;
+            imageUploader.quizId = widget.quizModel.quizId;
+            imageUploader.questionId = widget.questionModel.questionId;
+
+            if(widget.questionModel.questionImageUrl != null ) {
+              // Delete Question image in storage
+              imageUploader.field = "question";
+              imageUploader.deleteUploaded();
+            }
+            if(widget.questionModel.option1ImageUrl != null ) {
+              // Delete option1 image in storage
+              imageUploader.field = "option1";
+              imageUploader.deleteUploaded();
+            }
+            if(widget.questionModel.option2ImageUrl != null ) {
+              // Delete option2 image in storage
+              imageUploader.field = "option2";
+              imageUploader.deleteUploaded();
+            }
+            if(widget.questionModel.option3ImageUrl != null ) {
+              // Delete option3 image in storage
+              imageUploader.field = "option3";
+              imageUploader.deleteUploaded();
+            }
+            if(widget.questionModel.option4ImageUrl != null ) {
+              // Delete option4 image in storage
+              imageUploader.field = "option4";
+              imageUploader.deleteUploaded();
+            }
+
             databaseService.deleteQuestionDetails(
               userId: widget.teacherId,
               quizId: widget.quizModel.quizId,
@@ -329,25 +362,29 @@ class _QuestionTileState extends State<QuestionTile> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   FlatButton.icon(
-                      onPressed: () {
-                        displayDeleteQuestionAlert(context);
-                      },
-                      icon: FaIcon(FontAwesomeIcons.trash, size: 20.0, color: Colors.black54,),
-                      label: Text("Delete", style: TextStyle(fontSize: 16, color: Colors.black54),),
+                    onPressed: () {
+                      displayDeleteQuestionAlert(context);
+                    },
+                    icon: FaIcon(FontAwesomeIcons.trash, size: 20.0, color: Colors.black54,),
+                    label: Text("Delete", style: TextStyle(fontSize: 16, color: Colors.black54),),
                   ),
                   FlatButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => EditQuestion(
                             quizId: widget.quizModel.quizId,
                             questionModel: widget.questionModel,
                             quizModel: widget.quizModel,
                             teacherId: widget.teacherId,
                           )
-                        ));
-                      },
-                      icon: FaIcon(FontAwesomeIcons.pencilAlt, size: 20.0, color: Colors.blueAccent,),
-                      label: Text("Edit", style: TextStyle(fontSize: 16, color: Colors.blueAccent),),
+                      )).then((value) {
+                        if(value == true) {
+                          widget.showEditSnackBar(widget.index);
+                        }
+                      });
+                    },
+                    icon: FaIcon(FontAwesomeIcons.pencilAlt, size: 20.0, color: Colors.blueAccent,),
+                    label: Text("Edit", style: TextStyle(fontSize: 16, color: Colors.blueAccent),),
                   ),
                 ],
               ),
