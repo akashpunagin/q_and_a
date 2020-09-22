@@ -22,6 +22,7 @@ class ImageUploader {
     } else {
       filePath = "images/$field/$quizId/$questionId/$userId";
     }
+    print("### UPLOAD TO $filePath");
     _uploadTask = _storage.ref().child(filePath).putFile(file);
     StorageTaskSnapshot storageTaskSnapshot = await _uploadTask.onComplete;
     String imageUrl = await storageTaskSnapshot.ref.getDownloadURL();
@@ -35,6 +36,7 @@ class ImageUploader {
     } else {
       filePath = "images/$field/$quizId/$questionId/$userId";
     }
+    print("### $filePath");
     try {
       await _storage.ref().child(filePath).delete();
     } catch (e) {

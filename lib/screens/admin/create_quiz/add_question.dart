@@ -115,6 +115,7 @@ class _AddQuestionState extends State<AddQuestion> {
         _scaffoldKey.currentState.showSnackBar(snackBar);
       });
     }
+    setNewQuestionId();
   }
 
   _done() {
@@ -257,11 +258,17 @@ class _AddQuestionState extends State<AddQuestion> {
     });
   }
 
+  setNewQuestionId() {
+    setState(() {
+      questionId = uuid.v1();
+    });
+  }
+
 
   @override
   void initState() {
     selectedQuestionType = questionType[0];
-
+    setNewQuestionId();
     super.initState();
   }
 
@@ -272,7 +279,6 @@ class _AddQuestionState extends State<AddQuestion> {
 
     setState(() {
       userId = user.uid;
-      questionId = uuid.v1();
     });
 
     return Scaffold(

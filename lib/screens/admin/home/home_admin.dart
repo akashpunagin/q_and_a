@@ -20,6 +20,13 @@ class _HomeAdminState extends State<HomeAdmin> {
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
   String userId;
+  bool _isLoading = false;
+
+  setHomeAdminLoadingState(bool state) {
+    setState(() {
+      _isLoading = state;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +67,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                      quizModel: quizModel,
                      teacherId: user.uid,
                      fromStudent: false,
+                     setHomeAdminLoadingState: setHomeAdminLoadingState,
                    );
                  }
              );
