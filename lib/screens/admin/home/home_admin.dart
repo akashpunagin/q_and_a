@@ -11,6 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomeAdmin extends StatefulWidget {
+
+  final UserModel currentUser;
+
+  HomeAdmin({this.currentUser});
+
   @override
   _HomeAdminState createState() => _HomeAdminState();
 }
@@ -19,26 +24,20 @@ class _HomeAdminState extends State<HomeAdmin> {
 
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
-  String userId;
 
   @override
   Widget build(BuildContext context) {
-
-    final user = Provider.of<UserModel>(context);
-    if (user != null) {
-      setState(() {
-        userId = user.uid;
-      });
-    }
 
     return Scaffold(
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5.0),
         child: StreamBuilder(
-          stream: databaseService.getQuizDetails(userId : userId),
+          stream: databaseService.getQuizDetails(userId : widget.currentUser.uid),
           builder: (context, snapshots) {
             if (!snapshots.hasData) {
-              return Loading();
+              return Loading(
+                loadingText: "Getting your quizzes",
+              );
             } else if (snapshots.data.documents.length == 0) {
               return InfoDisplay(
                 textToDisplay: "Add Quiz to start",
@@ -47,18 +46,19 @@ class _HomeAdminState extends State<HomeAdmin> {
              return ListView.builder(
                  itemCount: snapshots.data.documents.length,
                  itemBuilder: (context, index) {
+                   Map<String, dynamic> quizData = snapshots.data.documents[index].data();
                    QuizModel quizModel =  QuizModel(
-                     imgURL: snapshots.data.documents[index].data()["imgURL"],
-                     topic: snapshots.data.documents[index].data()["topic"],
-                     description: snapshots.data.documents[index].data()["description"],
-                     quizId: snapshots.data.documents[index].data()["quizId"],
+                     imgURL: quizData["imgURL"],
+                     topic: quizData["topic"],
+                     description: quizData["description"],
+                     quizId: quizData["quizId"],
                      nCorrect: 0,
                      nWrong: 0,
                    );
 
                    return QuizDetailsTile(
                      quizModel: quizModel,
-                     teacherId: user.uid,
+                     teacherId: widget.currentUser.uid,
                      fromStudent: false,
                    );
                  }
@@ -72,7 +72,7 @@ class _HomeAdminState extends State<HomeAdmin> {
         onPressed: () {
           Navigator.push(context,
             MaterialPageRoute(
-              builder: (context) => CreateQuiz()
+              builder: (context) => CreateQuiz(currentUser: widget.currentUser,)
             )
           );
         },

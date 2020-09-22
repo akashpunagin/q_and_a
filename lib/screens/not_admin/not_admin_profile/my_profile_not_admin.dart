@@ -10,7 +10,9 @@ import 'package:provider/provider.dart';
 
 class MyProfileNotAdmin extends StatefulWidget {
 
-  MyProfileNotAdmin({Key key}) : super(key: key);
+  final UserModel currentUser;
+
+  MyProfileNotAdmin({Key key, this.currentUser}) : super(key: key);
 
   @override
   _MyProfileNotAdminState createState() => _MyProfileNotAdminState();

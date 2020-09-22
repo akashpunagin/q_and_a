@@ -138,165 +138,136 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
 
   @override
   Widget build(BuildContext context) {
+
     final user = Provider.of<UserModel>(context);
-    Future<String> studentName;
 
-    if(user != null) {
-      DocumentReference result = databaseService.getUserWithUserId(user.uid);
-      studentName = result.get().then((result){
-        return result.data()['displayName'].toString().trim();
-      });
-    }
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: appBar(context),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        brightness: Brightness.light,
+        elevation: 0.0,
+        iconTheme: IconThemeData(
+            color: Colors.blue
+        ),
+        actions: <Widget>[
+          widget.fromStudent == true ? FlatButton.icon(
+            onPressed: () {
 
-    return FutureBuilder(
-      future: studentName,
-      builder: (context, future) {
-
-        if(future.data == null) {
-          return Scaffold(
-            appBar: AppBar(
-              title: appBar(context),
-              centerTitle: true,
-              backgroundColor: Colors.transparent,
-              brightness: Brightness.light,
-              elevation: 0.0,
-              iconTheme: IconThemeData(
-                  color: Colors.blue
-              ),
-            ),
-            body: Loading(loadingText: "Just a moment",),
-          );
-        } else {
-          return Scaffold(
-            key: _scaffoldKey,
-            appBar: AppBar(
-              title: appBar(context),
-              centerTitle: true,
-              backgroundColor: Colors.transparent,
-              brightness: Brightness.light,
-              elevation: 0.0,
-              iconTheme: IconThemeData(
-                  color: Colors.blue
-              ),
-              actions: <Widget>[
-                widget.fromStudent == true ? FlatButton.icon(
-                  onPressed: () {
-
-                    Map<String, dynamic> quizResult = {
-                      "student" : future.data,
-                      "nCorrect" : widget.quizModel.nCorrect,
-                      "nWrong" : widget.quizModel.nWrong,
-                      "nNotAttempted" : widget.quizModel.nNotAttempted,
-                      "topic" : widget.quizModel.topic,
-                      "nTotal" : widget.quizModel.nTotal,
-                      "createAt" : Timestamp.now(),
-                    };
-                    databaseService.addQuizSubmissionDetails(
-                      teacherId: widget.teacherId,
-                      quizResultData: quizResult,
-                    ).then((value) {
-                      displaySelectGmailAlert(context: context, onPressed: _submitQuiz);
-                    }).catchError((err) {
-                      print("ERROR $err");
-                    });
-                  },
-                  label: Text("Submit", style: TextStyle(fontSize: 17, color: Colors.black87),),
-                  icon: FaIcon(FontAwesomeIcons.shareSquare, size: 17.0,),
-                ) :
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => AddQuestion(
-                          quizId: widget.quizModel.quizId,
-                          quizTopic: widget.quizModel.topic,
-                        )
-                    ));
-                  },
-                  icon: FaIcon(FontAwesomeIcons.plus, size: 17.0,),
+              Map<String, dynamic> quizResult = {
+                "student" : user.displayName,
+                "nCorrect" : widget.quizModel.nCorrect,
+                "nWrong" : widget.quizModel.nWrong,
+                "nNotAttempted" : widget.quizModel.nNotAttempted,
+                "topic" : widget.quizModel.topic,
+                "nTotal" : widget.quizModel.nTotal,
+                "createAt" : Timestamp.now(),
+              };
+              databaseService.addQuizSubmissionDetails(
+                teacherId: widget.teacherId,
+                quizResultData: quizResult,
+              ).then((value) {
+                displaySelectGmailAlert(context: context, onPressed: _submitQuiz);
+              }).catchError((err) {
+                print("ERROR $err");
+              });
+            },
+            label: Text("Submit", style: TextStyle(fontSize: 17, color: Colors.black87),),
+            icon: FaIcon(FontAwesomeIcons.shareSquare, size: 17.0,),
+          ) :
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => AddQuestion(
+                    quizId: widget.quizModel.quizId,
+                    quizTopic: widget.quizModel.topic,
+                  )
+              ));
+            },
+            icon: FaIcon(FontAwesomeIcons.plus, size: 17.0,),
+          ),
+        ],
+      ),
+      body: StreamBuilder(
+        stream: user.uid != widget.teacherId ?
+        databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : widget.teacherId) :
+        databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : user.uid),
+        builder: (context, snapshots) {
+          if(snapshots.data == null) {
+            return Loading(loadingText: "Just a moment, wait for questions to load from '${widget.quizModel.topic}'",);
+          } else if(snapshots.data.documents.length == 0) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InfoDisplay(textToDisplay:
+                widget.fromStudent ? "Wait for your teacher to add questions in this quiz" : "You haven't added any questions yet, add them now!",
                 ),
+                SizedBox(height: 10,),
+                widget.fromStudent ? blueButton(
+                    width: MediaQuery.of(context).size.width - 40,
+                    label: "Go Back",
+                    context: context,
+                    onPressed: () {
+                      Navigator.pushReplacement(context, MaterialPageRoute(
+                          builder: (context) => NotAdmin()
+                      ));
+                    }
+                ) : Container(),
               ],
-            ),
-            body: StreamBuilder(
-              stream: user.uid != widget.teacherId ?
-              databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : widget.teacherId) :
-              databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : user.uid),
-              builder: (context, snapshots) {
-                if(snapshots.data == null) {
-                  return Loading(loadingText: "Just a moment",);
-                } else if(snapshots.data.documents.length == 0) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InfoDisplay(textToDisplay:
-                      widget.fromStudent ? "Wait for your teacher to add questions in this quiz" : "You haven't added any questions yet, add them now!",
-                      ),
-                      SizedBox(height: 10,),
-                      widget.fromStudent ? blueButton(
-                          width: MediaQuery.of(context).size.width - 40,
-                          label: "Go Back",
-                          context: context,
-                          onPressed: () {
-                            Navigator.pushReplacement(context, MaterialPageRoute(
-                                builder: (context) => NotAdmin()
-                            ));
-                          }
-                      ) : Container(),
-                    ],
-                  );
-                } else {
-                  return SingleChildScrollView(
-                    physics: ScrollPhysics(),
-                    child: Column(
-                      children: <Widget>[
-                        // Display points
-                        ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: snapshots.data.documents.length,
-                            itemBuilder: (context, index) {
-                              widget.quizModel.nTotal = snapshots.data.documents.length;
-                              widget.quizModel.nNotAttempted = snapshots.data.documents.length;
-                              return Column(
-                                children: [
-                                  QuestionTile(
-                                    questionModel: _getQuestionModelFromStream(snapshots.data.documents[index]),
-                                    index: index,
-                                    quizModel: widget.quizModel,
-                                    fromStudent: widget.fromStudent,
-                                    teacherId: widget.teacherId,
-                                    setDisplayQuestionsState: setDisplayQuestionsState,
-                                    showEditSnackBar: showEditedSnackBar,
+            );
+          } else {
+            return SingleChildScrollView(
+              physics: ScrollPhysics(),
+              child: Column(
+                children: <Widget>[
+                  // Display points
+                  ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshots.data.documents.length,
+                      itemBuilder: (context, index) {
+                        widget.quizModel.nTotal = snapshots.data.documents.length;
+                        widget.quizModel.nNotAttempted = snapshots.data.documents.length;
+                        return Column(
+                          children: [
+                            QuestionTile(
+                              questionModel: _getQuestionModelFromStream(snapshots.data.documents[index]),
+                              index: index,
+                              quizModel: widget.quizModel,
+                              fromStudent: widget.fromStudent,
+                              teacherId: widget.teacherId,
+                              setDisplayQuestionsState: setDisplayQuestionsState,
+                              showEditSnackBar: showEditedSnackBar,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.bottomLeft,
+                                      end: Alignment.bottomRight,
+                                      stops: [0.2, 0.5, 0.8],
+                                      colors: [
+                                        Colors.blue[400],
+                                        Colors.blue[700],
+                                        Colors.blue[400],
+                                      ]
                                   ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.bottomRight,
-                                            stops: [0.2, 0.5, 0.8],
-                                            colors: [
-                                              Colors.blue[400],
-                                              Colors.blue[700],
-                                              Colors.blue[400],
-                                            ]
-                                        ),
-                                        borderRadius: BorderRadius.circular(5.0)
-                                    ),
-                                    height: 10.0,
-                                    margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                                  ),
-                                ],
-                              );
-                            }
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
-          );
-        }
-      },
+                                  borderRadius: BorderRadius.circular(5.0)
+                              ),
+                              height: 10.0,
+                              margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                            ),
+                          ],
+                        );
+                      }
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }

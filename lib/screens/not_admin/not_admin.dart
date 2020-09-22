@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/not_admin/home/home_not_admin.dart';
 import 'package:q_and_a/screens/not_admin/not_admin_profile/my_profile_not_admin.dart';
 import 'package:q_and_a/screens/not_admin/teacher_profile/teacher_profile.dart';
+import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/auth.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/shared/widgets.dart';
@@ -17,15 +21,36 @@ class _NotAdminState extends State<NotAdmin> {
 
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
+  UserModel currentUser;
   int navBarIndex = 0 ;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        currentUser = Provider.of<UserModel>(context, listen: false);
+        currentUser.isAdmin = false;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
 
+    // final user = Provider.of<UserModel>(context);
+    // if(user != null) {
+    //   DocumentReference result = databaseService.getUserWithUserId(user.uid);
+    //   result.get().then((result){
+    //     print(result.data());
+    //   });
+    // }
+
+
     List<Widget>_screens = [
-      HomeNotAdmin(),
-      TeacherProfile(),
-      MyProfileNotAdmin(),
+      HomeNotAdmin(currentUser: currentUser,),
+      TeacherProfile(currentUser: currentUser,),
+      MyProfileNotAdmin(currentUser: currentUser,),
     ];
 
     return Scaffold(
@@ -45,7 +70,9 @@ class _NotAdminState extends State<NotAdmin> {
           ),
         ],
       ),
-      body: _screens[navBarIndex],
+      body:currentUser == null ? Loading(
+        loadingText: "Loading your credentials",
+      ) : _screens[navBarIndex],
       bottomNavigationBar: CurvedNavigationBar(
         color: Colors.blueAccent,
         backgroundColor: Colors.white,

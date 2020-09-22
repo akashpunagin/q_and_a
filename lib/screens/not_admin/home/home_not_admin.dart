@@ -11,8 +11,8 @@ import 'package:provider/provider.dart';
 
 class HomeNotAdmin extends StatefulWidget {
 
-  final Function foo;
-  HomeNotAdmin({this.foo});
+  final UserModel currentUser;
+  HomeNotAdmin({this.currentUser});
 
   @override
   _HomeNotAdminState createState() => _HomeNotAdminState();

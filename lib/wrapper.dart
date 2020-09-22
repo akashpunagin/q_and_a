@@ -68,6 +68,7 @@ class _WrapperState extends State<Wrapper> {
       Future<StatefulWidget> widget = result.get().then((result){
         if (result.data().containsKey("isAdmin")) {
 
+          // Save device token in database
           _getDeviceToken().then((value) {
             if(!result.data().containsKey('deviceToken') || value != result.data()['deviceToken']) {
               databaseService.updateDeviceToken(userId: result.data()['uid'], deviceToken: value);

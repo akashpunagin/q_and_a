@@ -12,6 +12,10 @@ import 'change_teachers.dart';
 
 class TeacherProfile extends StatefulWidget {
 
+  final UserModel currentUser;
+
+  TeacherProfile({this.currentUser});
+
   @override
   _TeacherProfileState createState() => _TeacherProfileState();
 }
