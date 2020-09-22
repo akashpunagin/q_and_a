@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/screens/shared_screens/display_questions/display_quiz_questions.dart';
 import 'package:q_and_a/services/database.dart';
+import 'package:q_and_a/services/image_uploader.dart';
 import 'package:q_and_a/shared/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:q_and_a/shared/functions.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class QuizDetailsTile extends StatelessWidget {
@@ -33,10 +35,36 @@ class QuizDetailsTile extends StatelessWidget {
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
-          onPressed: () {
+          onPressed: () async {
+            await databaseService.deleteQuizDetails(userId: teacherId, quizId: quizModel.quizId);
             Navigator.pop(context);
-            // todo delete quiz questions in cloud storage
-            databaseService.deleteQuizDetails(userId: teacherId, quizId: quizModel.quizId);
+
+            //todo
+
+            // // Delete images in cloud storage, of all questions in quiz
+            // databaseService.getQuizQuestionDocuments(userId: teacherId, quizId: quizModel.quizId).then((value) {
+            //   for(var document in value.docs) {
+            //     deleteStorageImagesOfQuiz(
+            //       teacherId: teacherId,
+            //       quizId: quizModel.quizId,
+            //       questionId: document.data()['questionId'],
+            //       questionImageUrl: document.data()['questionImageUrl'],
+            //       option1ImageUrl: document.data()['option1ImageUrl'],
+            //       option2ImageUrl: document.data()['option2ImageUrl'],
+            //       option3ImageUrl: document.data()['option3ImageUrl'],
+            //       option4ImageUrl: document.data()['option4ImageUrl'],
+            //     );
+            //   }
+            //   print("DELETED ALL QUESTIONS IMAGES");
+            //   // // Delete quiz image in cloud storage
+            //   // ImageUploader imageUploader = ImageUploader();
+            //   // imageUploader.quizId = quizModel.quizId;
+            //   // imageUploader.userId = teacherId;
+            //   // imageUploader.field = "quizzes";
+            //   // imageUploader.isFromCreateQuiz = true;
+            //   // imageUploader.deleteUploaded();
+            // });
+
           },
           gradient: LinearGradient(colors: [
             Colors.blue[500],

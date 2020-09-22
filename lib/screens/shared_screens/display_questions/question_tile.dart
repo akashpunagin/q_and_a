@@ -10,6 +10,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:q_and_a/shared/functions.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class QuestionTile extends StatefulWidget {
@@ -54,37 +55,16 @@ class _QuestionTileState extends State<QuestionTile> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            ImageUploader imageUploader = ImageUploader();
-            imageUploader.userId = widget.teacherId;
-            imageUploader.quizId = widget.quizModel.quizId;
-            imageUploader.questionId = widget.questionModel.questionId;
-
-            if(widget.questionModel.questionImageUrl != null ) {
-              // Delete Question image in storage
-              imageUploader.field = "question";
-              imageUploader.deleteUploaded();
-            }
-            if(widget.questionModel.option1ImageUrl != null ) {
-              // Delete option1 image in storage
-              imageUploader.field = "option1";
-              imageUploader.deleteUploaded();
-            }
-            if(widget.questionModel.option2ImageUrl != null ) {
-              // Delete option2 image in storage
-              imageUploader.field = "option2";
-              imageUploader.deleteUploaded();
-            }
-            if(widget.questionModel.option3ImageUrl != null ) {
-              // Delete option3 image in storage
-              imageUploader.field = "option3";
-              imageUploader.deleteUploaded();
-            }
-            if(widget.questionModel.option4ImageUrl != null ) {
-              // Delete option4 image in storage
-              imageUploader.field = "option4";
-              imageUploader.deleteUploaded();
-            }
-
+            deleteStorageImagesOfQuiz(
+                teacherId: widget.teacherId,
+                quizId: widget.quizModel.quizId,
+                questionId: widget.questionModel.questionId,
+                questionImageUrl: widget.questionModel.questionImageUrl,
+                option1ImageUrl: widget.questionModel.option1ImageUrl,
+                option2ImageUrl: widget.questionModel.option2ImageUrl,
+                option3ImageUrl: widget.questionModel.option3ImageUrl,
+                option4ImageUrl: widget.questionModel.option4ImageUrl,
+            );
             databaseService.deleteQuestionDetails(
               userId: widget.teacherId,
               quizId: widget.quizModel.quizId,

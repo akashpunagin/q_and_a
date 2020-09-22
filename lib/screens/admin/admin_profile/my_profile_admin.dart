@@ -68,7 +68,7 @@ class _MyProfileAdminState extends State<MyProfileAdmin> {
                               borderRadius: BorderRadius.all(Radius.circular(10))
                             ),
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 20),
+                              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
@@ -93,7 +93,7 @@ class _MyProfileAdminState extends State<MyProfileAdmin> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: <Widget>[
                                           Icon(Icons.email, size: 20.0,),
-                                          SizedBox(width: 20,),
+                                          SizedBox(width: 10,),
                                           Column(
                                             children: [
                                               Text(future.data['email'].toString().split("@")[0], style: TextStyle(fontSize: 20.0, color: Colors.black),),
