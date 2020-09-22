@@ -234,7 +234,7 @@ class DatabaseService {
             .update({totalField : result.data()[totalField] + field});
       } else {
         userDetailsCollection.doc(userId)
-            .set({totalField : field});
+            .update({totalField : field});
       }
     }
 

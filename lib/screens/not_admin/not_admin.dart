@@ -22,7 +22,9 @@ class _NotAdminState extends State<NotAdmin> {
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
   UserModel currentUser;
+  StudentModel studentModel = StudentModel();
   int navBarIndex = 0 ;
+
 
   @override
   void initState() {
@@ -31,20 +33,20 @@ class _NotAdminState extends State<NotAdmin> {
         currentUser = Provider.of<UserModel>(context, listen: false);
         currentUser.isAdmin = false;
       });
+      DocumentReference result = databaseService.getUserWithUserId(currentUser.uid);
+      result.get().then((value) {
+
+        studentModel.displayName = currentUser.displayName;
+
+        print(value.data());
+        // todo print and see if nCorrect (etcetra) will update after submitting
+      });
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    // final user = Provider.of<UserModel>(context);
-    // if(user != null) {
-    //   DocumentReference result = databaseService.getUserWithUserId(user.uid);
-    //   result.get().then((result){
-    //     print(result.data());
-    //   });
-    // }
 
 
     List<Widget>_screens = [
