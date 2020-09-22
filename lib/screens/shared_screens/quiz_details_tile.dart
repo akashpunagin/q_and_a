@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/screens/shared_screens/display_questions/display_quiz_questions.dart';
+import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/services/image_uploader.dart';
 import 'package:q_and_a/shared/constants.dart';
@@ -12,17 +13,22 @@ import 'package:q_and_a/shared/functions.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 
-class QuizDetailsTile extends StatelessWidget {
+class QuizDetailsTile extends StatefulWidget {
 
   final String teacherId;
   final QuizModel quizModel;
   final bool fromStudent;
   final bool fromCreateQuiz;
   final File quizImage;
-  final Function setHomeAdminLoadingState;
-  QuizDetailsTile({this.teacherId, this.quizModel, this.fromStudent, this.fromCreateQuiz, this.quizImage, this.setHomeAdminLoadingState});
+  QuizDetailsTile({this.teacherId, this.quizModel, this.fromStudent, this.fromCreateQuiz, this.quizImage});
 
+  @override
+  _QuizDetailsTileState createState() => _QuizDetailsTileState();
+}
+
+class _QuizDetailsTileState extends State<QuizDetailsTile> {
   final DatabaseService databaseService = DatabaseService();
+  bool _isLoading = false;
 
   displayDeleteQuizAlert(BuildContext context) {
     Alert(
@@ -30,20 +36,25 @@ class QuizDetailsTile extends StatelessWidget {
       style: alertStyle,
       type: AlertType.info,
       title: "Quiz Deletion",
-      desc: "Are you you want to delete\nQuiz - ${quizModel.topic}?",
+      desc: "Are you you want to delete\nQuiz - ${widget.quizModel.topic}?",
       buttons: [
         DialogButton(
           child: Text(
             "Delete",
-            style: TextStyle(color: Colors.white54, fontSize: 20),
+            style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () async {
+            setState(() {
+              _isLoading = true;
+            });
+            Navigator.pop(context);
+
             // Delete images in cloud storage, of all questions in quiz
-            await databaseService.getQuizQuestionDocuments(userId: teacherId, quizId: quizModel.quizId).then((value) {
+            await databaseService.getQuizQuestionDocuments(userId: widget.teacherId, quizId: widget.quizModel.quizId).then((value) {
               for(var document in value.docs) {
                 deleteStorageImagesOfQuiz(
-                  teacherId: teacherId,
-                  quizId: quizModel.quizId,
+                  teacherId: widget.teacherId,
+                  quizId: widget.quizModel.quizId,
                   questionId: document.data()['questionId'],
                   questionImageUrl: document.data()['questionImageUrl'],
                   option1ImageUrl: document.data()['option1ImageUrl'],
@@ -52,19 +63,22 @@ class QuizDetailsTile extends StatelessWidget {
                   option4ImageUrl: document.data()['option4ImageUrl'],
                 );
               }
-              if(quizModel.imgURL != null) {
+              if(widget.quizModel.imgURL != null) {
                 // Delete quiz image in cloud storage
                 ImageUploader imageUploader = ImageUploader();
-                imageUploader.quizId = quizModel.quizId;
-                imageUploader.userId = teacherId;
+                imageUploader.quizId = widget.quizModel.quizId;
+                imageUploader.userId = widget.teacherId;
                 imageUploader.field = "quizzes";
                 imageUploader.isFromCreateQuiz = true;
                 imageUploader.deleteUploaded();
                 print("DELETED QUIZ");
               }
             });
-            await databaseService.deleteQuizDetails(userId: teacherId, quizId: quizModel.quizId);
-            Navigator.pop(context);
+            await databaseService.deleteQuizDetails(userId: widget.teacherId, quizId: widget.quizModel.quizId);
+            setState(() {
+              _isLoading = false;
+            });
+            // Navigator.pop(context);
           },
           gradient: LinearGradient(colors: [
             Colors.blue[500],
@@ -103,9 +117,9 @@ class QuizDetailsTile extends StatelessWidget {
             Navigator.pop(context);
             Navigator.pushReplacement(context, MaterialPageRoute(
                 builder: (context) => DisplayQuizQuestions(
-                  quizId: quizModel.quizId,
-                  teacherId: teacherId,
-                  quizModel: quizModel,
+                  quizId: widget.quizModel.quizId,
+                  teacherId: widget.teacherId,
+                  quizModel: widget.quizModel,
                   fromStudent: true,
                 )
             ));
@@ -135,15 +149,15 @@ class QuizDetailsTile extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        if (fromStudent == true) {
+        if (widget.fromStudent == true) {
           displayMailSendAlert(context);
         } else {
-          if(fromCreateQuiz != true) {
+          if(widget.fromCreateQuiz != true) {
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) => DisplayQuizQuestions(
-                  quizId: quizModel.quizId,
-                  teacherId: teacherId,
-                  quizModel: quizModel,
+                  quizId: widget.quizModel.quizId,
+                  teacherId: widget.teacherId,
+                  quizModel: widget.quizModel,
                   fromStudent: false,
                 )
             ));
@@ -151,10 +165,11 @@ class QuizDetailsTile extends StatelessWidget {
         }
       },
       onLongPress: () {
-        if(fromStudent != true) {
+        if(widget.fromStudent != true) {
           displayDeleteQuizAlert(context);
         }
       },
+      // todo change CircularProgressIndicator below nicely
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5,),
         height: (MediaQuery.of(context).size.height / 3) - 50,
@@ -163,17 +178,17 @@ class QuizDetailsTile extends StatelessWidget {
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
-              child: fromCreateQuiz == true  && quizImage != null ? Container(
+              child: widget.fromCreateQuiz == true  && widget.quizImage != null ? Container(
                 width: MediaQuery.of(context).size.width - 20,
                 child: Image.file(
-                  quizImage,
+                  widget.quizImage,
                   fit: BoxFit.cover,
                 ),
               ) : CachedNetworkImage(
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.cover,
                 useOldImageOnUrlChange: false,
-                imageUrl: quizModel.imgURL == "" || quizModel.imgURL == null ? defaultQuizImageURL : quizModel.imgURL,
+                imageUrl: widget.quizModel.imgURL == "" || widget.quizModel.imgURL == null ? defaultQuizImageURL : widget.quizModel.imgURL,
                 imageBuilder: (context, imageProvider) {
                   return Container(
                     width: MediaQuery.of(context).size.width - 20,
@@ -191,7 +206,18 @@ class QuizDetailsTile extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
+            _isLoading ? Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: Colors.black.withOpacity(0.7),
+              ),
+              alignment: Alignment.center,
+              child: Loading(
+                loadingText: "Deleting",
+                textColor: Colors.white,
+                spinKitColor: Colors.white,
+              ),
+            ) : Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.0),
                 color: Colors.black45,
@@ -201,9 +227,9 @@ class QuizDetailsTile extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(quizModel.topic, style: TextStyle(fontSize: 25.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
+                    Text(widget.quizModel.topic, style: TextStyle(fontSize: 25.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
                     SizedBox(height: 10,),
-                    Text(quizModel.description,
+                    Text(widget.quizModel.description,
                       style: TextStyle(fontSize: 20.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
                   ],
                 ),
@@ -217,7 +243,9 @@ class QuizDetailsTile extends StatelessWidget {
 }
 
 
-// class QuizDetailsTile extends StatefulWidget {
+
+
+// class QuizDetailsTile extends StatelessWidget {
 //
 //   final String teacherId;
 //   final QuizModel quizModel;
@@ -226,11 +254,6 @@ class QuizDetailsTile extends StatelessWidget {
 //   final File quizImage;
 //   QuizDetailsTile({this.teacherId, this.quizModel, this.fromStudent, this.fromCreateQuiz, this.quizImage});
 //
-//   @override
-//   _QuizDetailsTileState createState() => _QuizDetailsTileState();
-// }
-//
-// class _QuizDetailsTileState extends State<QuizDetailsTile> {
 //   final DatabaseService databaseService = DatabaseService();
 //
 //   displayDeleteQuizAlert(BuildContext context) {
@@ -239,20 +262,20 @@ class QuizDetailsTile extends StatelessWidget {
 //       style: alertStyle,
 //       type: AlertType.info,
 //       title: "Quiz Deletion",
-//       desc: "Are you you want to delete\nQuiz - ${widget.quizModel.topic}?",
+//       desc: "Are you you want to delete\nQuiz - ${quizModel.topic}?",
 //       buttons: [
 //         DialogButton(
 //           child: Text(
 //             "Delete",
-//             style: TextStyle(color: Colors.white54, fontSize: 20),
+//             style: TextStyle(color: Colors.white, fontSize: 20),
 //           ),
 //           onPressed: () async {
 //             // Delete images in cloud storage, of all questions in quiz
-//             await databaseService.getQuizQuestionDocuments(userId: widget.teacherId, quizId: widget.quizModel.quizId).then((value) {
+//             await databaseService.getQuizQuestionDocuments(userId: teacherId, quizId: quizModel.quizId).then((value) {
 //               for(var document in value.docs) {
 //                 deleteStorageImagesOfQuiz(
-//                   teacherId: widget.teacherId,
-//                   quizId: widget.quizModel.quizId,
+//                   teacherId: teacherId,
+//                   quizId: quizModel.quizId,
 //                   questionId: document.data()['questionId'],
 //                   questionImageUrl: document.data()['questionImageUrl'],
 //                   option1ImageUrl: document.data()['option1ImageUrl'],
@@ -261,18 +284,18 @@ class QuizDetailsTile extends StatelessWidget {
 //                   option4ImageUrl: document.data()['option4ImageUrl'],
 //                 );
 //               }
-//               if(widget.quizModel.imgURL != null) {
+//               if(quizModel.imgURL != null) {
 //                 // Delete quiz image in cloud storage
 //                 ImageUploader imageUploader = ImageUploader();
-//                 imageUploader.quizId = widget.quizModel.quizId;
-//                 imageUploader.userId = widget.teacherId;
+//                 imageUploader.quizId = quizModel.quizId;
+//                 imageUploader.userId = teacherId;
 //                 imageUploader.field = "quizzes";
 //                 imageUploader.isFromCreateQuiz = true;
 //                 imageUploader.deleteUploaded();
 //                 print("DELETED QUIZ");
 //               }
 //             });
-//             await databaseService.deleteQuizDetails(userId: widget.teacherId, quizId: widget.quizModel.quizId);
+//             await databaseService.deleteQuizDetails(userId: teacherId, quizId: quizModel.quizId);
 //             Navigator.pop(context);
 //           },
 //           gradient: LinearGradient(colors: [
@@ -312,9 +335,9 @@ class QuizDetailsTile extends StatelessWidget {
 //             Navigator.pop(context);
 //             Navigator.pushReplacement(context, MaterialPageRoute(
 //                 builder: (context) => DisplayQuizQuestions(
-//                   quizId: widget.quizModel.quizId,
-//                   teacherId: widget.teacherId,
-//                   quizModel: widget.quizModel,
+//                   quizId: quizModel.quizId,
+//                   teacherId: teacherId,
+//                   quizModel: quizModel,
 //                   fromStudent: true,
 //                 )
 //             ));
@@ -344,15 +367,15 @@ class QuizDetailsTile extends StatelessWidget {
 //
 //     return GestureDetector(
 //       onTap: () {
-//         if (widget.fromStudent == true) {
+//         if (fromStudent == true) {
 //           displayMailSendAlert(context);
 //         } else {
-//           if(widget.fromCreateQuiz != true) {
+//           if(fromCreateQuiz != true) {
 //             Navigator.push(context, MaterialPageRoute(
 //                 builder: (context) => DisplayQuizQuestions(
-//                   quizId: widget.quizModel.quizId,
-//                   teacherId: widget.teacherId,
-//                   quizModel: widget.quizModel,
+//                   quizId: quizModel.quizId,
+//                   teacherId: teacherId,
+//                   quizModel: quizModel,
 //                   fromStudent: false,
 //                 )
 //             ));
@@ -360,7 +383,7 @@ class QuizDetailsTile extends StatelessWidget {
 //         }
 //       },
 //       onLongPress: () {
-//         if(widget.fromStudent != true) {
+//         if(fromStudent != true) {
 //           displayDeleteQuizAlert(context);
 //         }
 //       },
@@ -372,17 +395,17 @@ class QuizDetailsTile extends StatelessWidget {
 //           children: <Widget>[
 //             ClipRRect(
 //               borderRadius: BorderRadius.circular(15.0),
-//               child: widget.fromCreateQuiz == true  && widget.quizImage != null ? Container(
+//               child: fromCreateQuiz == true  && quizImage != null ? Container(
 //                 width: MediaQuery.of(context).size.width - 20,
 //                 child: Image.file(
-//                   widget.quizImage,
+//                   quizImage,
 //                   fit: BoxFit.cover,
 //                 ),
 //               ) : CachedNetworkImage(
 //                 width: MediaQuery.of(context).size.width,
 //                 fit: BoxFit.cover,
 //                 useOldImageOnUrlChange: false,
-//                 imageUrl: widget.quizModel.imgURL == "" || widget.quizModel.imgURL == null ? defaultQuizImageURL : widget.quizModel.imgURL,
+//                 imageUrl: quizModel.imgURL == "" || quizModel.imgURL == null ? defaultQuizImageURL : quizModel.imgURL,
 //                 imageBuilder: (context, imageProvider) {
 //                   return Container(
 //                     width: MediaQuery.of(context).size.width - 20,
@@ -410,9 +433,9 @@ class QuizDetailsTile extends StatelessWidget {
 //                 child: Column(
 //                   mainAxisAlignment: MainAxisAlignment.center,
 //                   children: <Widget>[
-//                     Text(widget.quizModel.topic, style: TextStyle(fontSize: 25.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
+//                     Text(quizModel.topic, style: TextStyle(fontSize: 25.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
 //                     SizedBox(height: 10,),
-//                     Text(widget.quizModel.description,
+//                     Text(quizModel.description,
 //                       style: TextStyle(fontSize: 20.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
 //                   ],
 //                 ),

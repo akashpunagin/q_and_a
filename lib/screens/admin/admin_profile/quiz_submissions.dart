@@ -46,7 +46,7 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
               return Loading(loadingText: "Fetching your progress",);
             } else if(snapshots.data.documents.length == 0) {
               return InfoDisplay(
-                textToDisplay: "You've not submitted any quiz yet. Start submitting now!",
+                textToDisplay: "You've not received any quiz submissions yet",
               );
             } else {
               return SingleChildScrollView(

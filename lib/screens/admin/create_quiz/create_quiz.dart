@@ -71,7 +71,7 @@ class _CreateQuizState extends State<CreateQuiz> {
       }
 
       setState(() {
-        loadingText = "Adding Quiz to database";
+        loadingText = "Adding Quiz - ${quizModel.topic}";
       });
 
       await databaseService.addQuizDetails(

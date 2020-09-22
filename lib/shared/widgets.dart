@@ -24,12 +24,12 @@ Widget appBar(BuildContext context) {
   );
 }
 
-Widget blueButton({BuildContext context, String label, Function onPressed, double width}) {
+Widget blueButton({BuildContext context, String label, Function onPressed, double width, Color buttonColor}) {
   return ButtonTheme(
     minWidth: width == null ? MediaQuery.of(context).size.width : width,
     height: 50.0,
     child: FlatButton(
-      color: Colors.blueAccent,
+      color: buttonColor == null ? Colors.blueAccent : buttonColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       onPressed: onPressed,
       child: Text(

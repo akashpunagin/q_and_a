@@ -333,17 +333,29 @@ class _AddQuestionState extends State<AddQuestion> {
                   ),
                   SizedBox(height: 8,),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       !isButtonEnabled ? Container(
-                        width: (MediaQuery.of(context).size.width/2)-30,
+                        width: (MediaQuery.of(context).size.width * 0.6) - 30,
                         child: Center(
-                          child: CircularProgressIndicator(),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Adding Image", style: TextStyle(fontSize: 16),),
+                              SizedBox(width: 10,),
+                              CircularProgressIndicator(),
+                            ],
+                          ),
                         ),
                       ) : blueButton(context: context, label: "Add This Question",
-                          onPressed: _addQuestion,
-                          width: (MediaQuery.of(context).size.width/2)-30),
-                      blueButton(context: context, label: "Go back", onPressed: _done, width: (MediaQuery.of(context).size.width/2) - 30),
+                        onPressed: _addQuestion,
+                        width: (MediaQuery.of(context).size.width * 0.6) - 30,
+                      ),
+                      blueButton(context: context, label: "Go back",
+                        onPressed: !isButtonEnabled ? () {} : _done,
+                        width: (MediaQuery.of(context).size.width * 0.4) - 30,
+                        buttonColor: !isButtonEnabled ? Colors.grey : null
+                      ),
                     ],
                   ),
                 ],

@@ -153,7 +153,19 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
       builder: (context, future) {
 
         if(future.data == null) {
-          return Loading(loadingText: "Just a moment",);
+          return Scaffold(
+            appBar: AppBar(
+              title: appBar(context),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              brightness: Brightness.light,
+              elevation: 0.0,
+              iconTheme: IconThemeData(
+                  color: Colors.blue
+              ),
+            ),
+            body: Loading(loadingText: "Just a moment",),
+          );
         } else {
           return Scaffold(
             key: _scaffoldKey,
