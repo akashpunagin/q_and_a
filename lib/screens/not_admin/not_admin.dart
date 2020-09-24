@@ -22,38 +22,30 @@ class _NotAdminState extends State<NotAdmin> {
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
   StudentModel studentModel = StudentModel();
-  int navBarIndex = 0 ;
+  UserModel currentUser;
+  int navBarIndex = 2 ; // todo change to 0
 
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
-        UserModel currentUser = Provider.of<UserModel>(context, listen: false);
+        currentUser = Provider.of<UserModel>(context, listen: false);
         currentUser.isAdmin = false;
-
-        DocumentReference result = databaseService.getUserWithUserId(currentUser.uid);
-        result.get().then((value) {
-
+      });
+      DocumentReference result = databaseService.getUserWithUserId(currentUser.uid);
+      result.get().then((value) {
+        setState(() {
           studentModel.displayName = currentUser.displayName;
           studentModel.email = currentUser.email;
           studentModel.uid = currentUser.uid;
           studentModel.photoUrl = currentUser.photoUrl;
           studentModel.isAdmin = false;
-
           studentModel.nTotalCorrect = value.data().containsKey("nTotalCorrect") ?  value.data()["nTotalCorrect"] : 0;
           studentModel.nTotalWrong = value.data().containsKey("nTotalWrong") ?  value.data()["nTotalWrong"] : 0;
           studentModel.nTotalQuizSubmitted = value.data().containsKey("nTotalQuizSubmitted") ?  value.data()["nTotalQuizSubmitted"] : 0;
           studentModel.nTotalNotAttempted = value.data().containsKey("nTotalNotAttempted") ?  value.data()["nTotalNotAttempted"] : 0;
-
-
-          // studentModel.nTotalCorrect = value.data()['nTotalCorrect'].toString();
-          // studentModel.nTotalNotAttempted = value.data()['nTotalNotAttempted'].toString();
-          // studentModel.nTotalWrong = value.data()['nTotalWrong'].toString();
-          // studentModel.nTotalQuizSubmitted = value.data()['nTotalQuizSubmitted'].toString();
-
         });
-
       });
     });
     super.initState();
@@ -86,7 +78,7 @@ class _NotAdminState extends State<NotAdmin> {
           ),
         ],
       ),
-      body: studentModel == null ? Loading(
+      body: studentModel.toMap().containsValue(null) ? Loading(
         loadingText: "Loading your credentials",
       ) : _screens[navBarIndex],
       bottomNavigationBar: CurvedNavigationBar(

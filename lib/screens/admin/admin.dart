@@ -63,6 +63,7 @@ class _AdminState extends State<Admin> {
           ),
         ],
       ),
+      // todo check like this -  studentModel.toMap().containsValue(null)
       body: currentUser == null ? Loading(
         loadingText: "Loading your credentials",
       ) : _screens[navBarIndex],

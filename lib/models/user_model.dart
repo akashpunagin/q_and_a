@@ -28,4 +28,18 @@ class StudentModel extends UserModel {
   String teacherEmail;
 
   StudentModel({this.nTotalCorrect, this.nTotalWrong, this.nTotalQuizSubmitted, this.nTotalNotAttempted, this.teacherEmail});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'uid': uid,
+      'isAdmin': isAdmin,
+      'displayName': displayName,
+      'photoUrl': photoUrl,
+      'email': email,
+      'nTotalCorrect': nTotalCorrect,
+      'nTotalWrong': nTotalWrong,
+      'nTotalQuizSubmitted': nTotalQuizSubmitted,
+      'nTotalNotAttempted': nTotalNotAttempted,
+    };
+  }
 }
