@@ -25,31 +25,11 @@ class _TeacherProfileState extends State<TeacherProfile> {
   final DatabaseService databaseService = DatabaseService();
   String teacherEmailToStream = "";
 
-  Map<String, dynamic> studentDetails = {
-    "nTotalQuizSubmitted" : 0,
-    "nTotalCorrect" : 0,
-    "nTotalWrong" : 0,
-    "nTotalNotAttempted" : 0,
-    "studentName" : "",
-  };
-
   @override
   Widget build(BuildContext context) {
 
-
     DocumentReference result = databaseService.getUserWithUserId(widget.currentUser.uid);
     Future<bool> isTeacherEmailExists = result.get().then((result) async {
-
-      // todo update this to widget student model
-
-      setState(() {
-        studentDetails['nTotalCorrect'] = result.data().containsKey("nTotalCorrect") ?  result.data()["nTotalCorrect"] : 0;
-        studentDetails['nTotalWrong'] = result.data().containsKey("nTotalWrong") ?  result.data()["nTotalWrong"] : 0;
-        studentDetails['nTotalQuizSubmitted'] = result.data().containsKey("nTotalQuizSubmitted") ?  result.data()["nTotalQuizSubmitted"] : 0;
-        studentDetails['nTotalNotAttempted'] = result.data().containsKey("nTotalNotAttempted") ?  result.data()["nTotalNotAttempted"] : 0;
-        studentDetails['studentName'] = result.data()['displayName'];
-      });
-
       if ( result.data().containsKey("teacherEmail") ) {
         setState(() {
           teacherEmailToStream = result.data()['teacherEmail'];
@@ -145,7 +125,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                           displaySelectGmailAlert(context: context, onPressed: () {
                                             SendEmail sendEmail = SendEmail();
                                             sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
-                                            sendEmail.studentName = studentDetails['studentName'];
+                                            sendEmail.studentName = widget.currentUser.displayName;
                                             sendEmail.studentId = widget.currentUser.uid;
                                             sendEmail.sendEmailProgress();
                                           });

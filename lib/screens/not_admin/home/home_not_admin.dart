@@ -42,7 +42,7 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
         future: teacherEmail,
         builder: (context, future) {
           if (future.connectionState == ConnectionState.waiting) {
-            return Loading(loadingText: "Loading",);
+            return Loading(loadingText: "Checking your teacher email",);
           } else if (future.data == "null") {
             return InfoDisplay(
               textToDisplay: "Teacher email is not detected. Update your teacher email.",
@@ -60,7 +60,7 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
                     return StreamBuilder(
                       stream: databaseService.getQuizDetails(userId : teacherId),
                       builder: (context, snapshots) {
-                        return snapshots.data == null ? Loading() : ListView.builder(
+                        return snapshots.data == null ? Loading(loadingText: "Getting quizzes",) : ListView.builder(
                             itemCount: snapshots.data.documents.length,
                             itemBuilder: (context, index) {
                               QuizModel quizModel =  QuizModel(
