@@ -60,10 +60,8 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
 
   }
 
-  _submitQuiz() async {
+  _submitQuiz(UserModel user) async {
     SendEmail sendEmail = SendEmail();
-
-    final user = Provider.of<UserModel>(context);
 
     DocumentReference result = databaseService.getUserWithUserId(user.uid);
     Map<String, String> teacherData = await result.get().then((result){
@@ -169,7 +167,9 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                 teacherId: widget.teacherId,
                 quizResultData: quizResult,
               ).then((value) {
-                displaySelectGmailAlert(context: context, onPressed: _submitQuiz);
+                displaySelectGmailAlert(context: context, onPressed: () {
+                  _submitQuiz(user);
+                });
               }).catchError((err) {
                 print("ERROR $err");
               });

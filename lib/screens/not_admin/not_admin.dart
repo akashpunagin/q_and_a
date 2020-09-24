@@ -21,7 +21,6 @@ class _NotAdminState extends State<NotAdmin> {
 
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
-  UserModel currentUser;
   StudentModel studentModel = StudentModel();
   int navBarIndex = 0 ;
 
@@ -30,16 +29,31 @@ class _NotAdminState extends State<NotAdmin> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
-        currentUser = Provider.of<UserModel>(context, listen: false);
+        UserModel currentUser = Provider.of<UserModel>(context, listen: false);
         currentUser.isAdmin = false;
-      });
-      DocumentReference result = databaseService.getUserWithUserId(currentUser.uid);
-      result.get().then((value) {
 
-        studentModel.displayName = currentUser.displayName;
+        DocumentReference result = databaseService.getUserWithUserId(currentUser.uid);
+        result.get().then((value) {
 
-        print(value.data());
-        // todo print and see if nCorrect (etcetra) will update after submitting
+          studentModel.displayName = currentUser.displayName;
+          studentModel.email = currentUser.email;
+          studentModel.uid = currentUser.uid;
+          studentModel.photoUrl = currentUser.photoUrl;
+          studentModel.isAdmin = false;
+
+          studentModel.nTotalCorrect = value.data().containsKey("nTotalCorrect") ?  value.data()["nTotalCorrect"] : 0;
+          studentModel.nTotalWrong = value.data().containsKey("nTotalWrong") ?  value.data()["nTotalWrong"] : 0;
+          studentModel.nTotalQuizSubmitted = value.data().containsKey("nTotalQuizSubmitted") ?  value.data()["nTotalQuizSubmitted"] : 0;
+          studentModel.nTotalNotAttempted = value.data().containsKey("nTotalNotAttempted") ?  value.data()["nTotalNotAttempted"] : 0;
+
+
+          // studentModel.nTotalCorrect = value.data()['nTotalCorrect'].toString();
+          // studentModel.nTotalNotAttempted = value.data()['nTotalNotAttempted'].toString();
+          // studentModel.nTotalWrong = value.data()['nTotalWrong'].toString();
+          // studentModel.nTotalQuizSubmitted = value.data()['nTotalQuizSubmitted'].toString();
+
+        });
+
       });
     });
     super.initState();
@@ -50,9 +64,9 @@ class _NotAdminState extends State<NotAdmin> {
 
 
     List<Widget>_screens = [
-      HomeNotAdmin(currentUser: currentUser,),
-      TeacherProfile(currentUser: currentUser,),
-      MyProfileNotAdmin(currentUser: currentUser,),
+      HomeNotAdmin(currentUser: studentModel,),
+      TeacherProfile(currentUser: studentModel,),
+      MyProfileNotAdmin(currentUser: studentModel,),
     ];
 
     return Scaffold(
@@ -72,7 +86,7 @@ class _NotAdminState extends State<NotAdmin> {
           ),
         ],
       ),
-      body:currentUser == null ? Loading(
+      body: studentModel == null ? Loading(
         loadingText: "Loading your credentials",
       ) : _screens[navBarIndex],
       bottomNavigationBar: CurvedNavigationBar(

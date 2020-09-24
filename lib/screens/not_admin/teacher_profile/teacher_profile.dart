@@ -12,7 +12,7 @@ import 'change_teachers.dart';
 
 class TeacherProfile extends StatefulWidget {
 
-  final UserModel currentUser;
+  final StudentModel currentUser;
 
   TeacherProfile({this.currentUser});
 
@@ -36,10 +36,11 @@ class _TeacherProfileState extends State<TeacherProfile> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<UserModel>(context);
 
-    DocumentReference result = databaseService.getUserWithUserId(user.uid);
+    DocumentReference result = databaseService.getUserWithUserId(widget.currentUser.uid);
     Future<bool> isTeacherEmailExists = result.get().then((result) async {
+
+      // todo update this to widget student model
 
       setState(() {
         studentDetails['nTotalCorrect'] = result.data().containsKey("nTotalCorrect") ?  result.data()["nTotalCorrect"] : 0;
@@ -95,7 +96,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                   children: <Widget>[
                                     Text(
                                       "Your Teacher",
-                                      style: TextStyle(fontSize: 25.0, color: Colors.black87),
+                                      style: TextStyle(fontSize: 25.0, color: Colors.black54),
                                     ),
                                     Card(
                                       elevation: 5,
@@ -145,7 +146,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                             SendEmail sendEmail = SendEmail();
                                             sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
                                             sendEmail.studentName = studentDetails['studentName'];
-                                            sendEmail.studentId = user.uid;
+                                            sendEmail.studentId = widget.currentUser.uid;
                                             sendEmail.sendEmailProgress();
                                           });
                                     }) : Container(),
@@ -176,7 +177,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChangeTeachers(userId: user.uid, currentTeacherEmail: teacherEmailToStream,)
+              builder: (context) => ChangeTeachers(userId: widget.currentUser.uid, currentTeacherEmail: teacherEmailToStream,)
             ));
         },
         child: FaIcon(FontAwesomeIcons.userEdit, size: 20.0,),

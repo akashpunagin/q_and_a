@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class HomeNotAdmin extends StatefulWidget {
 
-  final UserModel currentUser;
+  final StudentModel currentUser;
   HomeNotAdmin({this.currentUser});
 
   @override
@@ -27,11 +27,10 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<UserModel>(context);
     Future<String> teacherEmail;
 
-    if(user != null) {
-      DocumentReference result = databaseService.getUserWithUserId(user.uid);
+    if(widget.currentUser != null) {
+      DocumentReference result = databaseService.getUserWithUserId(widget.currentUser.uid);
       teacherEmail = result.get().then((result){
         return result.data()['teacherEmail'].toString().trim();
       });
@@ -43,7 +42,7 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
         future: teacherEmail,
         builder: (context, future) {
           if (future.connectionState == ConnectionState.waiting) {
-            return Loading();
+            return Loading(loadingText: "Loading",);
           } else if (future.data == "null") {
             return InfoDisplay(
               textToDisplay: "Teacher email is not detected. Update your teacher email.",
