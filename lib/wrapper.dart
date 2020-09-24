@@ -95,7 +95,7 @@ class _WrapperState extends State<Wrapper> {
                 elevation: 0.0,
               ),
               body:Loading(
-                loadingText: future.data.toString() == "SignUpGoogle" ? "Signing you in" : "Logging you in",
+                loadingText: "Just a moment",
               ),
             );
           } else {
