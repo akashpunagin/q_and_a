@@ -45,7 +45,7 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
             return Loading(loadingText: "Checking your teacher email",);
           } else if (future.data == "null") {
             return InfoDisplay(
-              textToDisplay: "Teacher email is not detected. Update your teacher email.",
+              textToDisplay: "You have not selected your teacher yet",
             );
           } else {
             return Scaffold(

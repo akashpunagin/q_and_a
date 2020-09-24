@@ -24,12 +24,11 @@ class _TeacherProfileState extends State<TeacherProfile> {
 
   final DatabaseService databaseService = DatabaseService();
   String teacherEmailToStream = "";
+  Future<bool> isTeacherEmailExists;
 
-  @override
-  Widget build(BuildContext context) {
-
+  setTeacherEmail() {
     DocumentReference result = databaseService.getUserWithUserId(widget.currentUser.uid);
-    Future<bool> isTeacherEmailExists = result.get().then((result) async {
+    isTeacherEmailExists = result.get().then((result) async {
       if ( result.data().containsKey("teacherEmail") ) {
         setState(() {
           teacherEmailToStream = result.data()['teacherEmail'];
@@ -37,6 +36,18 @@ class _TeacherProfileState extends State<TeacherProfile> {
       }
       return result.data().containsKey("teacherEmail");
     });
+  }
+
+  @override
+  void initState() {
+    setTeacherEmail();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+
 
     return Scaffold(
       body: Container(
@@ -48,7 +59,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
               return Loading(loadingText: "Just a moment");
             } else if (future.data == false) {
               return InfoDisplay(
-                textToDisplay: "Update your Teacher email",
+                textToDisplay: "You have not selected any teachers yet",
               );
             } else {
               return StreamBuilder(
@@ -70,12 +81,12 @@ class _TeacherProfileState extends State<TeacherProfile> {
                           children: [
                             Expanded(
                               child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 15.0),
+                                padding: EdgeInsets.symmetric(vertical: 20.0),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      "Your Teacher",
+                                      "Selected Teacher",
                                       style: TextStyle(fontSize: 25.0, color: Colors.black54),
                                     ),
                                     Card(
@@ -92,9 +103,9 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                               backgroundImage: NetworkImage(
                                                   snapshots.data.documents[0].data()['photoUrl']
                                               ),
-                                              radius: 55,
+                                              radius: 45,
                                             ),
-                                            SizedBox(height: 10,),
+                                            SizedBox(height: 15,),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: <Widget>[
@@ -158,7 +169,9 @@ class _TeacherProfileState extends State<TeacherProfile> {
         onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => ChangeTeachers(userId: widget.currentUser.uid, currentTeacherEmail: teacherEmailToStream,)
-            ));
+            )).then((value) {
+              setTeacherEmail();
+            });
         },
         child: FaIcon(FontAwesomeIcons.userEdit, size: 20.0,),
       ),

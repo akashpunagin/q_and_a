@@ -23,7 +23,7 @@ class _NotAdminState extends State<NotAdmin> {
   final DatabaseService databaseService = DatabaseService();
   StudentModel studentModel = StudentModel();
   UserModel currentUser;
-  int navBarIndex = 2 ; // todo change to 0
+  int navBarIndex = 0;
 
 
   @override
@@ -78,7 +78,7 @@ class _NotAdminState extends State<NotAdmin> {
           ),
         ],
       ),
-      body: studentModel.toMap().containsValue(null) ? Loading(
+      body: studentModel.toMap().containsValue(null) || studentModel == null? Loading(
         loadingText: "Loading your credentials",
       ) : _screens[navBarIndex],
       bottomNavigationBar: CurvedNavigationBar(

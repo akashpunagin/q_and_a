@@ -24,7 +24,11 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
 
   totalDisplayTile({String label, String value}) {
     return Card(
-      elevation: 3,
+      margin: EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      elevation: 5,
       child: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -49,7 +53,6 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 20.0,),
                 child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text("My Profile",style: TextStyle(fontSize: 30.0, color: Colors.black54),),
@@ -68,26 +71,6 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
                         totalDisplayTile(label: "Total Submissions", value: widget.currentUser.nTotalQuizSubmitted.toString()),
                       ],
                     ),
-
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    //   children: [
-                    //     totalDisplayTile(label: "Correct Answers", value: widget.currentUser.nTotalCorrect.toString()),
-                    //     totalDisplayTile(label: "Wrong Answers", value: widget.currentUser.nTotalWrong.toString()),
-                    //   ],
-                    // ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    //   children: [
-                    //     totalDisplayTile(label: "Not Attempted", value: widget.currentUser.nTotalNotAttempted.toString()),
-                    //     totalDisplayTile(label: "Total Quiz Submitted", value: widget.currentUser.nTotalQuizSubmitted.toString()),
-                    //   ],
-                    // ),
-
-                    // Text("Correct Answers : ${widget.currentUser.nTotalCorrect}", style: TextStyle(fontSize: 18),),
-                    // Text("Wrong Answers : ${widget.currentUser.nTotalWrong}", style: TextStyle(fontSize: 18),),
-                    // Text("Not Attempted : ${widget.currentUser.nTotalNotAttempted}", style: TextStyle(fontSize: 18),),
-                    // Text("Total Quiz Submitted : ${widget.currentUser.nTotalQuizSubmitted}", style: TextStyle(fontSize: 18),),
                     blueButton(context: context, label: "View your progress", onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => StudentProgress(userId: widget.currentUser.uid,)
@@ -124,7 +107,7 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                FaIcon(FontAwesomeIcons.userGraduate, size: 15.0,),
+                                FaIcon(FontAwesomeIcons.userGraduate, size: 20.0,),
                                 SizedBox(width: 10,),
                                 Text(widget.currentUser.displayName, style: TextStyle(fontSize: 20.0),)
                               ],
@@ -132,12 +115,12 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
                             SizedBox(height: 20.0,),
                             Row(
                               children: <Widget>[
-                                Icon(Icons.email, size: 15,),
+                                Icon(Icons.email, size: 22,),
                                 SizedBox(width: 10,),
                                 Column(
                                   children: [
-                                    Text(widget.currentUser.email.toString().split("@")[0], style: TextStyle(fontSize: 14.0),),
-                                    Text(widget.currentUser.email.toString().split("@")[1], style: TextStyle(fontSize: 14.0),),
+                                    Text(widget.currentUser.email.toString().split("@")[0], style: TextStyle(fontSize: 18.0),),
+                                    Text(widget.currentUser.email.toString().split("@")[1], style: TextStyle(fontSize: 16.0),),
                                   ],
                                 )
                               ],
