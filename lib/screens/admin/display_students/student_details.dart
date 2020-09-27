@@ -1,6 +1,6 @@
 import 'package:q_and_a/models/user_model.dart';
-import 'package:q_and_a/screens/shared_screens/user_details_tile.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
+import 'package:q_and_a/screens/shared_screens/user_details_tile.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,6 +47,8 @@ class _StudentDetailsState extends State<StudentDetails> {
               builder: (context, future) {
                 if(future.data == null) {
                   return Loading(loadingText: "Fetching latest data",);
+                } else if(future.data.length == 0) {
+                  return InfoDisplay(textToDisplay: "You don't have any students as of now",);
                 } else {
                   return Column(
                     children: [

@@ -87,34 +87,52 @@ class _TeacherProfileState extends State<TeacherProfile> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 15.0),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
                                       "Your Teacher",
                                       style: TextStyle(fontSize: 25.0, color: Colors.black87),
                                     ),
-                                    CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          snapshots.data.documents[0].data()['photoUrl']
+                                    Card(
+                                      elevation: 5,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(15))
                                       ),
-                                      radius: 55,
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  snapshots.data.documents[0].data()['photoUrl']
+                                              ),
+                                              radius: 55,
+                                            ),
+                                            SizedBox(height: 10,),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
+                                                SizedBox(width: 5,),
+                                                Text(snapshots.data.documents[0].data()['displayName'], style: TextStyle(fontSize: 22.0),)
+                                              ],
+                                            ),
+                                            SizedBox(height: 5,),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(Icons.email, size: 20.0,),
+                                                SizedBox(width: 5,),
+                                                Text(snapshots.data.documents[0].data()['email'], style: TextStyle(fontSize: 18.0),)
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
-                                        SizedBox(width: 5,),
-                                        Text(snapshots.data.documents[0].data()['displayName'], style: TextStyle(fontSize: 22.0),)
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Icon(Icons.email, size: 20.0,),
-                                        SizedBox(width: 5,),
-                                        Text(snapshots.data.documents[0].data()['email'], style: TextStyle(fontSize: 18.0),)
-                                      ],
-                                    ),
+
+
                                     snapshots.hasData && snapshots.data.documents.length > 0 ?
                                     blueButton(
                                         context: context, label: "Send your progress to ${snapshots.data.documents[0].data()['displayName']}",

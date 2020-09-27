@@ -100,7 +100,6 @@ class _AddQuestionState extends State<AddQuestion> {
         setState(() {
           _isLoading = false;
         });
-
         final snackBar = SnackBar(
           content: Text("Question - \"$question\" was added to\nQuiz - \"${widget.quizTopic}\"", style: TextStyle(fontSize: 15.0),),
           backgroundColor: Colors.blueAccent,
@@ -112,9 +111,11 @@ class _AddQuestionState extends State<AddQuestion> {
             },
           ),
         );
+        _scaffoldKey.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.remove);
         _scaffoldKey.currentState.showSnackBar(snackBar);
       });
     }
+    setNewQuestionId();
   }
 
   _done() {
@@ -172,16 +173,16 @@ class _AddQuestionState extends State<AddQuestion> {
 
   Future<File> _cropImage(File image, String field) async {
     File croppedImage = await ImageCropper.cropImage(
-        sourcePath: image.path,
-        compressFormat: ImageCompressFormat.jpg,
-        compressQuality: 50,
-        androidUiSettings: AndroidUiSettings(
+      sourcePath: image.path,
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 50,
+      androidUiSettings: AndroidUiSettings(
           toolbarColor: Colors.blueAccent,
           backgroundColor: Colors.black38,
           toolbarWidgetColor: Colors.black54,
           activeControlsWidgetColor: Colors.blueAccent,
           statusBarColor: Colors.black54
-        ),
+      ),
     );
 
     switch (field) {
@@ -257,11 +258,17 @@ class _AddQuestionState extends State<AddQuestion> {
     });
   }
 
+  setNewQuestionId() {
+    setState(() {
+      questionId = uuid.v1();
+    });
+  }
+
 
   @override
   void initState() {
     selectedQuestionType = questionType[0];
-    questionId = uuid.v1();
+    setNewQuestionId();
     super.initState();
   }
 
@@ -326,17 +333,29 @@ class _AddQuestionState extends State<AddQuestion> {
                   ),
                   SizedBox(height: 8,),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       !isButtonEnabled ? Container(
-                        width: (MediaQuery.of(context).size.width/2)-30,
+                        width: (MediaQuery.of(context).size.width * 0.6) - 30,
                         child: Center(
-                            child: CircularProgressIndicator(),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Adding Image", style: TextStyle(fontSize: 16),),
+                              SizedBox(width: 10,),
+                              CircularProgressIndicator(),
+                            ],
+                          ),
                         ),
                       ) : blueButton(context: context, label: "Add This Question",
-                          onPressed: _addQuestion,
-                          width: (MediaQuery.of(context).size.width/2)-30),
-                      blueButton(context: context, label: "Done", onPressed: _done, width: (MediaQuery.of(context).size.width/2) - 30),
+                        onPressed: _addQuestion,
+                        width: (MediaQuery.of(context).size.width * 0.6) - 30,
+                      ),
+                      blueButton(context: context, label: "Go back",
+                        onPressed: !isButtonEnabled ? () {} : _done,
+                        width: (MediaQuery.of(context).size.width * 0.4) - 30,
+                        buttonColor: !isButtonEnabled ? Colors.grey : null
+                      ),
                     ],
                   ),
                 ],

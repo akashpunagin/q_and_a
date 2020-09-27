@@ -4,6 +4,10 @@ class DatabaseService {
 
   //Constant titles
   static String userCollectionTitle = "users";
+
+  // static String usersTeacherCollectionTitle = "users_teacher";
+  // static String usersStudentCollectionTitle = "users_students";
+
   static String quizCollectionTitle = "quizzes";
   static String questionsCollectionTitle = "questions";
   static String studentProgressCollectionTitle = "student_progress";
@@ -12,6 +16,9 @@ class DatabaseService {
 
   //Collection Reference
   final CollectionReference userDetailsCollection = FirebaseFirestore.instance.collection(userCollectionTitle);
+
+  // final CollectionReference usersTeacherCollection = FirebaseFirestore.instance.collection(usersTeacherCollectionTitle);
+  // final CollectionReference usersStudentsCollection = FirebaseFirestore.instance.collection(usersStudentCollectionTitle);
 
 
   // Adding to database
@@ -137,46 +144,6 @@ class DatabaseService {
 
   }
 
-
-
-  // Stream<QuerySnapshot> getStudents(String teacherEmail) {
-  //   var result =  userDetailsCollection.getDocuments().then((result) {
-  //
-  //     for (DocumentSnapshot document in result.documents) {
-  //
-  //       if(document.data["isAdmin"] == false) {
-  //
-  //         // print("STUDENT: ${document.data['displayName']}");
-  //
-  //         var teachers = userDetailsCollection
-  //             .document(document.data["uid"])
-  //             .collection(teachersCollectionTitle)
-  //             .where('email', isEqualTo: teacherEmail)
-  //             .getDocuments().then((teachers) {
-  //
-  //           if(teachers.documents.length > 0) {
-  //             print("STUDENT: ${document.data['email']} is teacher of $teacherEmail");
-  //
-  //             return userDetailsCollection
-  //                 .document(document.data['uid'])
-  //                 .snapshots();
-  //           }
-  //         });
-  //         return teachers;
-  //       }
-  //     }
-  //
-  //   });
-  //
-  //   return result;
-  //
-  // }
-
-
-
-
-
-
   Stream<QuerySnapshot> getQuizDetails({String userId})  {
     return userDetailsCollection
         .doc(userId)
@@ -191,6 +158,15 @@ class DatabaseService {
         .doc(quizId)
         .collection(questionsCollectionTitle)
         .snapshots();
+  }
+
+  Future<QuerySnapshot> getQuizQuestionDocuments({String quizId, String userId}) {
+    return userDetailsCollection
+        .doc(userId)
+        .collection(quizCollectionTitle)
+        .doc(quizId)
+        .collection(questionsCollectionTitle)
+        .get();
   }
 
   Future<QuerySnapshot> getStudentProgress({String userId}) {
@@ -286,6 +262,17 @@ class DatabaseService {
       return null;
     }
   }
+
+  Future<void> updateDeviceToken({String userId, String deviceToken}) {
+    return userDetailsCollection.doc(userId)
+        .update({"deviceToken": deviceToken})
+        .catchError((e) {
+      print(e.toString());
+    });
+  }
+
+
+
 
   // Delete from database
   deleteQuizDetails({String userId, String quizId}) {

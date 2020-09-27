@@ -74,17 +74,7 @@ class _EditQuestionState extends State<EditQuestion> {
         setState(() {
           _isLoading = false;
         });
-        Navigator.pop(context);
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => DisplayQuizQuestions(
-              quizId: widget.quizId,
-              teacherId: widget.teacherId,
-              quizModel: widget.quizModel,
-              fromStudent: false,
-              showQuestionEditedSnackBar: true,
-            )
-        ));
-
+        Navigator.of(context).pop(true);
       });
     }
   }

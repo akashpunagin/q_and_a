@@ -4,7 +4,6 @@ import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:q_and_a/shared/widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class QuizSubmissions extends StatefulWidget {
@@ -47,7 +46,7 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
               return Loading(loadingText: "Fetching your progress",);
             } else if(snapshots.data.documents.length == 0) {
               return InfoDisplay(
-                textToDisplay: "You've not submitted any quiz yet. Start submitting now!",
+                textToDisplay: "You've not received any quiz submissions yet",
               );
             } else {
               return SingleChildScrollView(
