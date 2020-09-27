@@ -169,72 +169,79 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
           displayDeleteQuizAlert(context);
         }
       },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5,),
-        height: (MediaQuery.of(context).size.height / 3) - 50,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15.0),
-              child: widget.fromCreateQuiz == true  && widget.quizImage != null ? Container(
-                width: MediaQuery.of(context).size.width - 20,
-                child: Image.file(
-                  widget.quizImage,
+      child: Card(
+        margin: EdgeInsets.all(5),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15))
+        ),
+        elevation: 5,
+        child: Container(
+          height: (MediaQuery.of(context).size.height / 3) - 50,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: widget.fromCreateQuiz == true  && widget.quizImage != null ? Container(
+                  width: MediaQuery.of(context).size.width - 20,
+                  child: Image.file(
+                    widget.quizImage,
+                    fit: BoxFit.cover,
+                  ),
+                ) : CachedNetworkImage(
+                  width: MediaQuery.of(context).size.width,
                   fit: BoxFit.cover,
-                ),
-              ) : CachedNetworkImage(
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
-                useOldImageOnUrlChange: false,
-                imageUrl: widget.quizModel.imgURL == "" || widget.quizModel.imgURL == null ? defaultQuizImageURL : widget.quizModel.imgURL,
-                imageBuilder: (context, imageProvider) {
-                  return Container(
-                    width: MediaQuery.of(context).size.width - 20,
-                    child: Image(
-                      fit: BoxFit.cover,
-                      image: imageProvider,
-                    ),
-                  );
-                },
-                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, e) => Container(
-                  padding: EdgeInsets.symmetric(vertical: 20.0),
-                  alignment: Alignment.topCenter,
-                  child: Text("Enter Correct Image URL", style: TextStyle(fontSize: 18),),
+                  useOldImageOnUrlChange: false,
+                  imageUrl: widget.quizModel.imgURL == "" || widget.quizModel.imgURL == null ? defaultQuizImageURL : widget.quizModel.imgURL,
+                  imageBuilder: (context, imageProvider) {
+                    return Container(
+                      width: MediaQuery.of(context).size.width - 20,
+                      child: Image(
+                        fit: BoxFit.cover,
+                        image: imageProvider,
+                      ),
+                    );
+                  },
+                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, e) => Container(
+                    padding: EdgeInsets.symmetric(vertical: 20.0),
+                    alignment: Alignment.topCenter,
+                    child: Text("Enter Correct Image URL", style: TextStyle(fontSize: 18),),
+                  ),
                 ),
               ),
-            ),
-            _isLoading ? Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                color: Colors.black.withOpacity(0.7),
-              ),
-              alignment: Alignment.center,
-              child: Loading(
-                loadingText: "Deleting",
-                textColor: Colors.white,
-                spinKitColor: Colors.white,
-              ),
-            ) : Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                color: Colors.black45,
-              ),
-              alignment: Alignment.center,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(widget.quizModel.topic, style: TextStyle(fontSize: 25.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
-                    SizedBox(height: 10,),
-                    Text(widget.quizModel.description,
-                      style: TextStyle(fontSize: 20.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
-                  ],
+              _isLoading ? Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: Colors.black.withOpacity(0.7),
                 ),
-              ),
-            )
-          ],
+                alignment: Alignment.center,
+                child: Loading(
+                  loadingText: "Deleting",
+                  textColor: Colors.white,
+                  spinKitColor: Colors.white,
+                ),
+              ) : Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: Colors.black45,
+                ),
+                alignment: Alignment.center,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(widget.quizModel.topic, style: TextStyle(fontSize: 25.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
+                      SizedBox(height: 10,),
+                      Text(widget.quizModel.description,
+                        style: TextStyle(fontSize: 20.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
