@@ -108,7 +108,7 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
           title: appBar(context),
           elevation: 0.0,
         ),
-        body: Loading(),
+        body: Loading(loadingText: "Just a moment",),
       ) : Container(
         alignment: Alignment.center,
         height: MediaQuery.of(context).size.height,
