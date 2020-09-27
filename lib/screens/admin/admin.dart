@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/admin/display_students/student_details.dart';
 import 'package:q_and_a/screens/admin/admin_profile/my_profile_admin.dart';
+import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/auth.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/shared/widgets.dart';
@@ -20,15 +24,26 @@ class _AdminState extends State<Admin> {
 
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
+  UserModel currentUser;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        currentUser = Provider.of<UserModel>(context, listen: false);
+        currentUser.isAdmin = true;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    List<Widget>_screens = [
-      HomeAdmin(),
-      StudentDetails(),
-      // StudentDetailsBackup(),
-      MyProfileAdmin(),
+    List<Widget> _screens = [
+      HomeAdmin(currentUser: currentUser,),
+      StudentDetails(currentUser: currentUser,),
+      MyProfileAdmin(currentUser: currentUser,),
     ];
 
     return Scaffold(
@@ -48,7 +63,9 @@ class _AdminState extends State<Admin> {
           ),
         ],
       ),
-      body: _screens[navBarIndex],
+      body: currentUser == null || currentUser.toMap().containsValue(null) ? Loading(
+        loadingText: "Loading your credentials",
+      ) : _screens[navBarIndex],
       bottomNavigationBar: CurvedNavigationBar(
         color: Colors.blueAccent,
         backgroundColor: Colors.white,

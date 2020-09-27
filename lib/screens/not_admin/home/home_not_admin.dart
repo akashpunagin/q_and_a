@@ -11,8 +11,8 @@ import 'package:provider/provider.dart';
 
 class HomeNotAdmin extends StatefulWidget {
 
-  final Function foo;
-  HomeNotAdmin({this.foo});
+  final StudentModel currentUser;
+  HomeNotAdmin({this.currentUser});
 
   @override
   _HomeNotAdminState createState() => _HomeNotAdminState();
@@ -27,11 +27,10 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<UserModel>(context);
     Future<String> teacherEmail;
 
-    if(user != null) {
-      DocumentReference result = databaseService.getUserWithUserId(user.uid);
+    if(widget.currentUser != null) {
+      DocumentReference result = databaseService.getUserWithUserId(widget.currentUser.uid);
       teacherEmail = result.get().then((result){
         return result.data()['teacherEmail'].toString().trim();
       });
@@ -43,10 +42,10 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
         future: teacherEmail,
         builder: (context, future) {
           if (future.connectionState == ConnectionState.waiting) {
-            return Loading();
+            return Loading(loadingText: "Checking your teacher email",);
           } else if (future.data == "null") {
             return InfoDisplay(
-              textToDisplay: "Teacher email is not detected. Update your teacher email.",
+              textToDisplay: "You have not selected your teacher yet",
             );
           } else {
             return Scaffold(
@@ -61,7 +60,7 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
                     return StreamBuilder(
                       stream: databaseService.getQuizDetails(userId : teacherId),
                       builder: (context, snapshots) {
-                        return snapshots.data == null ? Loading() : ListView.builder(
+                        return snapshots.data == null ? Loading(loadingText: "Getting quizzes",) : ListView.builder(
                             itemCount: snapshots.data.documents.length,
                             itemBuilder: (context, index) {
                               QuizModel quizModel =  QuizModel(

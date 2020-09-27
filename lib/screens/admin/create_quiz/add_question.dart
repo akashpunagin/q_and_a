@@ -42,7 +42,7 @@ class _AddQuestionState extends State<AddQuestion> {
   String option2 = "";
   String option3 = "";
   String option4 = "";
-  String userId = "";
+  // String userId = "";
   String questionImageUrl;
   String option1ImageUrl;
   String option2ImageUrl;
@@ -60,7 +60,7 @@ class _AddQuestionState extends State<AddQuestion> {
   bool trueOrFalse = true;
   bool isButtonEnabled = true;
 
-  _addQuestion() async {
+  _addQuestion(String userId) async {
     if(_formKey.currentState.validate()){
       setState(() {
         _isLoading = true;
@@ -93,10 +93,11 @@ class _AddQuestionState extends State<AddQuestion> {
       };
 
       await databaseService.addQuestionDetails(
-          questionData: questionData,
-          quizId: widget.quizId,
-          questionId: questionId,
-          userId: userId).then((val){
+        questionData: questionData,
+        quizId: widget.quizId,
+        questionId: questionId,
+        userId: userId
+      ).then((val){
         setState(() {
           _isLoading = false;
         });
@@ -123,7 +124,7 @@ class _AddQuestionState extends State<AddQuestion> {
   }
 
 
-  Future<void> _pickImage(ImageSource source, String field) async {
+  Future<void> _pickImage(ImageSource source, String field, String userId) async {
 
     final pickedFile = await picker.getImage(source: source);
 
@@ -223,7 +224,7 @@ class _AddQuestionState extends State<AddQuestion> {
 
   }
 
-  void _clearImage(String field) {
+  void _clearImage(String field, String userId) {
     ImageUploader imageUploader = ImageUploader();
     imageUploader.field = field;
     imageUploader.userId = userId;
@@ -276,10 +277,6 @@ class _AddQuestionState extends State<AddQuestion> {
   Widget build(BuildContext context) {
 
     final user = Provider.of<UserModel>(context);
-
-    setState(() {
-      userId = user.uid;
-    });
 
     return Scaffold(
       key: _scaffoldKey,
@@ -348,7 +345,9 @@ class _AddQuestionState extends State<AddQuestion> {
                           ),
                         ),
                       ) : blueButton(context: context, label: "Add This Question",
-                        onPressed: _addQuestion,
+                        onPressed: () {
+                          _addQuestion(user.uid);
+                        },
                         width: (MediaQuery.of(context).size.width * 0.6) - 30,
                       ),
                       blueButton(context: context, label: "Go back",
@@ -403,9 +402,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                   question = val;
                                 },
                               ),
-                              textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "question")),
-                              textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "question")),
-                              _imageQuestion != null ? textFieldStackButtonTimes(() =>  _clearImage("question")) : Container(),
+                              textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "question", user.uid)),
+                              textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "question", user.uid)),
+                              _imageQuestion != null ? textFieldStackButtonTimes(() =>  _clearImage("question", user.uid)) : Container(),
                             ],
                           ),
 
@@ -444,9 +443,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                       option1 = val;
                                     },
                                   ),
-                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option1")),
-                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option1")),
-                                  _imageOption1 != null ? textFieldStackButtonTimes(() =>  _clearImage("option1")) : Container(),
+                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option1", user.uid)),
+                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option1", user.uid)),
+                                  _imageOption1 != null ? textFieldStackButtonTimes(() =>  _clearImage("option1", user.uid)) : Container(),
                                 ],
                               ),
 
@@ -481,9 +480,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                       option2 = val;
                                     },
                                   ),
-                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option2")),
-                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option2")),
-                                  _imageOption2 != null ? textFieldStackButtonTimes(() =>  _clearImage("option2")) : Container(),
+                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option2", user.uid)),
+                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option2", user.uid)),
+                                  _imageOption2 != null ? textFieldStackButtonTimes(() =>  _clearImage("option2", user.uid)) : Container(),
                                 ],
                               ),
 
@@ -518,9 +517,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                       option3 = val;
                                     },
                                   ),
-                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option3")),
-                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option3")),
-                                  _imageOption3 != null ? textFieldStackButtonTimes(() =>  _clearImage("option3")) : Container(),
+                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option3", user.uid)),
+                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option3", user.uid)),
+                                  _imageOption3 != null ? textFieldStackButtonTimes(() =>  _clearImage("option3", user.uid)) : Container(),
                                 ],
                               ),
 
@@ -555,9 +554,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                       option4 = val;
                                     },
                                   ),
-                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option4")),
-                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option4")),
-                                  _imageOption4 != null ? textFieldStackButtonTimes(() =>  _clearImage("option4")) : Container(),
+                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option4", user.uid)),
+                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option4", user.uid)),
+                                  _imageOption4 != null ? textFieldStackButtonTimes(() =>  _clearImage("option4", user.uid)) : Container(),
                                 ],
                               ),
 

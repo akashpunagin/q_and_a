@@ -150,7 +150,7 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                   borderRadius: true,
                   moveIndicatorFromBottom: 180.0,
                   noRadiusForIndicator: true,
-                  animationDuration: Duration(milliseconds: 800),
+                  animationDuration: Duration(seconds: 2),
                   boxFit: BoxFit.contain,
                 )
             ),

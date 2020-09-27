@@ -11,21 +11,25 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SpinKitFadingCircle(
-          color: spinKitColor == null ? Colors.blue : spinKitColor,
-          size: 50.0,
-        ),
-        SizedBox(height: 20.0,),
-        loadingText != null ? Text("$loadingText . . .",
-          style: TextStyle(
-            fontSize: 20.0,
-            color: textColor == null ? Colors.black54 : textColor
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SpinKitFadingCircle(
+            color: spinKitColor == null ? Colors.blue : spinKitColor,
+            size: 50.0,
           ),
-        ) : Container(),
-      ],
+          SizedBox(height: 20.0,),
+          loadingText != null ? Text("$loadingText . . .",
+            style: TextStyle(
+              fontSize: 20.0,
+              color: textColor == null ? Colors.black54 : textColor,
+            ),
+            textAlign: TextAlign.center,
+          ) : Container(),
+        ],
+      ),
     );
   }
 }

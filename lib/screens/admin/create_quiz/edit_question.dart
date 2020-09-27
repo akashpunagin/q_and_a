@@ -33,11 +33,11 @@ class _EditQuestionState extends State<EditQuestion> {
   final picker = ImagePicker();
 
   String loadingText;
-  String userId;
+  // String userId;
   bool _isLoading = false;
   bool isButtonEnabled = true;
 
-  _editQuestion() async {
+  _editQuestion(String userId) async {
     if(_formKey.currentState.validate()){
       setState(() {
         _isLoading = true;
@@ -67,10 +67,11 @@ class _EditQuestionState extends State<EditQuestion> {
       };
 
       await databaseService.addQuestionDetails(
-          questionData: questionData,
-          quizId: widget.quizId,
-          questionId: questionId,
-          userId: userId).then((val){
+        questionData: questionData,
+        quizId: widget.quizId,
+        questionId: questionId,
+        userId: userId
+      ).then((val){
         setState(() {
           _isLoading = false;
         });
@@ -79,7 +80,7 @@ class _EditQuestionState extends State<EditQuestion> {
     }
   }
 
-  Future<void> _pickImage(ImageSource source, String field) async {
+  Future<void> _pickImage(ImageSource source, String field, String userId) async {
 
     final pickedFile = await picker.getImage(source: source);
 
@@ -165,7 +166,7 @@ class _EditQuestionState extends State<EditQuestion> {
 
   }
 
-  void _clearImage(String field) {
+  void _clearImage(String field, String userId) {
     ImageUploader imageUploader = ImageUploader();
     imageUploader.field = field;
     imageUploader.userId = userId;
@@ -199,10 +200,6 @@ class _EditQuestionState extends State<EditQuestion> {
   Widget build(BuildContext context) {
 
     final user = Provider.of<UserModel>(context);
-
-    setState(() {
-      userId = user.uid;
-    });
 
     return Scaffold(
       appBar: AppBar(
@@ -263,9 +260,9 @@ class _EditQuestionState extends State<EditQuestion> {
                         widget.questionModel.question = val;
                       },
                     ),
-                    textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "question")),
-                    textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "question")),
-                    widget.questionModel.questionImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("question")) : Container(),
+                    textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "question", user.uid)),
+                    textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "question", user.uid)),
+                    widget.questionModel.questionImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("question", user.uid)) : Container(),
                   ],
                 ),
 
@@ -327,9 +324,9 @@ class _EditQuestionState extends State<EditQuestion> {
                             widget.questionModel.option1 = val;
                           },
                         ),
-                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option1")),
-                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option1")),
-                        widget.questionModel.option1ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option1")) : Container(),
+                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option1", user.uid)),
+                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option1", user.uid)),
+                        widget.questionModel.option1ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option1", user.uid)) : Container(),
                       ],
                     ),
 
@@ -374,9 +371,9 @@ class _EditQuestionState extends State<EditQuestion> {
                             widget.questionModel.option2 = val;
                           },
                         ),
-                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option2")),
-                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option2")),
-                        widget.questionModel.option2ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option2")) : Container(),
+                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option2", user.uid)),
+                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option2", user.uid)),
+                        widget.questionModel.option2ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option2", user.uid)) : Container(),
                       ],
                     ),
 
@@ -421,9 +418,9 @@ class _EditQuestionState extends State<EditQuestion> {
                             widget.questionModel.option3 = val;
                           },
                         ),
-                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option3")),
-                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option3")),
-                        widget.questionModel.option3ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option3")) : Container(),
+                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option3", user.uid)),
+                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option3", user.uid)),
+                        widget.questionModel.option3ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option3", user.uid)) : Container(),
                       ],
                     ),
 
@@ -468,15 +465,17 @@ class _EditQuestionState extends State<EditQuestion> {
                             widget.questionModel.option4 = val;
                           },
                         ),
-                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option4")),
-                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option4")),
-                        widget.questionModel.option4ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option4")) : Container(),
+                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option4", user.uid)),
+                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option4", user.uid)),
+                        widget.questionModel.option4ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option4", user.uid)) : Container(),
                       ],
                     ),
                   ],
                 ),
                 SizedBox(height: 50,),
-                blueButton(context: context,label: "Edit This Question", onPressed: _editQuestion),
+                blueButton(context: context,label: "Edit This Question", onPressed: () {
+                  _editQuestion(user.uid);
+                }),
               ],
             ),
           ),

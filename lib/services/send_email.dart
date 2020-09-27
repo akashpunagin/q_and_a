@@ -106,7 +106,7 @@ class SendEmail {
 
     // Creating List of List (table)
     List<List<String>> titles = List();
-    titles.add(<String>[" ","Teacher", "Topic", "Total", "Correct", "Wrong", "Not Attempted", "Time of Day"]);
+    titles.add(<String>[" ","Teacher", "Topic", "Total Questions", "Correct", "Wrong", "Not Attempted", "Time of Day"]);
     int nTotalQuestions = 0;
     int nTotalCorrect = 0;
     int nTotalWrong = 0;

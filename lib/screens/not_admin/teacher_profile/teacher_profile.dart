@@ -12,6 +12,10 @@ import 'change_teachers.dart';
 
 class TeacherProfile extends StatefulWidget {
 
+  final StudentModel currentUser;
+
+  TeacherProfile({this.currentUser});
+
   @override
   _TeacherProfileState createState() => _TeacherProfileState();
 }
@@ -20,31 +24,11 @@ class _TeacherProfileState extends State<TeacherProfile> {
 
   final DatabaseService databaseService = DatabaseService();
   String teacherEmailToStream = "";
+  Future<bool> isTeacherEmailExists;
 
-  Map<String, dynamic> studentDetails = {
-    "nTotalQuizSubmitted" : 0,
-    "nTotalCorrect" : 0,
-    "nTotalWrong" : 0,
-    "nTotalNotAttempted" : 0,
-    "studentName" : "",
-  };
-
-  @override
-  Widget build(BuildContext context) {
-
-    final user = Provider.of<UserModel>(context);
-
-    DocumentReference result = databaseService.getUserWithUserId(user.uid);
-    Future<bool> isTeacherEmailExists = result.get().then((result) async {
-
-      setState(() {
-        studentDetails['nTotalCorrect'] = result.data().containsKey("nTotalCorrect") ?  result.data()["nTotalCorrect"] : 0;
-        studentDetails['nTotalWrong'] = result.data().containsKey("nTotalWrong") ?  result.data()["nTotalWrong"] : 0;
-        studentDetails['nTotalQuizSubmitted'] = result.data().containsKey("nTotalQuizSubmitted") ?  result.data()["nTotalQuizSubmitted"] : 0;
-        studentDetails['nTotalNotAttempted'] = result.data().containsKey("nTotalNotAttempted") ?  result.data()["nTotalNotAttempted"] : 0;
-        studentDetails['studentName'] = result.data()['displayName'];
-      });
-
+  setTeacherEmail() {
+    DocumentReference result = databaseService.getUserWithUserId(widget.currentUser.uid);
+    isTeacherEmailExists = result.get().then((result) async {
       if ( result.data().containsKey("teacherEmail") ) {
         setState(() {
           teacherEmailToStream = result.data()['teacherEmail'];
@@ -52,6 +36,18 @@ class _TeacherProfileState extends State<TeacherProfile> {
       }
       return result.data().containsKey("teacherEmail");
     });
+  }
+
+  @override
+  void initState() {
+    setTeacherEmail();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+
 
     return Scaffold(
       body: Container(
@@ -63,7 +59,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
               return Loading(loadingText: "Just a moment");
             } else if (future.data == false) {
               return InfoDisplay(
-                textToDisplay: "Update your Teacher email",
+                textToDisplay: "You have not selected any teachers yet",
               );
             } else {
               return StreamBuilder(
@@ -85,13 +81,13 @@ class _TeacherProfileState extends State<TeacherProfile> {
                           children: [
                             Expanded(
                               child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 15.0),
+                                padding: EdgeInsets.symmetric(vertical: 20.0),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      "Your Teacher",
-                                      style: TextStyle(fontSize: 25.0, color: Colors.black87),
+                                      "Selected Teacher",
+                                      style: TextStyle(fontSize: 25.0, color: Colors.black54),
                                     ),
                                     Card(
                                       elevation: 5,
@@ -107,9 +103,9 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                               backgroundImage: NetworkImage(
                                                   snapshots.data.documents[0].data()['photoUrl']
                                               ),
-                                              radius: 55,
+                                              radius: 45,
                                             ),
-                                            SizedBox(height: 10,),
+                                            SizedBox(height: 15,),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: <Widget>[
@@ -140,8 +136,8 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                           displaySelectGmailAlert(context: context, onPressed: () {
                                             SendEmail sendEmail = SendEmail();
                                             sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
-                                            sendEmail.studentName = studentDetails['studentName'];
-                                            sendEmail.studentId = user.uid;
+                                            sendEmail.studentName = widget.currentUser.displayName;
+                                            sendEmail.studentId = widget.currentUser.uid;
                                             sendEmail.sendEmailProgress();
                                           });
                                     }) : Container(),
@@ -172,8 +168,10 @@ class _TeacherProfileState extends State<TeacherProfile> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChangeTeachers(userId: user.uid, currentTeacherEmail: teacherEmailToStream,)
-            ));
+              builder: (context) => ChangeTeachers(userId: widget.currentUser.uid, currentTeacherEmail: teacherEmailToStream,)
+            )).then((value) {
+              setTeacherEmail();
+            });
         },
         child: FaIcon(FontAwesomeIcons.userEdit, size: 20.0,),
       ),

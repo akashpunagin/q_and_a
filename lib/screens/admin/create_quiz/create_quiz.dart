@@ -17,6 +17,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateQuiz extends StatefulWidget {
+
+  final UserModel currentUser;
+
+  CreateQuiz({this.currentUser});
+
   @override
   _CreateQuizState createState() => _CreateQuizState();
 }
@@ -31,7 +36,6 @@ class _CreateQuizState extends State<CreateQuiz> {
   var uuid = Uuid();
 
   String quizId = "";
-  String userId = "";
   File quizImage;
   String loadingText;
   bool _isLoading = false;
@@ -51,7 +55,7 @@ class _CreateQuizState extends State<CreateQuiz> {
         imageUploader.file = quizImage;
         imageUploader.field = "quizzes";
         imageUploader.quizId = quizId;
-        imageUploader.userId = userId;
+        imageUploader.userId = widget.currentUser.uid;
         imageUploader.isFromCreateQuiz = true;
         await imageUploader.startUpload().then((value)  {
           quizData = {
@@ -77,7 +81,8 @@ class _CreateQuizState extends State<CreateQuiz> {
       await databaseService.addQuizDetails(
           quizData: quizData,
           quizId: quizId,
-          userId: userId).then((val){
+          userId: widget.currentUser.uid
+      ).then((val){
         setState(() {
           _isLoading = false;
         });
@@ -130,7 +135,7 @@ class _CreateQuizState extends State<CreateQuiz> {
     ImageUploader imageUploader = ImageUploader();
     imageUploader.field = "quizzes";
     imageUploader.quizId = quizId;
-    imageUploader.userId = userId;
+    imageUploader.userId = widget.currentUser.uid;
     imageUploader.isFromCreateQuiz = true;
     imageUploader.deleteUploaded();
 
@@ -149,12 +154,6 @@ class _CreateQuizState extends State<CreateQuiz> {
 
   @override
   Widget build(BuildContext context) {
-
-    final user = Provider.of<UserModel>(context);
-
-    setState(() {
-      userId = user.uid;
-    });
 
     return Scaffold(
       appBar: AppBar(

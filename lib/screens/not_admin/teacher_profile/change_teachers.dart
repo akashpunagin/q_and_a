@@ -180,7 +180,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
               return Loading();
             } else if (snapshots.data.docs.length == 0) {
               return InfoDisplay(
-                textToDisplay: "You don't have any teachers stored, add your teachers now !",
+                textToDisplay: "You have not added any teachers here, add your teachers now!",
               );
             } else {
               return SingleChildScrollView(
