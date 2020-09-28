@@ -1,25 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:q_and_a/models/user_model.dart';
 
 class DatabaseService {
 
   //Constant titles
-  static String userCollectionTitle = "users";
-
-  // static String usersTeacherCollectionTitle = "users_teacher";
-  // static String usersStudentCollectionTitle = "users_students";
-
-  static String quizCollectionTitle = "quizzes";
-  static String questionsCollectionTitle = "questions";
-  static String studentProgressCollectionTitle = "student_progress";
-  static String teachersCollectionTitle = "teachers";
-  static String quizResultSubmissionTitle = "quiz_submissions";
+  static String userCollectionTitle = "users"; // all users (teacher and student)
+  static String quizCollectionTitle = "quizzes"; // quizzes of teachers
+  static String questionsCollectionTitle = "questions"; // questions of quizzes of teachers
+  static String studentProgressCollectionTitle = "student_progress"; // progress of students
+  static String teachersCollectionTitle = "teachers"; // teachers of students
+  static String studentsCollectionTitle = "students"; // students of teachers
+  static String quizResultSubmissionTitle = "quiz_submissions"; // quiz submissions of student
 
   //Collection Reference
   final CollectionReference userDetailsCollection = FirebaseFirestore.instance.collection(userCollectionTitle);
-
-  // final CollectionReference usersTeacherCollection = FirebaseFirestore.instance.collection(usersTeacherCollectionTitle);
-  // final CollectionReference usersStudentsCollection = FirebaseFirestore.instance.collection(usersStudentCollectionTitle);
-
 
   // Adding to database
 
@@ -219,9 +213,45 @@ class DatabaseService {
 
   // Update data in database
 
-  Future<void> updateTeacherEmail({String userId, String teacherEmail}) {
-    return userDetailsCollection.doc(userId)
-        .update({"teacherEmail": teacherEmail})
+  Future<void> updateTeacherEmail({String newTeacherEmail, String currentTeacherEmail, StudentModel studentModel}) {
+
+    getUserDocumentWithField(fieldKey: "email", fieldValue: newTeacherEmail, limit: 1).then((value) {
+      print("NEW ${value.docs[0].data()['displayName']}");
+
+      Map<String, String> userMap = {
+        'displayName' : studentModel.displayName,
+        'email' : studentModel.email,
+        'photoUrl' : studentModel.photoUrl,
+      };
+
+      userDetailsCollection
+        .doc(value.docs[0].id)
+        .collection(studentsCollectionTitle)
+        .add(userMap);
+    });
+
+    getUserDocumentWithField(fieldKey: "email", fieldValue: currentTeacherEmail, limit: 1).then((value) async{
+      print("Current ${value.docs[0].data()['displayName']}");
+
+      QuerySnapshot result = await userDetailsCollection
+        .doc(value.docs[0].id)
+        .collection(studentsCollectionTitle)
+        .where('email', isEqualTo: studentModel.email)
+        .limit(1)
+        .get();
+
+      if(result.docs.length > 0) {
+        userDetailsCollection
+          .doc(value.docs[0].id)
+          .collection(studentsCollectionTitle)
+          .doc(result.docs[0].id)
+          .delete();
+      }
+
+    });
+
+    return userDetailsCollection.doc(studentModel.uid)
+        .update({"teacherEmail": newTeacherEmail})
         .catchError((e) {
       print(e.toString());
     });

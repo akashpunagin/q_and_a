@@ -168,7 +168,10 @@ class _TeacherProfileState extends State<TeacherProfile> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChangeTeachers(userId: widget.currentUser.uid, currentTeacherEmail: teacherEmailToStream,)
+              builder: (context) => ChangeTeachers(
+                currentTeacherEmail: teacherEmailToStream,
+                currentUser: widget.currentUser,
+              )
             )).then((value) {
               setTeacherEmail();
             });
