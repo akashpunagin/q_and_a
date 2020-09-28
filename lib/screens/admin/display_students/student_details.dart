@@ -25,32 +25,29 @@ class _StudentDetailsState extends State<StudentDetails> {
   Widget build(BuildContext context) {
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20.0),
-      child: FutureBuilder(
-        future: databaseService.getStudents(teacherEmail: widget.currentUser.email),
-        builder: (context, future) {
-          if(future.data == null) {
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+      child: StreamBuilder(
+        stream: databaseService.getStudents(userId : widget.currentUser.uid),
+        builder: (context, snapshot) {
+          if(!snapshot.hasData) {
             return Loading(loadingText: "Fetching latest data",);
-          } else if(future.data.length == 0) {
+          } else if(snapshot.data.documents.length == 0) {
             return InfoDisplay(textToDisplay: "You don't have any students as of now",);
           } else {
             return Column(
               children: [
                 Text("Your Students", style: TextStyle(fontSize: 20, color: Colors.black87),),
-                SizedBox(height: 20,),
-                SingleChildScrollView(
-                  physics: ScrollPhysics(),
+                SizedBox(height: 5,),
+                Expanded(
                   child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: future.data.length,
+                      itemCount: snapshot.data.documents.length,
                       itemBuilder: (context, index) {
                         return Container(
                           margin: EdgeInsets.symmetric(vertical: 5.0,),
                           child: UserDetailsTile(
-                            displayName: future.data[index]["displayName"],
-                            email: future.data[index]["email"],
-                            photoUrl: future.data[index]["photoUrl"],
+                            displayName: snapshot.data.documents[index].data()["displayName"],
+                            email: snapshot.data.documents[index].data()["email"],
+                            photoUrl: snapshot.data.documents[index].data()["photoUrl"],
                             isHighlightTile: false,
                           ),
                         );

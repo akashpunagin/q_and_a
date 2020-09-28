@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/screens/shared_screens/user_details_tile.dart';
@@ -11,9 +12,9 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ChangeTeachers extends StatefulWidget {
 
-  final String userId;
   final String currentTeacherEmail;
-  ChangeTeachers({this.userId, this.currentTeacherEmail});
+  final StudentModel currentUser;
+  ChangeTeachers({this.currentTeacherEmail, this.currentUser});
 
   @override
   _ChangeTeachersState createState() => _ChangeTeachersState();
@@ -48,7 +49,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            databaseService.removeTeacher(userId: widget.userId, teacherEmail: email).then((value) {
+            databaseService.removeTeacher(userId: widget.currentUser.uid, teacherEmail: email).then((value) {
               Navigator.pop(context);
             });
           },
@@ -121,7 +122,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                         "photoUrl" : result.docs[0].data()['photoUrl']
                       };
 
-                      databaseService.addTeacher(userId: widget.userId, teacherData: teacherMap).then((value) {
+                      databaseService.addTeacher(userId: widget.currentUser.uid, teacherData: teacherMap).then((value) {
                         SnackBar snackBar = _snackBarWithText("Teacher \"${teacherMap['displayName']}\" added successfully");
                         _scaffoldKey.currentState.showSnackBar(snackBar);
                       });
@@ -174,7 +175,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
       body: _isLoading ? Loading(loadingText: "Just a moment",) : Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
         child: StreamBuilder(
-          stream: databaseService.getTeachersOfUser(userId: widget.userId),
+          stream: databaseService.getTeachersOfUser(userId: widget.currentUser.uid),
           builder: (context, snapshots) {
             if( !snapshots.hasData) {
               return Loading();
@@ -204,8 +205,13 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                             margin: EdgeInsets.symmetric(vertical: 5.0),
                             child: GestureDetector(
                               onTap: () {
-                                databaseService.updateTeacherEmail(userId: widget.userId, teacherEmail: snapshots.data.docs[index].data()["email"].toString().trim());
-                                Navigator.pop(context);
+                                databaseService.updateTeacherEmail(
+                                  studentModel: widget.currentUser,
+                                  newTeacherEmail: snapshots.data.docs[index].data()["email"].toString().trim(),
+                                  currentTeacherEmail: widget.currentTeacherEmail,
+                                ).whenComplete(() {
+                                  Navigator.of(context).pop(snapshots.data.docs[index].data()["email"].toString().trim());
+                                });
                               },
                               onLongPress: isHighlightTile ? () {
                                 final snackBar = SnackBar(

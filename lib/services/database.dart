@@ -1,25 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:q_and_a/models/user_model.dart';
 
 class DatabaseService {
 
   //Constant titles
-  static String userCollectionTitle = "users";
-
-  // static String usersTeacherCollectionTitle = "users_teacher";
-  // static String usersStudentCollectionTitle = "users_students";
-
-  static String quizCollectionTitle = "quizzes";
-  static String questionsCollectionTitle = "questions";
-  static String studentProgressCollectionTitle = "student_progress";
-  static String teachersCollectionTitle = "teachers";
-  static String quizResultSubmissionTitle = "quiz_submissions";
+  static String userCollectionTitle = "users"; // all users (teacher and student)
+  static String quizCollectionTitle = "quizzes"; // quizzes of teachers
+  static String questionsCollectionTitle = "questions"; // questions of quizzes of teachers
+  static String studentProgressCollectionTitle = "student_progress"; // progress of students
+  static String teachersCollectionTitle = "teachers"; // teachers of students
+  static String studentsCollectionTitle = "students"; // students of teachers
+  static String quizResultSubmissionTitle = "quiz_submissions"; // quiz submissions of student
 
   //Collection Reference
   final CollectionReference userDetailsCollection = FirebaseFirestore.instance.collection(userCollectionTitle);
-
-  // final CollectionReference usersTeacherCollection = FirebaseFirestore.instance.collection(usersTeacherCollectionTitle);
-  // final CollectionReference usersStudentsCollection = FirebaseFirestore.instance.collection(usersStudentCollectionTitle);
-
 
   // Adding to database
 
@@ -101,48 +95,13 @@ class DatabaseService {
 
   // Get data from database
 
-  Future<List<Map<String,String>>> getStudents({String teacherEmail}) async {
-
-    // Map<String,String> student = {};
-    List<Map<String,String>> students = [];
-
-    var result =  await userDetailsCollection.get();
-    // print(result.documents);
-
-    for (DocumentSnapshot document in result.docs) {
-
-      if(document.data()["isAdmin"] == false) {
-
-        // print("STUDENT: ${document.data['displayName']}");
-
-        var teachers = await userDetailsCollection
-          .doc(document.data()["uid"])
-          .collection(teachersCollectionTitle)
-          .where('email', isEqualTo: teacherEmail)
-          .get();
-
-
-        if(teachers.docs.length > 0) {
-          // print("STUDENT: ${document.data['email']} is teacher of $teacherEmail");
-
-          Map<String,String> student = {
-            'displayName' : document.data()['displayName'],
-            'email' : document.data()['email'],
-            'photoUrl' : document.data()['photoUrl'],
-          };
-          students.add(student);
-
-
-          // return getUserWithUserId(document.data['uid']).snapshots();
-        }
-
-      }
-    }
-
-    // print(students);
-    return students;
-
+  Stream<QuerySnapshot> getStudents({String userId})  {
+    return userDetailsCollection
+        .doc(userId)
+        .collection(studentsCollectionTitle)
+        .snapshots();
   }
+
 
   Stream<QuerySnapshot> getQuizDetails({String userId})  {
     return userDetailsCollection
@@ -219,9 +178,43 @@ class DatabaseService {
 
   // Update data in database
 
-  Future<void> updateTeacherEmail({String userId, String teacherEmail}) {
-    return userDetailsCollection.doc(userId)
-        .update({"teacherEmail": teacherEmail})
+  Future<void> updateTeacherEmail({String newTeacherEmail, String currentTeacherEmail, StudentModel studentModel}) {
+
+    getUserDocumentWithField(fieldKey: "email", fieldValue: newTeacherEmail, limit: 1).then((value) {
+
+      Map<String, String> userMap = {
+        'displayName' : studentModel.displayName,
+        'email' : studentModel.email,
+        'photoUrl' : studentModel.photoUrl,
+      };
+
+      userDetailsCollection
+        .doc(value.docs[0].id)
+        .collection(studentsCollectionTitle)
+        .add(userMap);
+    });
+
+    getUserDocumentWithField(fieldKey: "email", fieldValue: currentTeacherEmail, limit: 1).then((value) async{
+
+      QuerySnapshot result = await userDetailsCollection
+        .doc(value.docs[0].id)
+        .collection(studentsCollectionTitle)
+        .where('email', isEqualTo: studentModel.email)
+        .limit(1)
+        .get();
+
+      if(result.docs.length > 0) {
+        userDetailsCollection
+          .doc(value.docs[0].id)
+          .collection(studentsCollectionTitle)
+          .doc(result.docs[0].id)
+          .delete();
+      }
+
+    });
+
+    return userDetailsCollection.doc(studentModel.uid)
+        .update({"teacherEmail": newTeacherEmail})
         .catchError((e) {
       print(e.toString());
     });

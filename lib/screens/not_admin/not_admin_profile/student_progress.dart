@@ -50,15 +50,12 @@ class _StudentProgressState extends State<StudentProgress> {
                 textToDisplay: "You've not submitted any quiz yet. Start submitting now!",
               );
             } else {
-              return SingleChildScrollView(
-                physics: ScrollPhysics(),
-                child: Column(
-                  children: [
-                    Text("Your Progress", style: TextStyle(fontSize: 20.0),),
-                    SizedBox(height: 10.0,),
-                    ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
+              return Column(
+                children: [
+                  Text("Your Progress", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                  SizedBox(height: 10.0,),
+                  Expanded(
+                    child: ListView.builder(
                         itemCount: future.data.documents.length,
                         itemBuilder: (context, index) {
                           final String formattedDate = formatterDate.format(future.data.documents[index].data()['createAt'].toDate());
@@ -75,8 +72,8 @@ class _StudentProgressState extends State<StudentProgress> {
                           );
                         }
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             }
           },

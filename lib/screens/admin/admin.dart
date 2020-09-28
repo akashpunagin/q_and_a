@@ -63,7 +63,7 @@ class _AdminState extends State<Admin> {
           ),
         ],
       ),
-      body: currentUser == null || currentUser.toMap().containsValue(null) ? Loading(
+      body: currentUser == null || currentUser.toMapNotNullValues().containsValue(null) ? Loading(
         loadingText: "Loading your credentials",
       ) : _screens[navBarIndex],
       bottomNavigationBar: CurvedNavigationBar(
