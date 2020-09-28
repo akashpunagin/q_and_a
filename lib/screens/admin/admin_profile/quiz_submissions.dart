@@ -49,15 +49,12 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
                 textToDisplay: "You've not received any quiz submissions yet",
               );
             } else {
-              return SingleChildScrollView(
-                physics: ScrollPhysics(),
-                child: Column(
-                  children: [
-                    Text("Your Quiz Submissions", style: TextStyle(fontSize: 20.0),),
-                    SizedBox(height: 10.0,),
-                    ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
+              return Column(
+                children: [
+                  Text("Your Quiz Submissions", style: TextStyle(fontSize: 20.0),),
+                  SizedBox(height: 10.0,),
+                  Expanded(
+                    child: ListView.builder(
                         itemCount: snapshots.data.documents.length,
                         itemBuilder: (context, index) {
                           final String formattedDate = formatterDate.format(snapshots.data.documents[index].data()['createAt'].toDate());
@@ -74,8 +71,8 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
                           );
                         }
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             }
           },

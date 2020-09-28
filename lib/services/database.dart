@@ -95,48 +95,13 @@ class DatabaseService {
 
   // Get data from database
 
-  Future<List<Map<String,String>>> getStudents({String teacherEmail}) async {
-
-    // Map<String,String> student = {};
-    List<Map<String,String>> students = [];
-
-    var result =  await userDetailsCollection.get();
-    // print(result.documents);
-
-    for (DocumentSnapshot document in result.docs) {
-
-      if(document.data()["isAdmin"] == false) {
-
-        // print("STUDENT: ${document.data['displayName']}");
-
-        var teachers = await userDetailsCollection
-          .doc(document.data()["uid"])
-          .collection(teachersCollectionTitle)
-          .where('email', isEqualTo: teacherEmail)
-          .get();
-
-
-        if(teachers.docs.length > 0) {
-          // print("STUDENT: ${document.data['email']} is teacher of $teacherEmail");
-
-          Map<String,String> student = {
-            'displayName' : document.data()['displayName'],
-            'email' : document.data()['email'],
-            'photoUrl' : document.data()['photoUrl'],
-          };
-          students.add(student);
-
-
-          // return getUserWithUserId(document.data['uid']).snapshots();
-        }
-
-      }
-    }
-
-    // print(students);
-    return students;
-
+  Stream<QuerySnapshot> getStudents({String userId})  {
+    return userDetailsCollection
+        .doc(userId)
+        .collection(studentsCollectionTitle)
+        .snapshots();
   }
+
 
   Stream<QuerySnapshot> getQuizDetails({String userId})  {
     return userDetailsCollection
@@ -216,7 +181,6 @@ class DatabaseService {
   Future<void> updateTeacherEmail({String newTeacherEmail, String currentTeacherEmail, StudentModel studentModel}) {
 
     getUserDocumentWithField(fieldKey: "email", fieldValue: newTeacherEmail, limit: 1).then((value) {
-      print("NEW ${value.docs[0].data()['displayName']}");
 
       Map<String, String> userMap = {
         'displayName' : studentModel.displayName,
@@ -231,7 +195,6 @@ class DatabaseService {
     });
 
     getUserDocumentWithField(fieldKey: "email", fieldValue: currentTeacherEmail, limit: 1).then((value) async{
-      print("Current ${value.docs[0].data()['displayName']}");
 
       QuerySnapshot result = await userDetailsCollection
         .doc(value.docs[0].id)
