@@ -30,9 +30,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
     DocumentReference result = databaseService.getUserWithUserId(widget.currentUser.uid);
     isTeacherEmailExists = result.get().then((result) async {
       if ( result.data().containsKey("teacherEmail") ) {
-        setState(() {
-          teacherEmailToStream = result.data()['teacherEmail'];
-        });
+        teacherEmailToStream = result.data()['teacherEmail'];
       }
       return result.data().containsKey("teacherEmail");
     });
@@ -47,7 +45,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
   @override
   Widget build(BuildContext context) {
 
-
+    print("SEE ${widget.currentUser.teacherEmail}"); // todo uncomment
 
     return Scaffold(
       body: Container(
@@ -167,14 +165,16 @@ class _TeacherProfileState extends State<TeacherProfile> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          if(teacherEmailToStream != "") {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChangeTeachers(
-                currentTeacherEmail: teacherEmailToStream,
-                currentUser: widget.currentUser,
-              )
+                builder: (context) => ChangeTeachers(
+                  currentTeacherEmail: teacherEmailToStream,
+                  currentUser: widget.currentUser,
+                )
             )).then((value) {
               setTeacherEmail();
             });
+          }
         },
         child: FaIcon(FontAwesomeIcons.userEdit, size: 20.0,),
       ),
