@@ -38,6 +38,7 @@ class _NotAdminState extends State<NotAdmin> {
         setState(() {
           studentModel.displayName = currentUser.displayName;
           studentModel.email = currentUser.email;
+          studentModel.teacherEmail = value.data().containsKey("teacherEmail") ? value.data()['teacherEmail'] : null;
           studentModel.uid = currentUser.uid;
           studentModel.photoUrl = currentUser.photoUrl;
           studentModel.isAdmin = false;
@@ -78,7 +79,7 @@ class _NotAdminState extends State<NotAdmin> {
           ),
         ],
       ),
-      body: studentModel.toMap().containsValue(null) || studentModel == null? Loading(
+      body: studentModel.toMapNotNullValues().containsValue(null) || studentModel == null? Loading(
         loadingText: "Loading your credentials",
       ) : _screens[navBarIndex],
       bottomNavigationBar: CurvedNavigationBar(

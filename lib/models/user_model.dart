@@ -8,7 +8,7 @@ class UserModel {
 
   UserModel({this.uid, this.isAdmin, this.displayName, this.photoUrl, this.email});
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMapNotNullValues() {
     return {
       'uid': uid,
       'isAdmin': isAdmin,
@@ -29,7 +29,7 @@ class StudentModel extends UserModel {
 
   StudentModel({this.nTotalCorrect, this.nTotalWrong, this.nTotalQuizSubmitted, this.nTotalNotAttempted, this.teacherEmail});
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMapNotNullValues() {
     return {
       'uid': uid,
       'isAdmin': isAdmin,

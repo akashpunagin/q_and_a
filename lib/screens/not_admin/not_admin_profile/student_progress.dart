@@ -52,7 +52,7 @@ class _StudentProgressState extends State<StudentProgress> {
             } else {
               return Column(
                 children: [
-                  Text("Your Progress", style: TextStyle(fontSize: 20.0),),
+                  Text("Your Progress", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
                   SizedBox(height: 10.0,),
                   Expanded(
                     child: ListView.builder(

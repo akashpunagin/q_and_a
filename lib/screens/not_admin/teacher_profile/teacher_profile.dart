@@ -23,160 +23,131 @@ class TeacherProfile extends StatefulWidget {
 class _TeacherProfileState extends State<TeacherProfile> {
 
   final DatabaseService databaseService = DatabaseService();
-  String teacherEmailToStream = "";
-  Future<bool> isTeacherEmailExists;
-
-  setTeacherEmail() {
-    DocumentReference result = databaseService.getUserWithUserId(widget.currentUser.uid);
-    isTeacherEmailExists = result.get().then((result) async {
-      if ( result.data().containsKey("teacherEmail") ) {
-        teacherEmailToStream = result.data()['teacherEmail'];
-      }
-      return result.data().containsKey("teacherEmail");
-    });
-  }
-
-  @override
-  void initState() {
-    setTeacherEmail();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
 
-    print("SEE ${widget.currentUser.teacherEmail}"); // todo uncomment
-
     return Scaffold(
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        child: FutureBuilder(
-          future: isTeacherEmailExists,
-          builder: (context, future) {
-            if(future.data == null) {
-              return Loading(loadingText: "Just a moment");
-            } else if (future.data == false) {
-              return InfoDisplay(
-                textToDisplay: "You have not selected any teachers yet",
-              );
-            } else {
-              return StreamBuilder(
-                  stream: databaseService.getUserWithField(
-                      fieldKey: "email",
-                      fieldValue: teacherEmailToStream,
-                      limit: 1),
-                  builder: (context, snapshots) {
-                    if ( !snapshots.hasData ) {
-                      return Loading(loadingText: "Fetching information",);
-                    } else if(snapshots.hasData && snapshots.data.documents.length !=0 && snapshots.data.documents[0].data()['isAdmin'] == false) {
-                      return InfoDisplay(
-                        textToDisplay: "The email \"${snapshots.data.documents[0].data()['email']}\" is not registered as teacher, edit your Teacher email",
-                      );
-                    } else if ( snapshots.hasData && snapshots.data.documents.length > 0) {
-                      return Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 20.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      "Selected Teacher",
-                                      style: TextStyle(fontSize: 25.0, color: Colors.black54),
-                                    ),
-                                    Card(
-                                      elevation: 5,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(15))
-                                      ),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  snapshots.data.documents[0].data()['photoUrl']
-                                              ),
-                                              radius: 45,
-                                            ),
-                                            SizedBox(height: 15,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
-                                                SizedBox(width: 5,),
-                                                Text(snapshots.data.documents[0].data()['displayName'], style: TextStyle(fontSize: 22.0),)
-                                              ],
-                                            ),
-                                            SizedBox(height: 5,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(Icons.email, size: 20.0,),
-                                                SizedBox(width: 5,),
-                                                Text(snapshots.data.documents[0].data()['email'], style: TextStyle(fontSize: 18.0),)
-                                              ],
-                                            ),
-                                          ],
+        child: widget.currentUser.teacherEmail == null ? InfoDisplay(
+          textToDisplay: "You have not selected any teachers yet",
+        ) : StreamBuilder(
+            stream: databaseService.getUserWithField(
+                fieldKey: "email",
+                fieldValue: widget.currentUser.teacherEmail,
+                limit: 1),
+            builder: (context, snapshots) {
+              if ( !snapshots.hasData ) {
+                return Loading(loadingText: "Fetching information",);
+              } else if(snapshots.hasData && snapshots.data.documents.length !=0 && snapshots.data.documents[0].data()['isAdmin'] == false) {
+                return InfoDisplay(
+                  textToDisplay: "The email \"${snapshots.data.documents[0].data()['email']}\" is not registered as teacher, edit your Teacher email",
+                );
+              } else if ( snapshots.hasData && snapshots.data.documents.length > 0) {
+                return Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                "Selected Teacher",
+                                style: TextStyle(fontSize: 25.0, color: Colors.black54),
+                              ),
+                              Card(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(15))
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            snapshots.data.documents[0].data()['photoUrl']
                                         ),
+                                        radius: 45,
                                       ),
-                                    ),
-
-
-                                    snapshots.hasData && snapshots.data.documents.length > 0 ?
-                                    blueButton(
-                                        context: context, label: "Send your progress to ${snapshots.data.documents[0].data()['displayName']}",
-                                        onPressed: (){
-                                          displaySelectGmailAlert(context: context, onPressed: () {
-                                            SendEmail sendEmail = SendEmail();
-                                            sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
-                                            sendEmail.studentName = widget.currentUser.displayName;
-                                            sendEmail.studentId = widget.currentUser.uid;
-                                            sendEmail.sendEmailProgress();
-                                          });
-                                    }) : Container(),
-                                  ],
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
+                                          SizedBox(width: 5,),
+                                          Text(snapshots.data.documents[0].data()['displayName'], style: TextStyle(fontSize: 22.0),)
+                                        ],
+                                      ),
+                                      SizedBox(height: 5,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.email, size: 20.0,),
+                                          SizedBox(width: 5,),
+                                          Text(snapshots.data.documents[0].data()['email'], style: TextStyle(fontSize: 18.0),)
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Image.asset(
-                              "assets/images/teacher_profile.png",
-                              width: MediaQuery.of(context).size.height * 0.4,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    else {
-                      return InfoDisplay(
-                        textToDisplay: "Didn't find any teachers with email \"$teacherEmailToStream\".\nEdit your Teacher Email.",
-                      );
-                    }
-                  }
-              );
-            }
 
-          }
+                              snapshots.hasData && snapshots.data.documents.length > 0 ?
+                              blueButton(
+                                  context: context, label: "Send your progress to ${snapshots.data.documents[0].data()['displayName']}",
+                                  onPressed: (){
+                                    displaySelectGmailAlert(context: context, onPressed: () {
+                                      SendEmail sendEmail = SendEmail();
+                                      sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
+                                      sendEmail.studentName = widget.currentUser.displayName;
+                                      sendEmail.studentId = widget.currentUser.uid;
+                                      sendEmail.sendEmailProgress();
+                                    });
+                                  }) : Container(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Image.asset(
+                        "assets/images/teacher_profile.png",
+                        width: MediaQuery.of(context).size.height * 0.4,
+                      ),
+                    ],
+                  ),
+                );
+              }
+              else {
+                return InfoDisplay(
+                  textToDisplay: "Didn't find any teachers with email \"${widget.currentUser.teacherEmail}\".\nEdit your Teacher Email.",
+                );
+              }
+            }
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if(teacherEmailToStream != "") {
+          if(widget.currentUser.teacherEmail != "") {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => ChangeTeachers(
-                  currentTeacherEmail: teacherEmailToStream,
+                  currentTeacherEmail: widget.currentUser.teacherEmail,
                   currentUser: widget.currentUser,
                 )
             )).then((value) {
-              setTeacherEmail();
+              if(value != null) {
+                setState(() {
+                  widget.currentUser.teacherEmail = value;
+                });
+              }
             });
           }
         },
-        child: FaIcon(FontAwesomeIcons.userEdit, size: 20.0,),
+        child: FaIcon(FontAwesomeIcons.userPlus, size: 20.0,),
       ),
     );
   }

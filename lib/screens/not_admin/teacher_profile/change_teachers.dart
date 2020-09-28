@@ -210,7 +210,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                                   newTeacherEmail: snapshots.data.docs[index].data()["email"].toString().trim(),
                                   currentTeacherEmail: widget.currentTeacherEmail,
                                 ).whenComplete(() {
-                                  Navigator.pop(context);
+                                  Navigator.of(context).pop(snapshots.data.docs[index].data()["email"].toString().trim());
                                 });
                               },
                               onLongPress: isHighlightTile ? () {
