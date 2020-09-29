@@ -57,8 +57,9 @@ displayLogOutAlert(BuildContext context) {
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
         onPressed: () async {
-          Navigator.pop(context);
-          await authService.signOut();
+          await authService.signOut().then((value) {
+            Navigator.pop(context);
+          });
         },
         gradient: LinearGradient(colors: [
           Colors.black54,
