@@ -1,3 +1,4 @@
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/admin/create_quiz/create_quiz.dart';
@@ -43,25 +44,38 @@ class _HomeAdminState extends State<HomeAdmin> {
                 textToDisplay: "Add Quiz to start",
               );
             } else {
-             return ListView.builder(
-                 itemCount: snapshots.data.documents.length,
-                 itemBuilder: (context, index) {
-                   Map<String, dynamic> quizData = snapshots.data.documents[index].data();
-                   QuizModel quizModel =  QuizModel(
-                     imgURL: quizData["imgURL"],
-                     topic: quizData["topic"],
-                     description: quizData["description"],
-                     quizId: quizData["quizId"],
-                     nCorrect: 0,
-                     nWrong: 0,
-                   );
+             return AnimationLimiter(
+               child: ListView.builder(
+                   itemCount: snapshots.data.documents.length,
+                   itemBuilder: (context, index) {
+                     Map<String, dynamic> quizData = snapshots.data.documents[index].data();
+                     QuizModel quizModel =  QuizModel(
+                       imgURL: quizData["imgURL"],
+                       topic: quizData["topic"],
+                       description: quizData["description"],
+                       quizId: quizData["quizId"],
+                       nCorrect: 0,
+                       nWrong: 0,
+                     );
 
-                   return QuizDetailsTile(
-                     quizModel: quizModel,
-                     teacherId: widget.currentUser.uid,
-                     fromStudent: false,
-                   );
-                 }
+                     return AnimationConfiguration.staggeredList(
+                       position: index,
+                       duration: const Duration(milliseconds: 300),
+                       child: SlideAnimation(
+                         verticalOffset: 50.0,
+                         duration: Duration(milliseconds: 200),
+                         child: FadeInAnimation(
+                           duration: Duration(milliseconds: 300),
+                           child: QuizDetailsTile(
+                             quizModel: quizModel,
+                             teacherId: widget.currentUser.uid,
+                             fromStudent: false,
+                           ),
+                         ),
+                       ),
+                     );
+                   }
+               ),
              );
             }
           },

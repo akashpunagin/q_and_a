@@ -1,3 +1,4 @@
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/screens/shared_screens/results_tile.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
@@ -51,25 +52,46 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
             } else {
               return Column(
                 children: [
-                  Text("Your Quiz Submissions", style: TextStyle(fontSize: 20.0),),
+                  Hero(
+                    tag: "quiz_submissions",
+                    child: AnimationConfiguration.synchronized(
+                      child: FadeInAnimation(
+                          duration: Duration(milliseconds: 400),
+                          child: Text("Your Quiz Submissions", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 10.0,),
                   Expanded(
-                    child: ListView.builder(
+                    child: AnimationLimiter(
+                      child: ListView.builder(
                         itemCount: snapshots.data.documents.length,
                         itemBuilder: (context, index) {
                           final String formattedDate = formatterDate.format(snapshots.data.documents[index].data()['createAt'].toDate());
                           final String formattedTime = formatterTime.format(snapshots.data.documents[index].data()['createAt'].toDate());
-                          return ResultsTile(
-                            index: (index+1).toString(),
-                            date: "$formattedDate, $formattedTime",
-                            teacherName: snapshots.data.documents[index].data()['student'],
-                            topic: snapshots.data.documents[index].data()['topic'],
-                            nTotal: snapshots.data.documents[index].data()['nTotal'].toString(),
-                            nCorrect: snapshots.data.documents[index].data()['nCorrect'].toString(),
-                            nWrong: snapshots.data.documents[index].data()['nWrong'].toString(),
-                            nNotAttempted: snapshots.data.documents[index].data()['nNotAttempted'].toString(),
+                          
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 300),
+                            child: SlideAnimation(
+                              verticalOffset: 20.0,
+                              child: FadeInAnimation(
+                                duration: Duration(milliseconds: 400),
+                                child: ResultsTile(
+                                  index: (index+1).toString(),
+                                  date: "$formattedDate, $formattedTime",
+                                  teacherName: snapshots.data.documents[index].data()['student'],
+                                  topic: snapshots.data.documents[index].data()['topic'],
+                                  nTotal: snapshots.data.documents[index].data()['nTotal'].toString(),
+                                  nCorrect: snapshots.data.documents[index].data()['nCorrect'].toString(),
+                                  nWrong: snapshots.data.documents[index].data()['nWrong'].toString(),
+                                  nNotAttempted: snapshots.data.documents[index].data()['nNotAttempted'].toString(),
+                                ),
+                              ),
+                            ),
                           );
                         }
+                      ),
                     ),
                   ),
                 ],

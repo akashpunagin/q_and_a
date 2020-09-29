@@ -1,3 +1,4 @@
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/user_details_tile.dart';
@@ -36,22 +37,39 @@ class _StudentDetailsState extends State<StudentDetails> {
           } else {
             return Column(
               children: [
-                Text("Your Students", style: TextStyle(fontSize: 20, color: Colors.black87),),
+                AnimationConfiguration.synchronized(
+                  child: FadeInAnimation(
+                      duration: Duration(milliseconds: 400),
+                    child: Text("Your Students", style: TextStyle(fontSize: 20, color: Colors.black54),)
+                  ),
+                ),
                 SizedBox(height: 5,),
                 Expanded(
-                  child: ListView.builder(
+                  child: AnimationLimiter(
+                    child: ListView.builder(
                       itemCount: snapshot.data.documents.length,
                       itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 5.0,),
-                          child: UserDetailsTile(
-                            displayName: snapshot.data.documents[index].data()["displayName"],
-                            email: snapshot.data.documents[index].data()["email"],
-                            photoUrl: snapshot.data.documents[index].data()["photoUrl"],
-                            isHighlightTile: false,
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 300),
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            child: FadeInAnimation(
+                              duration: Duration(milliseconds: 400),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 5.0,),
+                                child: UserDetailsTile(
+                                  displayName: snapshot.data.documents[index].data()["displayName"],
+                                  email: snapshot.data.documents[index].data()["email"],
+                                  photoUrl: snapshot.data.documents[index].data()["photoUrl"],
+                                  isHighlightTile: false,
+                                ),
+                              ),
+                            ),
                           ),
                         );
                       }
+                    ),
                   ),
                 ),
               ],
