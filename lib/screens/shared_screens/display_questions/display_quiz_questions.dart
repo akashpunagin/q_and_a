@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:q_and_a/models/question_model.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
@@ -9,6 +10,7 @@ import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/services/send_email.dart';
+import 'package:q_and_a/shared/constants.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -218,14 +220,58 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
               ],
             );
           } else {
-            return SingleChildScrollView(
-              physics: ScrollPhysics(),
-              child: Column(
-                children: <Widget>[
-                  // Display points
-                  ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
+            return Column(
+              children: <Widget>[
+                Hero(
+                  tag: widget.quizModel.quizId,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: CachedNetworkImage(
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                            useOldImageOnUrlChange: false,
+                            imageUrl: widget.quizModel.imgURL == "" || widget.quizModel.imgURL == null ? defaultQuizImageURL : widget.quizModel.imgURL,
+                            imageBuilder: (context, imageProvider) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width - 20,
+                                child: Image(
+                                  fit: BoxFit.cover,
+                                  image: imageProvider,
+                                  height: 50,
+                                ),
+                              );
+                            },
+                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, e) => Container(
+                              padding: EdgeInsets.symmetric(vertical: 20.0),
+                              alignment: Alignment.topCenter,
+                              child: Text("Couldn't load image", style: TextStyle(fontSize: 18),),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15.0),
+                            color: Colors.black45,
+                          ),
+                          alignment: Alignment.center,
+                          child: SingleChildScrollView(
+                            child: Text(widget.quizModel.topic, style: TextStyle(fontSize: 18.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
                       itemCount: snapshots.data.documents.length,
                       itemBuilder: (context, index) {
                         widget.quizModel.nTotal = snapshots.data.documents.length;
@@ -262,8 +308,8 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                         );
                       }
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           }
         },
