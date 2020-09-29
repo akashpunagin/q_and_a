@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
@@ -184,15 +185,18 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                 textToDisplay: "You have not added any teachers here, add your teachers now!",
               );
             } else {
-              return SingleChildScrollView(
-                physics: ScrollPhysics(),
-                child: Column(
-                  children: [
-                    Text("Your Teachers", style: TextStyle(fontSize: 20.0),),
-                    SizedBox(height: 10.0,),
-                    ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
+              return Column(
+                children: [
+                  AnimationConfiguration.synchronized(
+                    child: FadeInAnimation(
+                        duration: Duration(milliseconds: 400),
+                        child: Text("Your Teachers", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                    ),
+                  ),
+                  SizedBox(height: 10.0,),
+                  Expanded(
+                    child: AnimationLimiter(
+                      child: ListView.builder(
                         itemCount: snapshots.data.docs.length,
                         itemBuilder: (context, index) {
 
@@ -201,43 +205,56 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                             isHighlightTile = true;
                           }
 
-                          return Container(
-                            margin: EdgeInsets.symmetric(vertical: 5.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                databaseService.updateTeacherEmail(
-                                  studentModel: widget.currentUser,
-                                  newTeacherEmail: snapshots.data.docs[index].data()["email"].toString().trim(),
-                                  currentTeacherEmail: widget.currentTeacherEmail,
-                                ).whenComplete(() {
-                                  Navigator.of(context).pop(snapshots.data.docs[index].data()["email"].toString().trim());
-                                });
-                              },
-                              onLongPress: isHighlightTile ? () {
-                                final snackBar = SnackBar(
-                                  content: Text("Cannot delete currently selected teacher", style: TextStyle(fontSize: 15.0),),
-                                  backgroundColor: Colors.blueAccent,
-                                );
-                                _scaffoldKey.currentState.showSnackBar(snackBar);
-                              } : () {
-                                _showDeleteTeacherAlert(
-                                  context: context,
-                                  displayName: snapshots.data.docs[index].data()["displayName"],
-                                  email: snapshots.data.docs[index].data()["email"],
-                                );
-                              },
-                              child: UserDetailsTile(
-                                displayName: snapshots.data.docs[index].data()["displayName"],
-                                email: snapshots.data.docs[index].data()["email"],
-                                photoUrl: snapshots.data.docs[index].data()["photoUrl"],
-                                isHighlightTile: isHighlightTile,
+
+
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 300),
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                duration: Duration(milliseconds: 400),
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(vertical: 5.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      databaseService.updateTeacherEmail(
+                                        studentModel: widget.currentUser,
+                                        newTeacherEmail: snapshots.data.docs[index].data()["email"].toString().trim(),
+                                        currentTeacherEmail: widget.currentTeacherEmail,
+                                      ).whenComplete(() {
+                                        Navigator.of(context).pop(snapshots.data.docs[index].data()["email"].toString().trim());
+                                      });
+                                    },
+                                    onLongPress: isHighlightTile ? () {
+                                      final snackBar = SnackBar(
+                                        content: Text("Cannot delete currently selected teacher", style: TextStyle(fontSize: 15.0),),
+                                        backgroundColor: Colors.blueAccent,
+                                      );
+                                      _scaffoldKey.currentState.showSnackBar(snackBar);
+                                    } : () {
+                                      _showDeleteTeacherAlert(
+                                        context: context,
+                                        displayName: snapshots.data.docs[index].data()["displayName"],
+                                        email: snapshots.data.docs[index].data()["email"],
+                                      );
+                                    },
+                                    child: UserDetailsTile(
+                                      displayName: snapshots.data.docs[index].data()["displayName"],
+                                      email: snapshots.data.docs[index].data()["email"],
+                                      photoUrl: snapshots.data.docs[index].data()["photoUrl"],
+                                      isHighlightTile: isHighlightTile,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           );
                         }
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             }
           },

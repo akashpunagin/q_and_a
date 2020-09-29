@@ -1,3 +1,4 @@
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/screens/shared_screens/results_tile.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
@@ -25,7 +26,6 @@ class _StudentProgressState extends State<StudentProgress> {
   @override
   Widget build(BuildContext context) {
 
-    Future<QuerySnapshot> result = databaseService.getStudentProgress(userId: widget.userId);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +41,7 @@ class _StudentProgressState extends State<StudentProgress> {
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: FutureBuilder(
-          future: result,
+          future: databaseService.getStudentProgress(userId: widget.userId),
           builder: (context, future) {
             if(!future.hasData || future.connectionState == ConnectionState.waiting) {
               return Loading(loadingText: "Fetching your progress",);
@@ -52,25 +52,45 @@ class _StudentProgressState extends State<StudentProgress> {
             } else {
               return Column(
                 children: [
-                  Text("Your Progress", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                  Hero(
+                    tag: "student_progress",
+                    child: AnimationConfiguration.synchronized(
+                      child: FadeInAnimation(
+                          duration: Duration(milliseconds: 400),
+                          child: Text("Your Progress", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 10.0,),
                   Expanded(
                     child: ListView.builder(
-                        itemCount: future.data.documents.length,
-                        itemBuilder: (context, index) {
-                          final String formattedDate = formatterDate.format(future.data.documents[index].data()['createAt'].toDate());
-                          final String formattedTime = formatterTime.format(future.data.documents[index].data()['createAt'].toDate());
-                          return ResultsTile(
-                            index: (index+1).toString(),
-                            date: "$formattedDate, $formattedTime",
-                            teacherName: future.data.documents[index].data()['teacher'],
-                            topic: future.data.documents[index].data()['topic'],
-                            nTotal: future.data.documents[index].data()['nTotal'].toString(),
-                            nCorrect: future.data.documents[index].data()['nCorrect'].toString(),
-                            nWrong: future.data.documents[index].data()['nWrong'].toString(),
-                            nNotAttempted: future.data.documents[index].data()['nNotAttempted'].toString(),
-                          );
-                        }
+                      itemCount: future.data.documents.length,
+                      itemBuilder: (context, index) {
+                        final String formattedDate = formatterDate.format(future.data.documents[index].data()['createAt'].toDate());
+                        final String formattedTime = formatterTime.format(future.data.documents[index].data()['createAt'].toDate());
+
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 400),
+                          child: SlideAnimation(
+                            horizontalOffset: MediaQuery.of(context).size.width,
+                            duration: Duration(milliseconds: 400),
+                            child: FadeInAnimation(
+                              duration: Duration(milliseconds: 300),
+                              child: ResultsTile(
+                                index: (index+1).toString(),
+                                date: "$formattedDate, $formattedTime",
+                                teacherName: future.data.documents[index].data()['teacher'],
+                                topic: future.data.documents[index].data()['topic'],
+                                nTotal: future.data.documents[index].data()['nTotal'].toString(),
+                                nCorrect: future.data.documents[index].data()['nCorrect'].toString(),
+                                nWrong: future.data.documents[index].data()['nWrong'].toString(),
+                                nNotAttempted: future.data.documents[index].data()['nNotAttempted'].toString(),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                     ),
                   ),
                 ],

@@ -1,3 +1,4 @@
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/shared_screens/quiz_details_tile.dart';
@@ -55,10 +56,22 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
                           nWrong: 0,
                         );
 
-                        return QuizDetailsTile(
-                          quizModel: quizModel,
-                          teacherId: teacherId,
-                          fromStudent: true,
+
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 300),
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            duration: Duration(milliseconds: 200),
+                            child: FadeInAnimation(
+                              duration: Duration(milliseconds: 300),
+                              child: QuizDetailsTile(
+                                quizModel: quizModel,
+                                teacherId: teacherId,
+                                fromStudent: true,
+                              )
+                            ),
+                          ),
                         );
                       }
                   );

@@ -1,3 +1,4 @@
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/not_admin/not_admin_profile/student_progress.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
@@ -64,18 +65,32 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       crossAxisCount: 2,
-                      children: [
+                      children: <Widget>[
                         totalDisplayTile(label: "Correct Answers", value: widget.currentUser.nTotalCorrect.toString()),
                         totalDisplayTile(label: "Wrong Answers", value: widget.currentUser.nTotalWrong.toString()),
                         totalDisplayTile(label: "Not Attempted", value: widget.currentUser.nTotalNotAttempted.toString()),
                         totalDisplayTile(label: "Total Submissions", value: widget.currentUser.nTotalQuizSubmitted.toString()),
-                      ],
+                      ].asMap().map((index, value) {
+                        return MapEntry(index, AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          duration: const Duration(milliseconds: 375),
+                          columnCount: 2,
+                          child: ScaleAnimation(
+                            child: FadeInAnimation(
+                              child: value
+                            ),
+                          ),
+                        ));
+                      }).values.toList(),
                     ),
-                    blueButton(context: context, label: "View your progress", onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => StudentProgress(userId: widget.currentUser.uid,)
-                      ));
-                    }),
+                    Hero(
+                      tag: "student_progress",
+                      child: blueButton(context: context, label: "View your progress", onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => StudentProgress(userId: widget.currentUser.uid,)
+                        ));
+                      }),
+                    ),
                   ],
                 ),
               ),
@@ -120,7 +135,7 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
                                 Column(
                                   children: [
                                     Text(widget.currentUser.email.toString().split("@")[0], style: TextStyle(fontSize: 18.0),),
-                                    Text(widget.currentUser.email.toString().split("@")[1], style: TextStyle(fontSize: 16.0),),
+                                    Text("@${widget.currentUser.email.toString().split("@")[1]}", style: TextStyle(fontSize: 16.0, color: Colors.black54),),
                                   ],
                                 )
                               ],

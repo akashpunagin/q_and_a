@@ -1,3 +1,4 @@
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
@@ -50,67 +51,75 @@ class _TeacherProfileState extends State<TeacherProfile> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 20.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                "Selected Teacher",
-                                style: TextStyle(fontSize: 25.0, color: Colors.black54),
-                              ),
-                              Card(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(15))
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                            snapshots.data.documents[0].data()['photoUrl']
+                        child: AnimationConfiguration.synchronized(
+                          child: SlideAnimation(
+                            verticalOffset: 20,
+                            child: FadeInAnimation(
+                              duration: Duration(milliseconds: 300),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 20.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      "Selected Teacher",
+                                      style: TextStyle(fontSize: 25.0, color: Colors.black54),
+                                    ),
+                                    Card(
+                                      elevation: 5,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(15))
+                                      ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(vertical: 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  snapshots.data.documents[0].data()['photoUrl']
+                                              ),
+                                              radius: 45,
+                                            ),
+                                            SizedBox(height: 15,),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
+                                                SizedBox(width: 5,),
+                                                Text(snapshots.data.documents[0].data()['displayName'], style: TextStyle(fontSize: 22.0),)
+                                              ],
+                                            ),
+                                            SizedBox(height: 5,),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(Icons.email, size: 20.0,),
+                                                SizedBox(width: 5,),
+                                                Text(snapshots.data.documents[0].data()['email'], style: TextStyle(fontSize: 18.0),)
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                        radius: 45,
                                       ),
-                                      SizedBox(height: 15,),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
-                                          SizedBox(width: 5,),
-                                          Text(snapshots.data.documents[0].data()['displayName'], style: TextStyle(fontSize: 22.0),)
-                                        ],
-                                      ),
-                                      SizedBox(height: 5,),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(Icons.email, size: 20.0,),
-                                          SizedBox(width: 5,),
-                                          Text(snapshots.data.documents[0].data()['email'], style: TextStyle(fontSize: 18.0),)
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+
+                                    snapshots.hasData && snapshots.data.documents.length > 0 ?
+                                    blueButton(
+                                        context: context, label: "Send your progress to ${snapshots.data.documents[0].data()['displayName']}",
+                                        onPressed: (){
+                                          displaySelectGmailAlert(context: context, onPressed: () {
+                                            SendEmail sendEmail = SendEmail();
+                                            sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
+                                            sendEmail.studentName = widget.currentUser.displayName;
+                                            sendEmail.studentId = widget.currentUser.uid;
+                                            sendEmail.sendEmailProgress();
+                                          });
+                                        }) : Container(),
+                                  ],
                                 ),
                               ),
-
-                              snapshots.hasData && snapshots.data.documents.length > 0 ?
-                              blueButton(
-                                  context: context, label: "Send your progress to ${snapshots.data.documents[0].data()['displayName']}",
-                                  onPressed: (){
-                                    displaySelectGmailAlert(context: context, onPressed: () {
-                                      SendEmail sendEmail = SendEmail();
-                                      sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
-                                      sendEmail.studentName = widget.currentUser.displayName;
-                                      sendEmail.studentId = widget.currentUser.uid;
-                                      sendEmail.sendEmailProgress();
-                                    });
-                                  }) : Container(),
-                            ],
+                            ),
                           ),
                         ),
                       ),
