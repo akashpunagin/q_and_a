@@ -7,6 +7,7 @@ import 'package:q_and_a/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:q_and_a/shared/widgets.dart';
 
 class StudentDetails extends StatefulWidget {
 
@@ -40,7 +41,10 @@ class _StudentDetailsState extends State<StudentDetails> {
                 AnimationConfiguration.synchronized(
                   child: FadeInAnimation(
                       duration: Duration(milliseconds: 400),
-                    child: Text("Your Students", style: TextStyle(fontSize: 20, color: Colors.black54),)
+                    child: bottomShadow(
+                      context: context,
+                      child: Text("My Students", style: TextStyle(fontSize: 20, color: Colors.black54),),
+                    )
                   ),
                 ),
                 SizedBox(height: 5,),

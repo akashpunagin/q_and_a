@@ -57,7 +57,10 @@ class _StudentProgressState extends State<StudentProgress> {
                     child: AnimationConfiguration.synchronized(
                       child: FadeInAnimation(
                           duration: Duration(milliseconds: 400),
-                          child: Text("Your Progress", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                          child: bottomShadow(
+                            child: Text("Your Progress", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                            context: context
+                          )
                       ),
                     ),
                   ),

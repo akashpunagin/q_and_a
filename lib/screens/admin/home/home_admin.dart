@@ -10,6 +10,7 @@ import 'package:q_and_a/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:q_and_a/shared/widgets.dart';
 
 class HomeAdmin extends StatefulWidget {
 
@@ -44,38 +45,54 @@ class _HomeAdminState extends State<HomeAdmin> {
                 textToDisplay: "Add Quiz to start",
               );
             } else {
-             return AnimationLimiter(
-               child: ListView.builder(
-                   itemCount: snapshots.data.documents.length,
-                   itemBuilder: (context, index) {
-                     Map<String, dynamic> quizData = snapshots.data.documents[index].data();
-                     QuizModel quizModel =  QuizModel(
-                       imgURL: quizData["imgURL"],
-                       topic: quizData["topic"],
-                       description: quizData["description"],
-                       quizId: quizData["quizId"],
-                       nCorrect: 0,
-                       nWrong: 0,
-                     );
+             return Column(
+               children: [
+                 AnimationConfiguration.synchronized(
+                   child: FadeInAnimation(
+                       duration: Duration(milliseconds: 400),
+                       child: bottomShadow(
+                         context: context,
+                         child: Text("My Quizzes", style: TextStyle(fontSize: 20, color: Colors.black54),),
+                       )
+                   ),
+                 ),
+                 SizedBox(height: 5,),
+                 Expanded(
+                   child: AnimationLimiter(
+                     child: ListView.builder(
+                         itemCount: snapshots.data.documents.length,
+                         itemBuilder: (context, index) {
+                           Map<String, dynamic> quizData = snapshots.data.documents[index].data();
+                           QuizModel quizModel =  QuizModel(
+                             imgURL: quizData["imgURL"],
+                             topic: quizData["topic"],
+                             description: quizData["description"],
+                             quizId: quizData["quizId"],
+                             nCorrect: 0,
+                             nWrong: 0,
+                           );
 
-                     return AnimationConfiguration.staggeredList(
-                       position: index,
-                       duration: const Duration(milliseconds: 300),
-                       child: SlideAnimation(
-                         verticalOffset: 50.0,
-                         duration: Duration(milliseconds: 200),
-                         child: FadeInAnimation(
-                           duration: Duration(milliseconds: 300),
-                           child: QuizDetailsTile(
-                             quizModel: quizModel,
-                             teacherId: widget.currentUser.uid,
-                             fromStudent: false,
-                           ),
-                         ),
-                       ),
-                     );
-                   }
-               ),
+                           return AnimationConfiguration.staggeredList(
+                             position: index,
+                             duration: const Duration(milliseconds: 300),
+                             child: SlideAnimation(
+                               verticalOffset: 50.0,
+                               duration: Duration(milliseconds: 200),
+                               child: FadeInAnimation(
+                                 duration: Duration(milliseconds: 300),
+                                 child: QuizDetailsTile(
+                                   quizModel: quizModel,
+                                   teacherId: widget.currentUser.uid,
+                                   fromStudent: false,
+                                 ),
+                               ),
+                             ),
+                           );
+                         }
+                     ),
+                   ),
+                 ),
+               ],
              );
             }
           },
