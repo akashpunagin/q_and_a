@@ -89,8 +89,7 @@ class DatabaseService {
     await userDetailsCollection
         .doc(userId)
         .collection(teachersCollectionTitle)
-        .doc()
-        .set(teacherData);
+        .add(teacherData);
   }
 
   // Get data from database
@@ -141,6 +140,7 @@ class DatabaseService {
     return userDetailsCollection
         .doc(teacherId)
         .collection(quizResultSubmissionTitle)
+        .orderBy('createAt', descending: true)
         .snapshots();
   }
 
@@ -179,6 +179,8 @@ class DatabaseService {
   // Update data in database
 
   Future<void> updateTeacherEmail({String newTeacherEmail, String currentTeacherEmail, StudentModel studentModel}) {
+
+    print("NEW $newTeacherEmail CURRENT $currentTeacherEmail");
 
     getUserDocumentWithField(fieldKey: "email", fieldValue: newTeacherEmail, limit: 1).then((value) {
 

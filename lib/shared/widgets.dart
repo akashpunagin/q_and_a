@@ -136,21 +136,20 @@ Widget textFieldStackButtonTimes(Function onPressed) {
 }
 
 Widget bottomShadow({Widget child, BuildContext context}) {
-  return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(vertical: 10),
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black54,
-            blurRadius: 2.0,
-            offset: Offset(0,4.0), // shadow direction: bottom right
-          )
-        ],
-      ),
-      child: child
+  return Card(
+    elevation: 3,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(20))
+    ),
+    child: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(vertical: 10),
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+          color: Colors.white,
+        ),
+        child: child
+    ),
   );
 }

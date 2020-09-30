@@ -48,7 +48,7 @@ class ResultsTile extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(teacherName, style: TextStyle(fontSize: 17.0),),
+              Text(teacherName, style: TextStyle(fontSize: 15.0),),
               Text(date.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w200),),
               Text(index, style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w200),),
             ],

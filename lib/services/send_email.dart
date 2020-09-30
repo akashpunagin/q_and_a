@@ -69,17 +69,7 @@ class SendEmail {
     await file.writeAsBytes(pdf.save());
 
     // Creating body of mail
-    String bodyText = "Respected Sir / Madam,<br/>I attempted your quiz on $topic and scored $nCorrect correct and $nWrong wrong.<br/>There were $nTotal total questions, out of them ";
-    if(nNotAttempted > 0) {
-      if (nNotAttempted == 1) {
-        bodyText = bodyText + "$nNotAttempted was not attempted.";
-      } else {
-        bodyText = bodyText + "$nNotAttempted were not attempted.";
-      }
-    } else {
-      bodyText = bodyText + "every question was attempted.";
-    }
-    bodyText = bodyText + "<br/><br/>Please find the attachment below.<br/><br/>Thank you<br/><br/>$studentName";
+    String bodyText = "Respected Sir / Madam,<br/>Please find the attachment of my results on quiz - $topic.<br/><br/>Thank you<br/><br/>$studentName";
 
     final MailOptions mailOptions = MailOptions(
       body: bodyText,

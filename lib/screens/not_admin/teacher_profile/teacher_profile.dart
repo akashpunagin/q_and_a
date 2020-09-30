@@ -63,7 +63,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                   children: <Widget>[
                                     bottomShadow(
                                       child: Text(
-                                        "Selected Teacher",
+                                        "My Teacher",
                                         style: TextStyle(fontSize: 20.0, color: Colors.black54),
                                       ),
                                       context: context

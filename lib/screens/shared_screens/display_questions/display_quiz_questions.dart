@@ -224,51 +224,25 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
               children: <Widget>[
                 Hero(
                   tag: widget.quizModel.quizId,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 5),
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: CachedNetworkImage(
-                            width: MediaQuery.of(context).size.width,
-                            fit: BoxFit.cover,
-                            useOldImageOnUrlChange: false,
-                            imageUrl: widget.quizModel.imgURL == "" || widget.quizModel.imgURL == null ? defaultQuizImageURL : widget.quizModel.imgURL,
-                            imageBuilder: (context, imageProvider) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width - 20,
-                                child: Image(
-                                  fit: BoxFit.cover,
-                                  image: imageProvider,
-                                  height: 50,
-                                ),
-                              );
-                            },
-                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, e) => Container(
-                              padding: EdgeInsets.symmetric(vertical: 20.0),
-                              alignment: Alignment.topCenter,
-                              child: Text("Couldn't load image", style: TextStyle(fontSize: 18),),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
-                            color: Colors.black45,
-                          ),
-                          alignment: Alignment.center,
-                          child: SingleChildScrollView(
-                            child: Text(widget.quizModel.topic, style: TextStyle(fontSize: 18.0, color: Colors.white), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
-                          ),
-                        )
-                      ],
+                  child: Card(
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(15))
                     ),
-                  ),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      height: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15.0),
+                        // color: Colors.black45.withOpacity(0.5),
+                      ),
+                      alignment: Alignment.center,
+                      child: SingleChildScrollView(
+                        child: Text("Topic : ${widget.quizModel.topic}", style: TextStyle(fontSize: 18.0, color: Colors.black54), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
+                      ),
+                    ),
+                  )
                 ),
                 Expanded(
                   child: ListView.builder(
@@ -286,23 +260,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                               teacherId: widget.teacherId,
                               setDisplayQuestionsState: setDisplayQuestionsState,
                               showEditSnackBar: showEditedSnackBar,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.bottomLeft,
-                                      end: Alignment.bottomRight,
-                                      stops: [0.2, 0.5, 0.8],
-                                      colors: [
-                                        Colors.blue[400],
-                                        Colors.blue[700],
-                                        Colors.blue[400],
-                                      ]
-                                  ),
-                                  borderRadius: BorderRadius.circular(5.0)
-                              ),
-                              height: 10.0,
-                              margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                             ),
                           ],
                         );

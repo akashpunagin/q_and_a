@@ -170,7 +170,7 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
         }
       },
       child: Hero(
-        tag: widget.quizModel.quizId,
+        tag: widget.fromCreateQuiz == true ? "" : widget.quizModel.quizId,
         child: Card(
           margin: EdgeInsets.all(5),
           shape: RoundedRectangleBorder(

@@ -36,9 +36,9 @@ class _QuestionTileState extends State<QuestionTile> {
 
   Map<String, Color> _colors = {
     "defaultColor" : Colors.transparent,
-    "colorIfAnswered" : Colors.yellow[300],
-    "colorIfCorrect" : Colors.green[600],
-    "colorIfWrong" : Colors.red[500],
+    "colorIfAnswered" : Colors.yellow[300].withOpacity(0.8),
+    "colorIfCorrect" : Colors.green[600].withOpacity(0.8),
+    "colorIfWrong" : Colors.red[500].withOpacity(0.8),
   };
 
   displayDeleteQuestionAlert(BuildContext context) {

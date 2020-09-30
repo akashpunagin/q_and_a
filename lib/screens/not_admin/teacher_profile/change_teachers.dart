@@ -123,6 +123,8 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                         "photoUrl" : result.docs[0].data()['photoUrl']
                       };
 
+                      // todo edit student list of teacher
+
                       databaseService.addTeacher(userId: widget.currentUser.uid, teacherData: teacherMap).then((value) {
                         SnackBar snackBar = _snackBarWithText("Teacher \"${teacherMap['displayName']}\" added successfully");
                         _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -204,9 +206,6 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                           if(snapshots.data.docs[index].data()["email"] == widget.currentTeacherEmail) {
                             isHighlightTile = true;
                           }
-
-
-
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             duration: const Duration(milliseconds: 300),

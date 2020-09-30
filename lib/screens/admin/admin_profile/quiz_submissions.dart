@@ -19,14 +19,11 @@ class QuizSubmissions extends StatefulWidget {
 class _QuizSubmissionsState extends State<QuizSubmissions> {
 
   DatabaseService databaseService = DatabaseService();
-  final DateFormat formatterDate = DateFormat.MMMMd();
-  final DateFormat formatterTime = DateFormat.Hm();
+  final DateFormat formatterDate = DateFormat('MMM d');
+  final DateFormat formatterTime = DateFormat.jm();
 
   @override
   Widget build(BuildContext context) {
-
-    // Future<QuerySnapshot> result = databaseService.getStudentProgress(userId: widget.teacherId);
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -58,7 +55,7 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
                       child: FadeInAnimation(
                           duration: Duration(milliseconds: 400),
                           child: bottomShadow(
-                            child: Text("My Quiz Submissions", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                            child: Text("Received Quiz Submissions", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
                             context: context
                           )
                       ),
