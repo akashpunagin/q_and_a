@@ -135,7 +135,6 @@ class DatabaseService {
         .get();
   }
 
-
   Stream<QuerySnapshot> getQuizSubmissionDetails({String teacherId}) {
     return userDetailsCollection
         .doc(teacherId)
@@ -143,8 +142,6 @@ class DatabaseService {
         .orderBy('createAt', descending: true)
         .snapshots();
   }
-
-
 
 
   // Get user from database
@@ -314,6 +311,17 @@ class DatabaseService {
         .doc(result.docs[0].reference.id)
         .delete();
 
+  }
+
+  deleteQuizSubmissions({String userId}) {
+    return userDetailsCollection
+        .doc(userId)
+        .collection(quizResultSubmissionTitle)
+        .get().then((snapshot) {
+      for(DocumentSnapshot doc in snapshot.docs) {
+        doc.reference.delete();
+      }
+    });
   }
 
 }

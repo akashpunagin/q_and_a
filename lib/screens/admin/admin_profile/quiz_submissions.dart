@@ -6,6 +6,7 @@ import 'package:q_and_a/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 
 class QuizSubmissions extends StatefulWidget {
 
@@ -34,6 +35,14 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
         iconTheme: IconThemeData(
             color: Colors.black54
         ),
+        actions: [
+          FlatButton(
+            child: Text("Clear all", style: TextStyle(fontSize: 15, color: Colors.black54),),
+            onPressed: () {
+              databaseService.deleteQuizSubmissions(userId: widget.teacherId);
+            },
+          )
+        ],
       ),
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -64,12 +73,24 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
                   SizedBox(height: 10.0,),
                   Expanded(
                     child: AnimationLimiter(
+
+                      // child: StickyGroupedListView<dynamic, String>(
+                      //   elements: _elements,
+                      //   groupBy: (dynamic element) => element['group'],
+                      //   groupSeparatorBuilder: (dynamic element) => Text(element['group']),
+                      //   itemBuilder: (context, dynamic element) => Text(element['name']),
+                      //   itemComparator: (element1, element2) => element1['name'].compareTo(element2['name']),
+                      //   itemScrollController: GroupedItemScrollController(),
+                      //   order: StickyGroupedListOrder.ASC,
+                      // ),
+
+
                       child: ListView.builder(
                         itemCount: snapshots.data.documents.length,
                         itemBuilder: (context, index) {
                           final String formattedDate = formatterDate.format(snapshots.data.documents[index].data()['createAt'].toDate());
                           final String formattedTime = formatterTime.format(snapshots.data.documents[index].data()['createAt'].toDate());
-                          
+
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             duration: const Duration(milliseconds: 300),
