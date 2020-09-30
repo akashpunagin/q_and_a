@@ -106,7 +106,7 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
       style: alertStyle,
       type: AlertType.info,
       title: "E-mail alert",
-      desc: "Once you submit the quiz, an E-mail will be sent to your teacher about your progress. Are you sure you are ready?",
+      desc: "Once you submit the quiz, an\nE-mail will be sent to your teacher about your progress. Are you sure you are ready?",
       buttons: [
         DialogButton(
           child: Text(

@@ -71,11 +71,11 @@ class _NotAdminState extends State<NotAdmin> {
         elevation: 0.0,
         actions: <Widget>[
           FlatButton.icon(
-              onPressed: () {
-                displayLogOutAlert(context);
-              },
-              icon: FaIcon(FontAwesomeIcons.signOutAlt, size: 20.0,),
-              label: Text("Logout")
+            onPressed: () {
+              displayLogOutAlert(context);
+            },
+            icon: FaIcon(FontAwesomeIcons.signOutAlt, size: 20.0, color: Colors.black54,),
+            label: Text("Logout", style: TextStyle(color: Colors.black54),)
           ),
         ],
       ),

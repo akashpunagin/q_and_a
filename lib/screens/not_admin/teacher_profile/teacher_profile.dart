@@ -61,9 +61,12 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      "Selected Teacher",
-                                      style: TextStyle(fontSize: 25.0, color: Colors.black54),
+                                    bottomShadow(
+                                      child: Text(
+                                        "Selected Teacher",
+                                        style: TextStyle(fontSize: 20.0, color: Colors.black54),
+                                      ),
+                                      context: context
                                     ),
                                     Card(
                                       elevation: 5,

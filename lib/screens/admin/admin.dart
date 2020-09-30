@@ -58,8 +58,8 @@ class _AdminState extends State<Admin> {
               onPressed: () {
                 displayLogOutAlert(context);
               },
-              icon: FaIcon(FontAwesomeIcons.signOutAlt, size: 20.0,),
-              label: Text("Logout")
+              icon: FaIcon(FontAwesomeIcons.signOutAlt, size: 20.0, color: Colors.black54,),
+              label: Text("Logout", style: TextStyle(color: Colors.black54),)
           ),
         ],
       ),
