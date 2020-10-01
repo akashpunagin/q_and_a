@@ -118,6 +118,7 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                     } else {
 
                       Map<String, String> teacherMap = {
+                        "teacherId" : result.docs[0].data()["uid"],
                         "displayName" : result.docs[0].data()["displayName"],
                         "email" : result.docs[0].data()['email'],
                         "photoUrl" : result.docs[0].data()['photoUrl']
@@ -153,8 +154,6 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
 
   @override
   Widget build(BuildContext context) {
-
-    print("widget.currentTeacherEmail- ${widget.currentTeacherEmail}");
 
     return Scaffold(
       key: _scaffoldKey,
@@ -226,14 +225,14 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                                   child: GestureDetector(
                                     onTap: () {
                                       if(widget.currentTeacherEmail == snapshots.data.docs[index].data()["email"].toString().trim()) {
-                                        Navigator.of(context).pop(snapshots.data.docs[index].data()["email"].toString().trim());
+                                        Navigator.of(context).pop(snapshots.data.docs[index].data());
                                       } else {
                                         databaseService.updateTeacherEmail(
                                           studentModel: widget.currentUser,
                                           newTeacherEmail: snapshots.data.docs[index].data()["email"].toString().trim(),
                                           currentTeacherEmail: widget.currentTeacherEmail,
                                         ).whenComplete(() {
-                                          Navigator.of(context).pop(snapshots.data.docs[index].data()["email"].toString().trim());
+                                          Navigator.of(context).pop(snapshots.data.docs[index].data());
                                         });
                                       }
                                     },

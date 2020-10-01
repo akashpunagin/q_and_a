@@ -33,113 +33,90 @@ class _TeacherProfileState extends State<TeacherProfile> {
         margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: widget.currentUser.teacherEmail == null ? InfoDisplay(
           textToDisplay: "You have not selected any teachers yet",
-        ) : StreamBuilder(
-            stream: databaseService.getUserWithField(
-                fieldKey: "email",
-                fieldValue: widget.currentUser.teacherEmail,
-                limit: 1),
-            builder: (context, snapshots) {
-              if ( !snapshots.hasData ) {
-                return Loading(loadingText: "Fetching information",);
-              } else if(snapshots.hasData && snapshots.data.documents.length !=0 && snapshots.data.documents[0].data()['isAdmin'] == false) {
-                return InfoDisplay(
-                  textToDisplay: "The email \"${snapshots.data.documents[0].data()['email']}\" is not registered as teacher, edit your Teacher email",
-                );
-              } else if ( snapshots.hasData && snapshots.data.documents.length > 0) {
-                return Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: AnimationConfiguration.synchronized(
-                          child: SlideAnimation(
-                            verticalOffset: 20,
-                            child: FadeInAnimation(
-                              duration: Duration(milliseconds: 300),
+        ) : Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: AnimationConfiguration.synchronized(
+                  child: SlideAnimation(
+                    verticalOffset: 20,
+                    child: FadeInAnimation(
+                      duration: Duration(milliseconds: 300),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            screenLabel(
+                                child: Text(
+                                  "My Teacher",
+                                  style: TextStyle(fontSize: 20.0, color: Colors.black54),
+                                ),
+                                context: context
+                            ),
+                            Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(15))
+                              ),
                               child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 20.0),
+                                padding: EdgeInsets.symmetric(vertical: 10),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    screenLabel(
-                                      child: Text(
-                                        "My Teacher",
-                                        style: TextStyle(fontSize: 20.0, color: Colors.black54),
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          widget.currentUser.teacherPhotoUrl
                                       ),
-                                      context: context
+                                      radius: 45,
                                     ),
-                                    Card(
-                                      elevation: 5,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(15))
-                                      ),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(vertical: 10),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  snapshots.data.documents[0].data()['photoUrl']
-                                              ),
-                                              radius: 45,
-                                            ),
-                                            SizedBox(height: 15,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
-                                                SizedBox(width: 5,),
-                                                Text(snapshots.data.documents[0].data()['displayName'], style: TextStyle(fontSize: 22.0),)
-                                              ],
-                                            ),
-                                            SizedBox(height: 5,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(Icons.email, size: 20.0,),
-                                                SizedBox(width: 5,),
-                                                Text(snapshots.data.documents[0].data()['email'], style: TextStyle(fontSize: 18.0),)
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                    SizedBox(height: 15,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        FaIcon(FontAwesomeIcons.chalkboardTeacher, size: 18.0,),
+                                        SizedBox(width: 5,),
+                                        Text(widget.currentUser.teacherName, style: TextStyle(fontSize: 22.0),)
+                                      ],
                                     ),
-
-                                    snapshots.hasData && snapshots.data.documents.length > 0 ?
-                                    blueButton(
-                                        context: context, label: "Send your progress to ${snapshots.data.documents[0].data()['displayName']}",
-                                        onPressed: (){
-                                          displaySelectGmailAlert(context: context, onPressed: () {
-                                            SendEmail sendEmail = SendEmail();
-                                            sendEmail.teacherEmail = snapshots.data.documents[0].data()['email'];
-                                            sendEmail.studentName = widget.currentUser.displayName;
-                                            sendEmail.studentId = widget.currentUser.uid;
-                                            sendEmail.sendEmailProgress();
-                                          });
-                                        }) : Container(),
+                                    SizedBox(height: 5,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(Icons.email, size: 20.0,),
+                                        SizedBox(width: 5,),
+                                        Text(widget.currentUser.teacherEmail, style: TextStyle(fontSize: 18.0),)
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                          ),
+                            blueButton(
+                                context: context, label: "Send your progress to ${widget.currentUser.teacherName}",
+                                onPressed: (){
+                                  displaySelectGmailAlert(context: context, onPressed: () {
+                                    SendEmail sendEmail = SendEmail();
+                                    sendEmail.teacherEmail = widget.currentUser.teacherEmail;
+                                    sendEmail.studentName = widget.currentUser.displayName;
+                                    sendEmail.studentId = widget.currentUser.uid;
+                                    sendEmail.sendEmailProgress();
+                                  });
+                                }),
+                          ],
                         ),
                       ),
-                      Image.asset(
-                        "assets/images/teacher_profile.png",
-                        width: MediaQuery.of(context).size.height * 0.4,
-                      ),
-                    ],
+                    ),
                   ),
-                );
-              }
-              else {
-                return InfoDisplay(
-                  textToDisplay: "Didn't find any teachers with email \"${widget.currentUser.teacherEmail}\".\nEdit your Teacher Email.",
-                );
-              }
-            }
+                ),
+              ),
+              Image.asset(
+                "assets/images/teacher_profile.png",
+                width: MediaQuery.of(context).size.height * 0.4,
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -153,7 +130,10 @@ class _TeacherProfileState extends State<TeacherProfile> {
             )).then((value) {
               if(value != null) {
                 setState(() {
-                  widget.currentUser.teacherEmail = value;
+                  widget.currentUser.teacherEmail = value['email'];
+                  widget.currentUser.teacherName = value['displayName'];
+                  widget.currentUser.teacherPhotoUrl = value['photoUrl'];
+                  widget.currentUser.teacherId = value['teacherId'];
                 });
               }
             });

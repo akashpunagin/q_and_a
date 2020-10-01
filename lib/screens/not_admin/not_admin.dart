@@ -25,6 +25,15 @@ class _NotAdminState extends State<NotAdmin> {
   UserModel currentUser;
   int navBarIndex = 0;
 
+  fetchTeacherCredentials({String teacherEmail}) {
+    databaseService.getUserDocumentWithField(fieldKey: "email", fieldValue: teacherEmail, limit: 1).then((value) {
+      setState(() {
+        studentModel.teacherName = value.docs[0].data()['displayName'];
+        studentModel.teacherId = value.docs[0].data()['uid'];
+        studentModel.teacherPhotoUrl = value.docs[0].data()['photoUrl'];
+      });
+    });
+  }
 
   @override
   void initState() {
@@ -48,9 +57,7 @@ class _NotAdminState extends State<NotAdmin> {
           studentModel.nTotalNotAttempted = value.data().containsKey("nTotalNotAttempted") ?  value.data()["nTotalNotAttempted"] : 0;
         });
         if(value.data().containsKey("teacherEmail")) {
-          databaseService.getUserDocumentWithField(fieldKey: "email", fieldValue: value.data()['teacherEmail'], limit: 1).then((value) {
-            print("SEE ${value.docs[0].data()}");
-          });
+          fetchTeacherCredentials(teacherEmail: value.data()['teacherEmail']);
         }
       });
     });

@@ -25,8 +25,10 @@ class StudentModel extends UserModel {
   int nTotalWrong;
   int nTotalNotAttempted;
   int nTotalQuizSubmitted;
-  String teacherEmail;
+  String teacherId;
   String teacherName;
+  String teacherEmail;
+  String teacherPhotoUrl;
 
   StudentModel({this.nTotalCorrect, this.nTotalWrong, this.nTotalQuizSubmitted, this.nTotalNotAttempted, this.teacherEmail, this.teacherName});
 

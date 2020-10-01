@@ -24,7 +24,6 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
 
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
-  static String teacherId;
 
   @override
   Widget build(BuildContext context) {
@@ -34,69 +33,54 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
       child: widget.currentUser.teacherEmail == null ? InfoDisplay(
         textToDisplay: "You have not selected your teacher yet",
       ) : Scaffold(
-        body: FutureBuilder(
-          future: databaseService.getUserDocumentWithField(
-              fieldKey: "email",
-              fieldValue: widget.currentUser.teacherEmail,
-              limit: null),
-          builder: (context, future) {
-            try{
-              teacherId = future.hasData ? future.data.documents[0].data()['uid'] : null;
-              return StreamBuilder(
-                stream: databaseService.getQuizDetails(userId : teacherId),
-                builder: (context, snapshots) {
-                  return snapshots.data == null ? Loading(loadingText: "Getting quizzes",) : Column(
-                    children: [
-                      AnimationConfiguration.synchronized(
-                        child: FadeInAnimation(
-                            duration: Duration(milliseconds: 400),
-                            child: screenLabel(
-                              context: context,
-                              child: Text("${future.data.documents[0].data()['displayName']}'s quizzes", style: TextStyle(fontSize: 18, color: Colors.black54),),
-                            )
-                        ),
-                      ),
-                      SizedBox(height: 5,),
-                      Expanded(
-                        child: ListView.builder(
-                            itemCount: snapshots.data.documents.length,
-                            itemBuilder: (context, index) {
-                              QuizModel quizModel =  QuizModel(
-                                imgURL: snapshots.data.documents[index].data()["imgURL"],
-                                topic: snapshots.data.documents[index].data()["topic"],
-                                description: snapshots.data.documents[index].data()["description"],
-                                quizId: snapshots.data.documents[index].data()["quizId"],
-                                nCorrect: 0,
-                                nWrong: 0,
-                              );
-                              return AnimationConfiguration.staggeredList(
-                                position: index,
-                                duration: const Duration(milliseconds: 300),
-                                child: SlideAnimation(
-                                  verticalOffset: 50.0,
-                                  duration: Duration(milliseconds: 200),
-                                  child: FadeInAnimation(
-                                    duration: Duration(milliseconds: 300),
-                                    child: QuizDetailsTile(
-                                      quizModel: quizModel,
-                                      teacherId: teacherId,
-                                      fromStudent: true,
-                                    )
-                                  ),
-                                ),
-                              );
-                            }
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            } catch (e) {
-              return InfoDisplay(
-                textToDisplay: "Email \"${widget.currentUser.teacherEmail}\" not found.\nUpdate your teacher email.",
-              );
-            }
+        body: StreamBuilder(
+          stream: databaseService.getQuizDetails(userId : widget.currentUser.teacherId),
+          builder: (context, snapshots) {
+            return snapshots.data == null ? Loading(loadingText: "Getting quizzes",) : Column(
+              children: [
+                AnimationConfiguration.synchronized(
+                  child: FadeInAnimation(
+                      duration: Duration(milliseconds: 400),
+                      child: screenLabel(
+                        context: context,
+                        child: Text("${widget.currentUser.teacherName}'s quizzes", style: TextStyle(fontSize: 18, color: Colors.black54),),
+                      )
+                  ),
+                ),
+                SizedBox(height: 5,),
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: snapshots.data.documents.length,
+                      itemBuilder: (context, index) {
+                        QuizModel quizModel =  QuizModel(
+                          imgURL: snapshots.data.documents[index].data()["imgURL"],
+                          topic: snapshots.data.documents[index].data()["topic"],
+                          description: snapshots.data.documents[index].data()["description"],
+                          quizId: snapshots.data.documents[index].data()["quizId"],
+                          nCorrect: 0,
+                          nWrong: 0,
+                        );
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 300),
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            duration: Duration(milliseconds: 200),
+                            child: FadeInAnimation(
+                                duration: Duration(milliseconds: 300),
+                                child: QuizDetailsTile(
+                                  quizModel: quizModel,
+                                  teacherId: widget.currentUser.teacherId,
+                                  fromStudent: true,
+                                )
+                            ),
+                          ),
+                        );
+                      }
+                  ),
+                ),
+              ],
+            );
           },
         ),
       ),

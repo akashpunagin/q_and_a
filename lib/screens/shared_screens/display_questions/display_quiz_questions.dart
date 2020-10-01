@@ -33,8 +33,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
 
   DatabaseService databaseService = new DatabaseService();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  bool _isDisplayEmailAlert = true;
-  bool _isDisplayOptionsAlert = true;
   List<String> _alerts = ["Once you submit the quiz, an email will be sent to your teacher about your progress", "Note that for each question, you can select your answer only once.\nAll the best!"];
 
   Question _getQuestionModelFromStream(DocumentSnapshot questionSnapshot) {
@@ -238,8 +236,8 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                             child: screenLabel(
                               context: context,
                               child: ListTile(
-                                title: Text(_alerts[index]),
-                                subtitle: Text("Swipe to dismiss"),
+                                title: Text(_alerts[index], textAlign: TextAlign.start,),
+                                subtitle: Text("Swipe to dismiss", textAlign: TextAlign.end,),
                               ),
                             ),
                           );

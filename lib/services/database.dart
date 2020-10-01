@@ -233,7 +233,7 @@ class DatabaseService {
     result.get().then((result){
       checkFieldAndUpdate(result: result, field: nCorrect, totalField: "nTotalCorrect");
       checkFieldAndUpdate(result: result, field: nWrong, totalField: "nTotalWrong");
-      checkFieldAndUpdate(result: result, field: nCorrect, totalField: "nTotalNotAttempted");
+      checkFieldAndUpdate(result: result, field: nNotAttempted, totalField: "nTotalNotAttempted");
       checkFieldAndUpdate(result: result, field: 1, totalField: "nTotalQuizSubmitted");
     });
   }

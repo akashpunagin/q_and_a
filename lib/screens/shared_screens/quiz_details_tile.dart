@@ -105,7 +105,6 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
       context: context,
       style: alertStyle,
       type: AlertType.info,
-      // todo add note to student saying he can only select options once, update sentences
       title: "Before you start",
       desc: "Once you submit the quiz, an\nE-mail will be sent to your teacher about your progress. Are you sure you are ready?",
       buttons: [

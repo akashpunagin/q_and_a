@@ -1,3 +1,4 @@
+import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:flutter/material.dart';
 import '../not_admin.dart';
