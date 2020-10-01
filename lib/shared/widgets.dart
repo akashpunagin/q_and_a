@@ -135,7 +135,7 @@ Widget textFieldStackButtonTimes(Function onPressed) {
   );
 }
 
-Widget bottomShadow({Widget child, BuildContext context}) {
+Widget screenLabel({Widget child, BuildContext context}) {
   return Card(
     elevation: 3,
     shape: RoundedRectangleBorder(

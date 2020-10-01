@@ -61,7 +61,7 @@ class _TeacherProfileState extends State<TeacherProfile> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    bottomShadow(
+                                    screenLabel(
                                       child: Text(
                                         "My Teacher",
                                         style: TextStyle(fontSize: 20.0, color: Colors.black54),

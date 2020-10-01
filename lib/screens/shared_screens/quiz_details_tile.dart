@@ -105,7 +105,8 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
       context: context,
       style: alertStyle,
       type: AlertType.info,
-      title: "E-mail alert",
+      // todo add note to student saying he can only select options once, update sentences
+      title: "Before you start",
       desc: "Once you submit the quiz, an\nE-mail will be sent to your teacher about your progress. Are you sure you are ready?",
       buttons: [
         DialogButton(
@@ -150,7 +151,15 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
     return GestureDetector(
       onTap: () {
         if (widget.fromStudent == true) {
-          displayMailSendAlert(context);
+          // displayMailSendAlert(context);
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => DisplayQuizQuestions(
+                quizId: widget.quizModel.quizId,
+                teacherId: widget.teacherId,
+                quizModel: widget.quizModel,
+                fromStudent: true,
+              )
+          ));
         } else {
           if(widget.fromCreateQuiz != true) {
             Navigator.push(context, MaterialPageRoute(

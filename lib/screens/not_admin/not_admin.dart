@@ -47,6 +47,11 @@ class _NotAdminState extends State<NotAdmin> {
           studentModel.nTotalQuizSubmitted = value.data().containsKey("nTotalQuizSubmitted") ?  value.data()["nTotalQuizSubmitted"] : 0;
           studentModel.nTotalNotAttempted = value.data().containsKey("nTotalNotAttempted") ?  value.data()["nTotalNotAttempted"] : 0;
         });
+        if(value.data().containsKey("teacherEmail")) {
+          databaseService.getUserDocumentWithField(fieldKey: "email", fieldValue: value.data()['teacherEmail'], limit: 1).then((value) {
+            print("SEE ${value.docs[0].data()}");
+          });
+        }
       });
     });
     super.initState();

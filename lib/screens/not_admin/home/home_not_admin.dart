@@ -50,7 +50,7 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
                       AnimationConfiguration.synchronized(
                         child: FadeInAnimation(
                             duration: Duration(milliseconds: 400),
-                            child: bottomShadow(
+                            child: screenLabel(
                               context: context,
                               child: Text("${future.data.documents[0].data()['displayName']}'s quizzes", style: TextStyle(fontSize: 18, color: Colors.black54),),
                             )

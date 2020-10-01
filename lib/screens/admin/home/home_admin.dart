@@ -50,7 +50,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                  AnimationConfiguration.synchronized(
                    child: FadeInAnimation(
                        duration: Duration(milliseconds: 400),
-                       child: bottomShadow(
+                       child: screenLabel(
                          context: context,
                          child: Text("My Quizzes", style: TextStyle(fontSize: 20, color: Colors.black54),),
                        )

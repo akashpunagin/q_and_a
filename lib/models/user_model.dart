@@ -26,8 +26,9 @@ class StudentModel extends UserModel {
   int nTotalNotAttempted;
   int nTotalQuizSubmitted;
   String teacherEmail;
+  String teacherName;
 
-  StudentModel({this.nTotalCorrect, this.nTotalWrong, this.nTotalQuizSubmitted, this.nTotalNotAttempted, this.teacherEmail});
+  StudentModel({this.nTotalCorrect, this.nTotalWrong, this.nTotalQuizSubmitted, this.nTotalNotAttempted, this.teacherEmail, this.teacherName});
 
   Map<String, dynamic> toMapNotNullValues() {
     return {

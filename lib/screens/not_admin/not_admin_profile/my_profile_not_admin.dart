@@ -87,7 +87,7 @@ class _MyProfileNotAdminState extends State<MyProfileNotAdmin> {
                       tag: "student_progress",
                       child: blueButton(context: context, label: "View your progress", onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => StudentProgress(userId: widget.currentUser.uid,)
+                            builder: (context) => StudentProgress(currentUser : widget.currentUser,)
                         ));
                       }),
                     ),

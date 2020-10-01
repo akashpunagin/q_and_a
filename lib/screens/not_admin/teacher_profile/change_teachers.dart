@@ -123,8 +123,6 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                         "photoUrl" : result.docs[0].data()['photoUrl']
                       };
 
-                      // todo edit student list of teacher
-
                       databaseService.addTeacher(userId: widget.currentUser.uid, teacherData: teacherMap).then((value) {
                         SnackBar snackBar = _snackBarWithText("Teacher \"${teacherMap['displayName']}\" added successfully");
                         _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -155,6 +153,9 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
 
   @override
   Widget build(BuildContext context) {
+
+    print("widget.currentTeacherEmail- ${widget.currentTeacherEmail}");
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -192,7 +193,14 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                   AnimationConfiguration.synchronized(
                     child: FadeInAnimation(
                         duration: Duration(milliseconds: 400),
-                        child: Text("Your Teachers", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                        child: Column(
+                          children: [
+                            Text("Your Teachers", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
+                            widget.currentTeacherEmail == null ? SizedBox(height: 10,) : SizedBox(),
+                            widget.currentTeacherEmail == null ? Text("Tap to select your teacher", style: TextStyle(fontSize: 20.0, color: Colors.black54),) : Container(),
+                            widget.currentTeacherEmail == null ? Text("Long tap to delete", style: TextStyle(fontSize: 20.0, color: Colors.black54),) : Container(),
+                          ],
+                        ),
                     ),
                   ),
                   SizedBox(height: 10.0,),
@@ -217,13 +225,17 @@ class _ChangeTeachersState extends State<ChangeTeachers> {
                                   margin: EdgeInsets.symmetric(vertical: 5.0),
                                   child: GestureDetector(
                                     onTap: () {
-                                      databaseService.updateTeacherEmail(
-                                        studentModel: widget.currentUser,
-                                        newTeacherEmail: snapshots.data.docs[index].data()["email"].toString().trim(),
-                                        currentTeacherEmail: widget.currentTeacherEmail,
-                                      ).whenComplete(() {
+                                      if(widget.currentTeacherEmail == snapshots.data.docs[index].data()["email"].toString().trim()) {
                                         Navigator.of(context).pop(snapshots.data.docs[index].data()["email"].toString().trim());
-                                      });
+                                      } else {
+                                        databaseService.updateTeacherEmail(
+                                          studentModel: widget.currentUser,
+                                          newTeacherEmail: snapshots.data.docs[index].data()["email"].toString().trim(),
+                                          currentTeacherEmail: widget.currentTeacherEmail,
+                                        ).whenComplete(() {
+                                          Navigator.of(context).pop(snapshots.data.docs[index].data()["email"].toString().trim());
+                                        });
+                                      }
                                     },
                                     onLongPress: isHighlightTile ? () {
                                       final snackBar = SnackBar(

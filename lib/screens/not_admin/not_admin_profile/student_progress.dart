@@ -1,4 +1,7 @@
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:q_and_a/models/user_model.dart';
+import 'package:q_and_a/screens/not_admin/home/home_not_admin.dart';
+import 'package:q_and_a/screens/not_admin/not_admin.dart';
 import 'package:q_and_a/screens/shared_screens/results_tile.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
@@ -10,8 +13,8 @@ import 'package:flutter/material.dart';
 
 class StudentProgress extends StatefulWidget {
 
-  final String userId;
-  StudentProgress({this.userId});
+  StudentModel currentUser;
+  StudentProgress({this.currentUser});
 
   @override
   _StudentProgressState createState() => _StudentProgressState();
@@ -41,13 +44,28 @@ class _StudentProgressState extends State<StudentProgress> {
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: FutureBuilder(
-          future: databaseService.getStudentProgress(userId: widget.userId),
+          future: databaseService.getStudentProgress(userId: widget.currentUser.uid),
           builder: (context, future) {
             if(!future.hasData || future.connectionState == ConnectionState.waiting) {
               return Loading(loadingText: "Fetching your progress",);
             } else if(future.data.documents.length == 0) {
-              return InfoDisplay(
-                textToDisplay: "You've not submitted any quiz yet. Start submitting now!",
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InfoDisplay(
+                    textToDisplay: "You've not submitted any quiz yet",
+                  ),
+                  SizedBox(height: 20,),
+                  blueButton(
+                    context: context,
+                    label: "Start submitting now!",
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => NotAdmin()
+                      ));
+                    }
+                  ),
+                ],
               );
             } else {
               return Column(
@@ -57,7 +75,7 @@ class _StudentProgressState extends State<StudentProgress> {
                     child: AnimationConfiguration.synchronized(
                       child: FadeInAnimation(
                           duration: Duration(milliseconds: 400),
-                          child: bottomShadow(
+                          child: screenLabel(
                             child: Text("Your Progress", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
                             context: context
                           )

@@ -6,7 +6,6 @@ import 'package:q_and_a/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 
 class QuizSubmissions extends StatefulWidget {
 
@@ -63,7 +62,7 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
                     child: AnimationConfiguration.synchronized(
                       child: FadeInAnimation(
                           duration: Duration(milliseconds: 400),
-                          child: bottomShadow(
+                          child: screenLabel(
                             child: Text("Received Quiz Submissions", style: TextStyle(fontSize: 20.0, color: Colors.black54),),
                             context: context
                           )

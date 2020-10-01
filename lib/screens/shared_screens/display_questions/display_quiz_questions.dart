@@ -33,6 +33,9 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
 
   DatabaseService databaseService = new DatabaseService();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool _isDisplayEmailAlert = true;
+  bool _isDisplayOptionsAlert = true;
+  List<String> _alerts = ["Once you submit the quiz, an email will be sent to your teacher about your progress", "Note that for each question, you can select your answer only once.\nAll the best!"];
 
   Question _getQuestionModelFromStream(DocumentSnapshot questionSnapshot) {
     Question questionModel = new Question();
@@ -63,7 +66,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
   }
 
   _submitQuiz(UserModel user) async {
-    SendEmail sendEmail = SendEmail();
 
     DocumentReference result = databaseService.getUserWithUserId(user.uid);
     Map<String, String> teacherData = await result.get().then((result){
@@ -72,16 +74,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
         "displayName" : result.data()['displayName'],
       };
     });
-
-    sendEmail.teacherEmail = teacherData['teacherEmail'];
-    sendEmail.studentName = teacherData['displayName'];
-    sendEmail.topic = widget.quizModel.topic;
-    sendEmail.nWrong = widget.quizModel.nWrong;
-    sendEmail.nCorrect = widget.quizModel.nCorrect;
-    sendEmail.nTotal = widget.quizModel.nTotal;
-    sendEmail.nNotAttempted = widget.quizModel.nNotAttempted;
-
-    await sendEmail.sendEmailQuizSubmit();
 
     databaseService.updateStudentTotals(
       userId: user.uid,
@@ -103,6 +95,18 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
       userId: user.uid,
       progressData: progressData,
     );
+
+    SendEmail sendEmail = SendEmail();
+
+    sendEmail.teacherEmail = teacherData['teacherEmail'];
+    sendEmail.studentName = teacherData['displayName'];
+    sendEmail.topic = widget.quizModel.topic;
+    sendEmail.nWrong = widget.quizModel.nWrong;
+    sendEmail.nCorrect = widget.quizModel.nCorrect;
+    sendEmail.nTotal = widget.quizModel.nTotal;
+    sendEmail.nNotAttempted = widget.quizModel.nNotAttempted;
+
+    await sendEmail.sendEmailQuizSubmit();
 
     Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) => DisplayQuizResults(
@@ -128,7 +132,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
 
   }
-
   @override
   void initState() {
     super.initState();
@@ -222,6 +225,29 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
           } else {
             return Column(
               children: <Widget>[
+                widget.fromStudent == true ? Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _alerts.length,
+                        itemBuilder: (context, index) {
+                          return Dismissible(
+                            key: UniqueKey(),
+                            child: screenLabel(
+                              context: context,
+                              child: ListTile(
+                                title: Text(_alerts[index]),
+                                subtitle: Text("Swipe to dismiss"),
+                              ),
+                            ),
+                          );
+                        }
+                      ),
+                    ],
+                  ),
+                ) : Container(),
                 Hero(
                   tag: widget.quizModel.quizId,
                   child: Card(
@@ -232,14 +258,15 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                     ),
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      height: 20,
+                      height: 25,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
-                        // color: Colors.black45.withOpacity(0.5),
                       ),
                       alignment: Alignment.center,
                       child: SingleChildScrollView(
-                        child: Text("Topic : ${widget.quizModel.topic}", style: TextStyle(fontSize: 18.0, color: Colors.black54), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.zero,
+                        child: Text("Topic : ${widget.quizModel.topic}", style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.center, overflow: TextOverflow.fade,),
                       ),
                     ),
                   )

@@ -176,42 +176,41 @@ class DatabaseService {
   // Update data in database
 
   Future<void> updateTeacherEmail({String newTeacherEmail, String currentTeacherEmail, StudentModel studentModel}) {
-
-    print("NEW $newTeacherEmail CURRENT $currentTeacherEmail");
-
-    getUserDocumentWithField(fieldKey: "email", fieldValue: newTeacherEmail, limit: 1).then((value) {
-
-      Map<String, String> userMap = {
-        'displayName' : studentModel.displayName,
-        'email' : studentModel.email,
-        'photoUrl' : studentModel.photoUrl,
-      };
-
-      userDetailsCollection
-        .doc(value.docs[0].id)
-        .collection(studentsCollectionTitle)
-        .add(userMap);
-    });
-
-    getUserDocumentWithField(fieldKey: "email", fieldValue: currentTeacherEmail, limit: 1).then((value) async{
-
-      QuerySnapshot result = await userDetailsCollection
-        .doc(value.docs[0].id)
-        .collection(studentsCollectionTitle)
-        .where('email', isEqualTo: studentModel.email)
-        .limit(1)
-        .get();
-
-      if(result.docs.length > 0) {
+    if(newTeacherEmail != null) {
+      // add student in students collection
+      getUserDocumentWithField(fieldKey: "email", fieldValue: newTeacherEmail, limit: 1).then((value) {
+        Map<String, String> userMap = {
+          'displayName' : studentModel.displayName,
+          'email' : studentModel.email,
+          'photoUrl' : studentModel.photoUrl,
+        };
         userDetailsCollection
           .doc(value.docs[0].id)
           .collection(studentsCollectionTitle)
-          .doc(result.docs[0].id)
-          .delete();
-      }
+          .add(userMap);
+      });
+    }
 
-    });
+    if(currentTeacherEmail != null) {
+      // delete student from current teacher
+      getUserDocumentWithField(fieldKey: "email", fieldValue: currentTeacherEmail, limit: 1).then((value) async {
+        QuerySnapshot result = await userDetailsCollection
+          .doc(value.docs[0].id)
+          .collection(studentsCollectionTitle)
+          .where('email', isEqualTo: studentModel.email)
+          .limit(1)
+          .get();
+        if(result.docs.length > 0) {
+          userDetailsCollection
+            .doc(value.docs[0].id)
+            .collection(studentsCollectionTitle)
+            .doc(result.docs[0].id)
+            .delete();
+        }
+      });
+    }
 
+    // update teacherEmail field of student
     return userDetailsCollection.doc(studentModel.uid)
         .update({"teacherEmail": newTeacherEmail})
         .catchError((e) {
