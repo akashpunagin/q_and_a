@@ -153,3 +153,25 @@ Widget screenLabel({Widget child, BuildContext context}) {
     ),
   );
 }
+
+Widget listDismissibleAlerts({List<String> alerts, Function onDismissed}) {
+  return ListView.builder(
+      shrinkWrap: true,
+      itemCount: alerts.length,
+      itemBuilder: (context, index) {
+        return Dismissible(
+          onDismissed: (direction) {
+            onDismissed();
+          },
+          key: UniqueKey(),
+          child: screenLabel(
+            context: context,
+            child: ListTile(
+              title: Text(alerts[index], textAlign: TextAlign.start,),
+              subtitle: Text("Swipe to dismiss", textAlign: TextAlign.end,),
+            ),
+          ),
+        );
+      }
+  );
+}

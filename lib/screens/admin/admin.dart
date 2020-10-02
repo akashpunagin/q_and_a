@@ -25,13 +25,22 @@ class _AdminState extends State<Admin> {
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
   UserModel currentUser;
+  TeacherModel teacherModel = TeacherModel();
+  bool isShowHomeAdminAlerts = true;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
         currentUser = Provider.of<UserModel>(context, listen: false);
-        currentUser.isAdmin = true;
+
+        teacherModel.uid = currentUser.uid;
+        teacherModel.isAdmin = true;
+        teacherModel.displayName = currentUser.displayName;
+        teacherModel.photoUrl = currentUser.photoUrl;
+        teacherModel.email = currentUser.email;
+        teacherModel.isShowHomeAdminAlerts = true;
+
       });
     });
     super.initState();
@@ -41,7 +50,7 @@ class _AdminState extends State<Admin> {
   Widget build(BuildContext context) {
 
     List<Widget> _screens = [
-      HomeAdmin(currentUser: currentUser,),
+      HomeAdmin(currentUser: teacherModel,),
       StudentDetails(currentUser: currentUser,),
       MyProfileAdmin(currentUser: currentUser,),
     ];
@@ -63,7 +72,7 @@ class _AdminState extends State<Admin> {
           ),
         ],
       ),
-      body: currentUser == null || currentUser.toMapNotNullValues().containsValue(null) ? Loading(
+      body: teacherModel == null || teacherModel.toMapNotNullValues().containsValue(null) ? Loading(
         loadingText: "Loading your credentials",
       ) : _screens[navBarIndex],
       bottomNavigationBar: CurvedNavigationBar(

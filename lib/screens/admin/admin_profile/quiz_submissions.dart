@@ -72,18 +72,6 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
                   SizedBox(height: 10.0,),
                   Expanded(
                     child: AnimationLimiter(
-
-                      // child: StickyGroupedListView<dynamic, String>(
-                      //   elements: _elements,
-                      //   groupBy: (dynamic element) => element['group'],
-                      //   groupSeparatorBuilder: (dynamic element) => Text(element['group']),
-                      //   itemBuilder: (context, dynamic element) => Text(element['name']),
-                      //   itemComparator: (element1, element2) => element1['name'].compareTo(element2['name']),
-                      //   itemScrollController: GroupedItemScrollController(),
-                      //   order: StickyGroupedListOrder.ASC,
-                      // ),
-
-
                       child: ListView.builder(
                         itemCount: snapshots.data.documents.length,
                         itemBuilder: (context, index) {

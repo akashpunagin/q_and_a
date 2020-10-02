@@ -28,77 +28,6 @@ class QuizDetailsTile extends StatefulWidget {
 
 class _QuizDetailsTileState extends State<QuizDetailsTile> {
   final DatabaseService databaseService = DatabaseService();
-  bool _isLoading = false;
-
-  displayDeleteQuizAlert(BuildContext context) {
-    Alert(
-      context: context,
-      style: alertStyle,
-      type: AlertType.info,
-      title: "Quiz Deletion",
-      desc: "Are you you want to delete\nQuiz - ${widget.quizModel.topic}?",
-      buttons: [
-        DialogButton(
-          child: Text(
-            "Delete",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () async {
-            setState(() {
-              _isLoading = true;
-            });
-            Navigator.pop(context);
-
-            // Delete images in cloud storage, of all questions in quiz
-            await databaseService.getQuizQuestionDocuments(userId: widget.teacherId, quizId: widget.quizModel.quizId).then((value) {
-              for(var document in value.docs) {
-                deleteStorageImagesOfQuiz(
-                  teacherId: widget.teacherId,
-                  quizId: widget.quizModel.quizId,
-                  questionId: document.data()['questionId'],
-                  questionImageUrl: document.data()['questionImageUrl'],
-                  option1ImageUrl: document.data()['option1ImageUrl'],
-                  option2ImageUrl: document.data()['option2ImageUrl'],
-                  option3ImageUrl: document.data()['option3ImageUrl'],
-                  option4ImageUrl: document.data()['option4ImageUrl'],
-                );
-              }
-              if(widget.quizModel.imgURL != null) {
-                // Delete quiz image in cloud storage
-                ImageUploader imageUploader = ImageUploader();
-                imageUploader.quizId = widget.quizModel.quizId;
-                imageUploader.userId = widget.teacherId;
-                imageUploader.field = "quizzes";
-                imageUploader.isFromCreateQuiz = true;
-                imageUploader.deleteUploaded();
-                print("DELETED QUIZ");
-              }
-            });
-            await databaseService.deleteQuizDetails(userId: widget.teacherId, quizId: widget.quizModel.quizId);
-            setState(() {
-              _isLoading = false;
-            });
-            // Navigator.pop(context);
-          },
-          gradient: LinearGradient(colors: [
-            Colors.blue[500],
-            Colors.blue[400],
-          ]),
-        ),
-        DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () => Navigator.pop(context),
-          gradient: LinearGradient(colors: [
-            Colors.blue[400],
-            Colors.blue[500],
-          ]),
-        )
-      ],
-    ).show();
-  }
 
   displayMailSendAlert(BuildContext context) {
     Alert(
@@ -172,11 +101,6 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
           }
         }
       },
-      onLongPress: () {
-        if(widget.fromStudent != true) {
-          displayDeleteQuizAlert(context);
-        }
-      },
       child: Hero(
         tag: widget.fromCreateQuiz == true ? "" : widget.quizModel.quizId,
         child: Card(
@@ -220,18 +144,7 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
                     ),
                   ),
                 ),
-                _isLoading ? Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    color: Colors.black.withOpacity(0.7),
-                  ),
-                  alignment: Alignment.center,
-                  child: Loading(
-                    loadingText: "Deleting",
-                    textColor: Colors.white,
-                    spinKitColor: Colors.white,
-                  ),
-                ) : Container(
+                Container(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15.0),

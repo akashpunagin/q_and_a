@@ -36,51 +36,57 @@ class _HomeNotAdminState extends State<HomeNotAdmin> {
         body: StreamBuilder(
           stream: databaseService.getQuizDetails(userId : widget.currentUser.teacherId),
           builder: (context, snapshots) {
-            return snapshots.data == null ? Loading(loadingText: "Getting quizzes",) : Column(
-              children: [
-                AnimationConfiguration.synchronized(
-                  child: FadeInAnimation(
-                      duration: Duration(milliseconds: 400),
-                      child: screenLabel(
-                        context: context,
-                        child: Text("${widget.currentUser.teacherName}'s quizzes", style: TextStyle(fontSize: 18, color: Colors.black54),),
-                      )
+            if(snapshots.data == null) {
+              return Loading(loadingText: "Getting quizzes",);
+            } else if(snapshots.data.documents.length == 0) {
+              return InfoDisplay(textToDisplay: "Wait for ${widget.currentUser.teacherName} to add quizzes",);
+            } else {
+              return Column(
+                children: [
+                  AnimationConfiguration.synchronized(
+                    child: FadeInAnimation(
+                        duration: Duration(milliseconds: 400),
+                        child: screenLabel(
+                          context: context,
+                          child: Text("${widget.currentUser.teacherName}'s quizzes", style: TextStyle(fontSize: 18, color: Colors.black54),),
+                        )
+                    ),
                   ),
-                ),
-                SizedBox(height: 5,),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: snapshots.data.documents.length,
-                      itemBuilder: (context, index) {
-                        QuizModel quizModel =  QuizModel(
-                          imgURL: snapshots.data.documents[index].data()["imgURL"],
-                          topic: snapshots.data.documents[index].data()["topic"],
-                          description: snapshots.data.documents[index].data()["description"],
-                          quizId: snapshots.data.documents[index].data()["quizId"],
-                          nCorrect: 0,
-                          nWrong: 0,
-                        );
-                        return AnimationConfiguration.staggeredList(
-                          position: index,
-                          duration: const Duration(milliseconds: 300),
-                          child: SlideAnimation(
-                            verticalOffset: 50.0,
-                            duration: Duration(milliseconds: 200),
-                            child: FadeInAnimation(
-                                duration: Duration(milliseconds: 300),
-                                child: QuizDetailsTile(
-                                  quizModel: quizModel,
-                                  teacherId: widget.currentUser.teacherId,
-                                  fromStudent: true,
-                                )
+                  SizedBox(height: 5,),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: snapshots.data.documents.length,
+                        itemBuilder: (context, index) {
+                          QuizModel quizModel =  QuizModel(
+                            imgURL: snapshots.data.documents[index].data()["imgURL"],
+                            topic: snapshots.data.documents[index].data()["topic"],
+                            description: snapshots.data.documents[index].data()["description"],
+                            quizId: snapshots.data.documents[index].data()["quizId"],
+                            nCorrect: 0,
+                            nWrong: 0,
+                          );
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 300),
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              duration: Duration(milliseconds: 200),
+                              child: FadeInAnimation(
+                                  duration: Duration(milliseconds: 300),
+                                  child: QuizDetailsTile(
+                                    quizModel: quizModel,
+                                    teacherId: widget.currentUser.teacherId,
+                                    fromStudent: true,
+                                  )
+                              ),
                             ),
-                          ),
-                        );
-                      }
+                          );
+                        }
+                    ),
                   ),
-                ),
-              ],
-            );
+                ],
+              );
+            }
           },
         ),
       ),

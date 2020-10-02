@@ -7,6 +7,12 @@ class UserModel {
   String email;
 
   UserModel({this.uid, this.isAdmin, this.displayName, this.photoUrl, this.email});
+}
+
+class TeacherModel extends UserModel {
+  bool isShowHomeAdminAlerts;
+
+  TeacherModel({this.isShowHomeAdminAlerts});
 
   Map<String, dynamic> toMapNotNullValues() {
     return {
@@ -17,7 +23,6 @@ class UserModel {
       'email': email,
     };
   }
-
 }
 
 class StudentModel extends UserModel {
