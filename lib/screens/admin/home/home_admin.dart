@@ -243,6 +243,13 @@ class _HomeAdminState extends State<HomeAdmin> {
                                        ),
                                        onTap: () {
                                          // todo edit quiz
+                                         Navigator.of(context).push(MaterialPageRoute(
+                                           builder: (context) => CreateQuiz(
+                                             currentUser: widget.currentUser,
+                                             isFromEditQuiz: true,
+                                             quizModelToEdit: quizModel,
+                                           )
+                                         ));
                                        },
                                      ),
                                    ],

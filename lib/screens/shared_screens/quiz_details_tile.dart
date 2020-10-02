@@ -18,9 +18,9 @@ class QuizDetailsTile extends StatefulWidget {
   final String teacherId;
   final QuizModel quizModel;
   final bool fromStudent;
-  final bool fromCreateQuiz;
+  final bool isPreview;
   final File quizImage;
-  QuizDetailsTile({this.teacherId, this.quizModel, this.fromStudent, this.fromCreateQuiz, this.quizImage});
+  QuizDetailsTile({this.teacherId, this.quizModel, this.fromStudent, this.isPreview, this.quizImage});
 
   @override
   _QuizDetailsTileState createState() => _QuizDetailsTileState();
@@ -89,7 +89,7 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
               )
           ));
         } else {
-          if(widget.fromCreateQuiz != true) {
+          if(widget.isPreview != true) {
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) => DisplayQuizQuestions(
                   quizId: widget.quizModel.quizId,
@@ -102,7 +102,7 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
         }
       },
       child: Hero(
-        tag: widget.fromCreateQuiz == true ? "" : widget.quizModel.quizId,
+        tag: widget.isPreview == true ? "" : widget.quizModel.quizId,
         child: Card(
           margin: EdgeInsets.all(5),
           shape: RoundedRectangleBorder(
@@ -116,7 +116,7 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
               children: <Widget>[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
-                  child: widget.fromCreateQuiz == true  && widget.quizImage != null ? Container(
+                  child: widget.isPreview == true  && widget.quizImage != null ? Container(
                     width: MediaQuery.of(context).size.width - 20,
                     child: Image.file(
                       widget.quizImage,

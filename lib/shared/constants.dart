@@ -31,3 +31,5 @@ var defaultQuizImageURL = "https://images.unsplash.com/photo-1557318041-1ce374d5
 // Content padding for Text fields inside Stack widget
 var textFieldStackContentPaddingWithTimes = EdgeInsets.fromLTRB(0, 6, 130, 6);
 var textFieldStackContentPaddingWithoutTimes = EdgeInsets.fromLTRB(0, 6, 90, 6);
+
+// todo make class for imagepicker field

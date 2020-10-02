@@ -2,7 +2,7 @@ class QuizModel {
   String imgURL;
   String topic;
   String description;
-  final String quizId;
+  String quizId;
   int nCorrect;
   int nWrong;
   int nTotal;

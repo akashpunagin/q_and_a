@@ -175,6 +175,17 @@ class DatabaseService {
 
   // Update data in database
 
+  Future<void> updateQuizDetails({Map quizData, String quizId, String userId}) async {
+    await userDetailsCollection
+        .doc(userId)
+        .collection(quizCollectionTitle)
+        .doc(quizId)
+        .update(quizData)
+        .catchError((e){
+      print(e.toString());
+    });
+  }
+
   Future<void> updateTeacherEmail({String newTeacherEmail, String currentTeacherEmail, StudentModel studentModel}) {
     if(newTeacherEmail != null) {
       // add student in students collection

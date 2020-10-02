@@ -18,9 +18,11 @@ import 'package:uuid/uuid.dart';
 
 class CreateQuiz extends StatefulWidget {
 
-  final UserModel currentUser;
+  final TeacherModel currentUser;
+  final bool isFromEditQuiz;
+  final QuizModel quizModelToEdit;
 
-  CreateQuiz({this.currentUser});
+  CreateQuiz({this.currentUser, this.isFromEditQuiz, this.quizModelToEdit});
 
   @override
   _CreateQuizState createState() => _CreateQuizState();
@@ -39,7 +41,29 @@ class _CreateQuizState extends State<CreateQuiz> {
   File quizImage;
   String loadingText;
   bool _isLoading = false;
-  bool isButtonEnabled = true;
+  bool isButtonEnabled = true; // todo check if this is not needed
+
+  _updateQuiz() async {
+    Map<String,String> quizData;
+    if(_formKey.currentState.validate()) {
+      setState(() {
+        _isLoading = true;
+        loadingText = "Updating";
+      });
+      quizData = {
+        "topic" : quizModel.topic,
+        "description" : quizModel.description,
+      };
+    }
+
+    await databaseService.updateQuizDetails(
+      userId: widget.currentUser.uid,
+      quizId: quizModel.quizId,
+      quizData: quizData,
+    ).then((value) {
+      Navigator.pop(context);
+    });
+  }
 
   _createQuiz() async {
     Map<String,String> quizData;
@@ -47,7 +71,7 @@ class _CreateQuizState extends State<CreateQuiz> {
     if(_formKey.currentState.validate()) {
       setState(() {
         _isLoading = true;
-        loadingText = "Fetching image URL";
+        loadingText = "Loading Quiz Image";
       });
 
       if(quizImage != null) {
@@ -146,14 +170,23 @@ class _CreateQuizState extends State<CreateQuiz> {
 
   @override
   void initState() {
-    quizModel.topic = "";
-    quizModel.description = "";
-    quizId = uuid.v1();
+    if(widget.isFromEditQuiz == true) {
+      quizModel.topic = widget.quizModelToEdit.topic;
+      quizModel.description = widget.quizModelToEdit.description;
+      quizModel.quizId = widget.quizModelToEdit.quizId;
+      quizModel.imgURL = widget.quizModelToEdit.imgURL;
+    } else {
+      quizModel.topic = "";
+      quizModel.description = "";
+      quizId = uuid.v1();
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    print("SEE ${widget.isFromEditQuiz}");
 
     return Scaffold(
       appBar: AppBar(
@@ -174,7 +207,10 @@ class _CreateQuizState extends State<CreateQuiz> {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  Text("Preview", style: TextStyle(fontSize: 25.0, color: Colors.black54),),
+                  Text(
+                    widget.isFromEditQuiz == true ? "Edit Quiz" : "Preview",
+                    style: TextStyle(fontSize: 25.0, color: Colors.black54),
+                  ),
                   SizedBox(height: 5,),
                   !isButtonEnabled ? Container(
                     height: (MediaQuery.of(context).size.height / 3) - 50,
@@ -185,7 +221,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                   ) : QuizDetailsTile(
                     quizModel: quizModel,
                     quizImage: quizImage,
-                    fromCreateQuiz: true,
+                    isPreview: true,
                   )
                 ],
               ),
@@ -196,6 +232,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                   children: <Widget>[
                     TextFormField(
                       validator: (val) => val.isEmpty ? "Enter Topic" : null,
+                      initialValue: quizModel.topic,
                       decoration: InputDecoration(
                           hintText: "Quiz Topic"
                       ),
@@ -208,6 +245,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                     SizedBox(height: 8,),
                     TextFormField(
                       validator: (val) => val.isEmpty ? "Enter Description" : null,
+                      initialValue: quizModel.description,
                       decoration: InputDecoration(
                           hintText: "Quiz Description"
                       ),
@@ -218,63 +256,70 @@ class _CreateQuizState extends State<CreateQuiz> {
                       },
                     ),
                     SizedBox(height: 25,),
-                    Text("Edit background image", style: TextStyle(fontSize: 20.0, color: Colors.black.withOpacity(0.7))),
-                    SizedBox(height: 5,),
+                    // widget.isFromEditQuiz == true ? Container() :
                     Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      child: Column(
                         children: [
-                          FlatButton.icon(
-                            onPressed: () {
-                              _pickImage(ImageSource.gallery);
-                            },
-                            icon: FaIcon(FontAwesomeIcons.images, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
-                            label: Text("Gallery", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
+                          Text("Edit background image", style: TextStyle(fontSize: 20.0, color: Colors.black.withOpacity(0.7))),
+                          SizedBox(height: 5,),
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                FlatButton.icon(
+                                  onPressed: () {
+                                    _pickImage(ImageSource.gallery);
+                                  },
+                                  icon: FaIcon(FontAwesomeIcons.images, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
+                                  label: Text("Gallery", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
+                                ),
+                                quizImage != null ? FlatButton.icon(
+                                  onPressed: () {
+                                    _clearImage();
+                                  },
+                                  icon: FaIcon(FontAwesomeIcons.undoAlt, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
+                                  label: Text("Undo", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
+                                ) : Container(),
+                                FlatButton.icon(
+                                  onPressed: () {
+                                    _pickImage(ImageSource.camera);
+                                  },
+                                  icon: FaIcon(FontAwesomeIcons.camera, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
+                                  label: Text("Camera", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
+                                ),
+                              ],
+                            ),
                           ),
-                          quizImage != null ? FlatButton.icon(
-                            onPressed: () {
-                              _clearImage();
-                            },
-                            icon: FaIcon(FontAwesomeIcons.undoAlt, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
-                            label: Text("Undo", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
+
+                          quizModel.topic != "" ? Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                            width: MediaQuery.of(context).size.width - 40,
+                            child: FlatButton.icon(
+                              onPressed: () async {
+                                String url = "https://www.google.com/images?q=${quizModel.topic}";
+                                if(await canLaunch(url)) {
+                                  await launch(url);
+                                } else {
+                                  final snackBar = SnackBar(
+                                    content: Text("There was an error launching \"$url\"", style: TextStyle(fontSize: 15.0),),
+                                    backgroundColor: Colors.blueAccent,
+                                  );
+                                  _scaffoldKey.currentState.showSnackBar(snackBar);
+                                }
+                              },
+                              splashColor: Colors.blueAccent,
+                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                              icon: FaIcon(FontAwesomeIcons.search, size: 30.0, color: Colors.blueAccent.withOpacity(0.9),),
+                              label: Flexible(
+                                fit: FlexFit.loose,
+                                child: Text("Search Google images for \"${quizModel.topic}\"",
+                                  style: TextStyle(fontSize: 15), overflow: TextOverflow.fade, softWrap: false,),
+                              ),
+                            ),
                           ) : Container(),
-                          FlatButton.icon(
-                            onPressed: () {
-                              _pickImage(ImageSource.camera);
-                            },
-                            icon: FaIcon(FontAwesomeIcons.camera, size: 22.0, color: Colors.blueAccent.withOpacity(0.9),),
-                            label: Text("Camera", style: TextStyle(fontSize: 15, color: Colors.black.withOpacity(0.7))),
-                          ),
                         ],
                       ),
                     ),
-
-                    quizModel.topic != "" ? Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                      width: MediaQuery.of(context).size.width - 40,
-                      child: FlatButton.icon(
-                          onPressed: () async {
-                            String url = "https://www.google.com/images?q=${quizModel.topic}";
-                            if(await canLaunch(url)) {
-                              await launch(url);
-                            } else {
-                              final snackBar = SnackBar(
-                                content: Text("There was an error launching \"$url\"", style: TextStyle(fontSize: 15.0),),
-                                backgroundColor: Colors.blueAccent,
-                              );
-                              _scaffoldKey.currentState.showSnackBar(snackBar);
-                            }
-                          },
-                          splashColor: Colors.blueAccent,
-                          padding: EdgeInsets.symmetric(vertical: 10.0),
-                          icon: FaIcon(FontAwesomeIcons.search, size: 30.0, color: Colors.blueAccent.withOpacity(0.9),),
-                          label: Flexible(
-                            fit: FlexFit.loose,
-                            child: Text("Search Google images for \"${quizModel.topic}\"",
-                              style: TextStyle(fontSize: 15), overflow: TextOverflow.fade, softWrap: false,),
-                          ),
-                      ),
-                    ) : Container(),
                     SizedBox(height: 15,),
                     !isButtonEnabled ? Container(
                       height: 50,
@@ -282,7 +327,11 @@ class _CreateQuizState extends State<CreateQuiz> {
                       child: Center(
                         child: CircularProgressIndicator(),
                       ),
-                    ) : blueButton(context: context, label: "Create Quiz", onPressed: _createQuiz),
+                    ) : blueButton(
+                      context: context,
+                      label: widget.isFromEditQuiz == true ? "Update Quiz" : "Create Quiz",
+                      onPressed: widget.isFromEditQuiz == true ?  _updateQuiz : _createQuiz,
+                    ),
                   ],
                 ),
               ),
