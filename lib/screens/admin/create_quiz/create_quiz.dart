@@ -50,10 +50,34 @@ class _CreateQuizState extends State<CreateQuiz> {
         _isLoading = true;
         loadingText = "Updating";
       });
-      quizData = {
-        "topic" : quizModel.topic,
-        "description" : quizModel.description,
-      };
+
+      if(quizModel.imgURL == null && quizImage == null) {
+        quizData = {
+          "topic" : quizModel.topic,
+          "description" : quizModel.description,
+          "imgURL" : null,
+        };
+      } else if(quizImage != null) {
+        ImageUploader imageUploader = ImageUploader();
+        imageUploader.file = quizImage;
+        imageUploader.field = "quizzes";
+        imageUploader.quizId = quizId;
+        imageUploader.userId = widget.currentUser.uid;
+        imageUploader.isFromCreateQuiz = true;
+        await imageUploader.startUpload().then((value)  {
+          quizData = {
+            "topic" : quizModel.topic,
+            "description" : quizModel.description,
+            "imgURL" : value,
+          };
+        });
+      } else {
+        quizData = {
+          "topic" : quizModel.topic,
+          "description" : quizModel.description,
+          "imgURL" : quizModel.imgURL,
+        };
+      }
     }
 
     await databaseService.updateQuizDetails(
@@ -185,8 +209,6 @@ class _CreateQuizState extends State<CreateQuiz> {
 
   @override
   Widget build(BuildContext context) {
-
-    print("SEE ${widget.isFromEditQuiz}");
 
     return Scaffold(
       appBar: AppBar(
