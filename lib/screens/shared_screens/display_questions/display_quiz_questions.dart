@@ -227,8 +227,22 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
-                      // todo remove this function and hard code
-                      listDismissibleAlerts(alerts: _alerts, onDismissed: () {}),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _alerts.length,
+                          itemBuilder: (context, index) {
+                            return Dismissible(
+                              key: UniqueKey(),
+                              child: screenLabel(
+                                context: context,
+                                child: ListTile(
+                                  title: Text(_alerts[index], textAlign: TextAlign.start,),
+                                  subtitle: Text("Swipe to dismiss", textAlign: TextAlign.end,),
+                                ),
+                              ),
+                            );
+                          }
+                      )
                     ],
                   ),
                 ) : Container(),

@@ -41,7 +41,6 @@ class _CreateQuizState extends State<CreateQuiz> {
   File quizImage;
   String loadingText;
   bool _isLoading = false;
-  bool isButtonEnabled = true; // todo check if this is not needed
 
   _updateQuiz() async {
     Map<String,String> quizData;
@@ -234,13 +233,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                     style: TextStyle(fontSize: 25.0, color: Colors.black54),
                   ),
                   SizedBox(height: 5,),
-                  !isButtonEnabled ? Container(
-                    height: (MediaQuery.of(context).size.height / 3) - 50,
-                    width: (MediaQuery.of(context).size.width/2)-30,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ) : QuizDetailsTile(
+                  QuizDetailsTile(
                     quizModel: quizModel,
                     quizImage: quizImage,
                     isPreview: true,
@@ -343,13 +336,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                       ),
                     ),
                     SizedBox(height: 15,),
-                    !isButtonEnabled ? Container(
-                      height: 50,
-                      width: (MediaQuery.of(context).size.width/2)-30,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ) : blueButton(
+                    blueButton(
                       context: context,
                       label: widget.isFromEditQuiz == true ? "Update Quiz" : "Create Quiz",
                       onPressed: widget.isFromEditQuiz == true ?  _updateQuiz : _createQuiz,

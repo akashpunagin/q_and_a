@@ -31,7 +31,7 @@ class _HomeAdminState extends State<HomeAdmin> {
 
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
-  List<String> _alerts = ["Your first quiz is uploaded. Now your students can view your quiz", "You can swipe on quiz to delete/edit quizzes"];
+  List<String> _alerts = ["Your first quiz is uploaded. Now your students can view your quiz", "You can swipe right on quiz to delete/edit quizzes"];
   String quizIdToDelete;
   bool _isLoading = false;
 
@@ -242,7 +242,6 @@ class _HomeAdminState extends State<HomeAdmin> {
                                          )
                                        ),
                                        onTap: () {
-                                         // todo edit quiz
                                          Navigator.of(context).push(MaterialPageRoute(
                                            builder: (context) => CreateQuiz(
                                              currentUser: widget.currentUser,
