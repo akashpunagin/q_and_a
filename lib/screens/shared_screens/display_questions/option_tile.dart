@@ -18,13 +18,6 @@ class OptionTile extends StatefulWidget {
 
 class _OptionTileState extends State<OptionTile> {
 
-
-  @override
-  void initState() {
-    print("INIT OPTION TILE");
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
 

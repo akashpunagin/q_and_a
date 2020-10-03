@@ -138,9 +138,7 @@ class _QuestionTileState extends State<QuestionTile> {
     }
   }
 
-  @override
-  void initState() {
-
+  buildOptionModels() {
     if( !widget.questionModel.isTrueOrFalseType ) {
       OptionModel optionModel1 = OptionModel();
       OptionModel optionModel2 = OptionModel();
@@ -173,16 +171,17 @@ class _QuestionTileState extends State<QuestionTile> {
       });
 
     }
+  }
 
-
+  @override
+  void initState() {
+    buildOptionModels();
     super.initState();
   }
 
 
   @override
   Widget build(BuildContext context) {
-
-    print("SEE HERE ${widget.questionModel.option1}");
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -360,8 +359,11 @@ class _QuestionTileState extends State<QuestionTile> {
                             quizModel: widget.quizModel,
                             teacherId: widget.teacherId,
                           )
-                      )).whenComplete(() {
-                        print("Show snackbar"); // todo
+                      )).then((value) {
+                        if(value == true) {
+                          buildOptionModels();
+                          widget.showEditSnackBar(widget.index);
+                        }
                       });
                     },
                     icon: FaIcon(FontAwesomeIcons.pencilAlt, size: 20.0, color: Colors.blueAccent,),
