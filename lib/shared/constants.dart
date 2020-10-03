@@ -32,4 +32,14 @@ var defaultQuizImageURL = "https://images.unsplash.com/photo-1557318041-1ce374d5
 var textFieldStackContentPaddingWithTimes = EdgeInsets.fromLTRB(0, 6, 130, 6);
 var textFieldStackContentPaddingWithoutTimes = EdgeInsets.fromLTRB(0, 6, 90, 6);
 
-// todo make class for imagepicker field
+// Enum for fields of image to upload
+String enumToString(Object o) => o.toString().split('.').last;
+
+enum fieldsToUploadImage {
+  quizzes,
+  question,
+  option1,
+  option2,
+  option3,
+  option4,
+}

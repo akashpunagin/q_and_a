@@ -124,7 +124,7 @@ class _AddQuestionState extends State<AddQuestion> {
   }
 
 
-  Future<void> _pickImage(ImageSource source, String field, String userId) async {
+  Future<void> _pickImage(ImageSource source, fieldsToUploadImage field, String userId) async {
 
     final pickedFile = await picker.getImage(source: source);
 
@@ -132,7 +132,7 @@ class _AddQuestionState extends State<AddQuestion> {
       File croppedImage = await _cropImage(File(pickedFile.path), field);
       ImageUploader imageUploader = ImageUploader();
       imageUploader.file = croppedImage;
-      imageUploader.field = field;
+      imageUploader.field = enumToString(field);
       imageUploader.quizId = widget.quizId;
       imageUploader.questionId = questionId;
       imageUploader.userId = userId;
@@ -143,20 +143,22 @@ class _AddQuestionState extends State<AddQuestion> {
         setState(() {
 
           switch (field) {
-            case "question" :
+            case fieldsToUploadImage.question :
               questionImageUrl = value;
               break;
-            case "option1" :
+            case fieldsToUploadImage.option1 :
               option1ImageUrl = value;
               break;
-            case "option2" :
+            case fieldsToUploadImage.option2 :
               option2ImageUrl = value;
               break;
-            case "option3" :
+            case fieldsToUploadImage.option3 :
               option3ImageUrl = value;
               break;
-            case "option4" :
+            case fieldsToUploadImage.option4 :
               option4ImageUrl = value;
+              break;
+            case fieldsToUploadImage.quizzes:
               break;
           }
           setState(() {
@@ -172,7 +174,7 @@ class _AddQuestionState extends State<AddQuestion> {
 
   }
 
-  Future<File> _cropImage(File image, String field) async {
+  Future<File> _cropImage(File image, fieldsToUploadImage field) async {
     File croppedImage = await ImageCropper.cropImage(
       sourcePath: image.path,
       compressFormat: ImageCompressFormat.jpg,
@@ -187,31 +189,31 @@ class _AddQuestionState extends State<AddQuestion> {
     );
 
     switch (field) {
-      case "question" :
+      case fieldsToUploadImage.question :
         setState(() {
           _imageQuestion = croppedImage;
         });
         return croppedImage ?? image;
         break;
-      case "option1" :
+      case fieldsToUploadImage.option1 :
         setState(() {
           _imageOption1 = croppedImage;
         });
         return croppedImage ?? image;
         break;
-      case "option2" :
+      case fieldsToUploadImage.option2 :
         setState(() {
           _imageOption2 = croppedImage;
         });
         return croppedImage ?? image;
         break;
-      case "option3" :
+      case fieldsToUploadImage.option3 :
         setState(() {
           _imageOption3 = croppedImage;
         });
         return croppedImage ?? image;
         break;
-      case "option4" :
+      case fieldsToUploadImage.option4 :
         setState(() {
           _imageOption4 = croppedImage;
         });
@@ -224,9 +226,9 @@ class _AddQuestionState extends State<AddQuestion> {
 
   }
 
-  void _clearImage(String field, String userId) {
+  void _clearImage(fieldsToUploadImage field, String userId) {
     ImageUploader imageUploader = ImageUploader();
-    imageUploader.field = field;
+    imageUploader.field = enumToString(field);
     imageUploader.userId = userId;
     imageUploader.quizId = widget.quizId;
     imageUploader.questionId = questionId;
@@ -235,25 +237,27 @@ class _AddQuestionState extends State<AddQuestion> {
     setState(() {
 
       switch (field) {
-        case "question" :
+        case fieldsToUploadImage.question :
           _imageQuestion = null;
           questionImageUrl = null;
           break;
-        case "option1" :
+        case fieldsToUploadImage.option1 :
           _imageOption1 = null;
           option1ImageUrl = null;
           break;
-        case "option2" :
+        case fieldsToUploadImage.option2 :
           _imageOption2 = null;
           option2ImageUrl = null;
           break;
-        case "option3" :
+        case fieldsToUploadImage.option3 :
           _imageOption3 = null;
           option3ImageUrl = null;
           break;
-        case "option4" :
+        case fieldsToUploadImage.option4 :
           _imageOption4 = null;
           option4ImageUrl = null;
+          break;
+        case fieldsToUploadImage.quizzes:
           break;
       }
     });
@@ -402,9 +406,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                   question = val;
                                 },
                               ),
-                              textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "question", user.uid)),
-                              textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "question", user.uid)),
-                              _imageQuestion != null ? textFieldStackButtonTimes(() =>  _clearImage("question", user.uid)) : Container(),
+                              textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.question, user.uid)),
+                              textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.question, user.uid)),
+                              _imageQuestion != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.question, user.uid)) : Container(),
                             ],
                           ),
 
@@ -443,9 +447,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                       option1 = val;
                                     },
                                   ),
-                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option1", user.uid)),
-                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option1", user.uid)),
-                                  _imageOption1 != null ? textFieldStackButtonTimes(() =>  _clearImage("option1", user.uid)) : Container(),
+                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.option1, user.uid)),
+                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.option1, user.uid)),
+                                  _imageOption1 != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.option1, user.uid)) : Container(),
                                 ],
                               ),
 
@@ -480,9 +484,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                       option2 = val;
                                     },
                                   ),
-                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option2", user.uid)),
-                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option2", user.uid)),
-                                  _imageOption2 != null ? textFieldStackButtonTimes(() =>  _clearImage("option2", user.uid)) : Container(),
+                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.option2, user.uid)),
+                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.option2, user.uid)),
+                                  _imageOption2 != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.option2, user.uid)) : Container(),
                                 ],
                               ),
 
@@ -517,9 +521,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                       option3 = val;
                                     },
                                   ),
-                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option3", user.uid)),
-                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option3", user.uid)),
-                                  _imageOption3 != null ? textFieldStackButtonTimes(() =>  _clearImage("option3", user.uid)) : Container(),
+                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.option3, user.uid)),
+                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.option3, user.uid)),
+                                  _imageOption3 != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.option3, user.uid)) : Container(),
                                 ],
                               ),
 
@@ -554,9 +558,9 @@ class _AddQuestionState extends State<AddQuestion> {
                                       option4 = val;
                                     },
                                   ),
-                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option4", user.uid)),
-                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option4", user.uid)),
-                                  _imageOption4 != null ? textFieldStackButtonTimes(() =>  _clearImage("option4", user.uid)) : Container(),
+                                  textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.option4, user.uid)),
+                                  textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.option4, user.uid)),
+                                  _imageOption4 != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.option4, user.uid)) : Container(),
                                 ],
                               ),
 

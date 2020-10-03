@@ -182,6 +182,8 @@ class _QuestionTileState extends State<QuestionTile> {
   @override
   Widget build(BuildContext context) {
 
+    print("SEE HERE ${widget.questionModel.option1}");
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -196,6 +198,7 @@ class _QuestionTileState extends State<QuestionTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             widget.questionModel.questionImageUrl != null ? CachedNetworkImage(
+              useOldImageOnUrlChange: false,
               imageUrl: widget.questionModel.questionImageUrl,
               imageBuilder: (context, imageProvider) {
                 return Column(
@@ -357,10 +360,8 @@ class _QuestionTileState extends State<QuestionTile> {
                             quizModel: widget.quizModel,
                             teacherId: widget.teacherId,
                           )
-                      )).then((value) {
-                        if(value == true) {
-                          widget.showEditSnackBar(widget.index);
-                        }
+                      )).whenComplete(() {
+                        print("Show snackbar"); // todo
                       });
                     },
                     icon: FaIcon(FontAwesomeIcons.pencilAlt, size: 20.0, color: Colors.blueAccent,),

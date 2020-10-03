@@ -73,7 +73,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                 ImageUploader imageUploader = ImageUploader();
                 imageUploader.quizId = quizModel.quizId;
                 imageUploader.userId = widget.currentUser.uid;
-                imageUploader.field = "quizzes";
+                imageUploader.field = enumToString(fieldsToUploadImage.quizzes);
                 imageUploader.isFromCreateQuiz = true;
                 imageUploader.deleteUploaded();
               }

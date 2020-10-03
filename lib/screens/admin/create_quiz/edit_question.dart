@@ -75,12 +75,19 @@ class _EditQuestionState extends State<EditQuestion> {
         setState(() {
           _isLoading = false;
         });
-        Navigator.of(context).pop(true);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => DisplayQuizQuestions(
+            quizModel: widget.quizModel,
+            quizId: widget.quizId,
+            teacherId: widget.teacherId,
+            fromStudent: false,
+          )
+        ));
       });
     }
   }
 
-  Future<void> _pickImage(ImageSource source, String field, String userId) async {
+  Future<void> _pickImage(ImageSource source, fieldsToUploadImage field, String userId) async {
 
     final pickedFile = await picker.getImage(source: source);
 
@@ -88,32 +95,34 @@ class _EditQuestionState extends State<EditQuestion> {
       File croppedImage = await _cropImage(File(pickedFile.path), field);
       ImageUploader imageUploader = ImageUploader();
       imageUploader.file = croppedImage;
-      imageUploader.field = field;
+      imageUploader.field = enumToString(field);
       imageUploader.quizId = widget.quizId;
       imageUploader.questionId = widget.questionModel.questionId;
       imageUploader.userId = userId;
       setState(() {
         isButtonEnabled = false;
-        loadingText = "Fetching image URL";
+        loadingText = "Loading image";
       });
       imageUploader.startUpload().then((value)  {
         setState(() {
 
           switch (field) {
-            case "question" :
+            case fieldsToUploadImage.question :
               widget.questionModel.questionImageUrl = value;
               break;
-            case "option1" :
+            case fieldsToUploadImage.option1 :
               widget.questionModel.option1ImageUrl = value;
               break;
-            case "option2" :
+            case fieldsToUploadImage.option2 :
               widget.questionModel.option2ImageUrl = value;
               break;
-            case "option3" :
+            case fieldsToUploadImage.option3 :
               widget.questionModel.option3ImageUrl = value;
               break;
-            case "option4" :
+            case fieldsToUploadImage.option4 :
               widget.questionModel.option4ImageUrl = value;
+              break;
+            case fieldsToUploadImage.quizzes:
               break;
           }
           setState(() {
@@ -129,7 +138,7 @@ class _EditQuestionState extends State<EditQuestion> {
 
   }
 
-  Future<File> _cropImage(File image, String field) async {
+  Future<File> _cropImage(File image, fieldsToUploadImage field) async {
     File croppedImage = await ImageCropper.cropImage(
       sourcePath: image.path,
       compressFormat: ImageCompressFormat.jpg,
@@ -144,19 +153,19 @@ class _EditQuestionState extends State<EditQuestion> {
     );
 
     switch (field) {
-      case "question" :
+      case fieldsToUploadImage.question :
         return croppedImage ?? image;
         break;
-      case "option1" :
+      case fieldsToUploadImage.option1 :
         return croppedImage ?? image;
         break;
-      case "option2" :
+      case fieldsToUploadImage.option2 :
         return croppedImage ?? image;
         break;
-      case "option3" :
+      case fieldsToUploadImage.option3 :
         return croppedImage ?? image;
         break;
-      case "option4" :
+      case fieldsToUploadImage.option4 :
         return croppedImage ?? image;
         break;
       default:
@@ -166,9 +175,9 @@ class _EditQuestionState extends State<EditQuestion> {
 
   }
 
-  void _clearImage(String field, String userId) {
+  void _clearImage(fieldsToUploadImage field, String userId) {
     ImageUploader imageUploader = ImageUploader();
-    imageUploader.field = field;
+    imageUploader.field = enumToString(field);
     imageUploader.userId = userId;
     imageUploader.quizId = widget.quizId;
     imageUploader.questionId = widget.questionModel.questionId;
@@ -177,20 +186,22 @@ class _EditQuestionState extends State<EditQuestion> {
     setState(() {
 
       switch (field) {
-        case "question" :
+        case fieldsToUploadImage.question :
           widget.questionModel.questionImageUrl = null;
           break;
-        case "option1" :
+        case fieldsToUploadImage.option1 :
           widget.questionModel.option1ImageUrl = null;
           break;
-        case "option2" :
+        case fieldsToUploadImage.option2 :
           widget.questionModel.option2ImageUrl = null;
           break;
-        case "option3" :
+        case fieldsToUploadImage.option3 :
           widget.questionModel.option3ImageUrl = null;
           break;
-        case "option4" :
+        case fieldsToUploadImage.option4 :
           widget.questionModel.option4ImageUrl = null;
+          break;
+        case fieldsToUploadImage.quizzes:
           break;
       }
     });
@@ -260,9 +271,9 @@ class _EditQuestionState extends State<EditQuestion> {
                         widget.questionModel.question = val;
                       },
                     ),
-                    textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "question", user.uid)),
-                    textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "question", user.uid)),
-                    widget.questionModel.questionImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("question", user.uid)) : Container(),
+                    textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.question, user.uid)),
+                    textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.question, user.uid)),
+                    widget.questionModel.questionImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.question, user.uid)) : Container(),
                   ],
                 ),
 
@@ -324,9 +335,9 @@ class _EditQuestionState extends State<EditQuestion> {
                             widget.questionModel.option1 = val;
                           },
                         ),
-                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option1", user.uid)),
-                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option1", user.uid)),
-                        widget.questionModel.option1ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option1", user.uid)) : Container(),
+                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.option1, user.uid)),
+                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.option1, user.uid)),
+                        widget.questionModel.option1ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.option1, user.uid)) : Container(),
                       ],
                     ),
 
@@ -371,9 +382,9 @@ class _EditQuestionState extends State<EditQuestion> {
                             widget.questionModel.option2 = val;
                           },
                         ),
-                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option2", user.uid)),
-                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option2", user.uid)),
-                        widget.questionModel.option2ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option2", user.uid)) : Container(),
+                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.option2, user.uid)),
+                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.option2, user.uid)),
+                        widget.questionModel.option2ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.option2, user.uid)) : Container(),
                       ],
                     ),
 
@@ -418,9 +429,9 @@ class _EditQuestionState extends State<EditQuestion> {
                             widget.questionModel.option3 = val;
                           },
                         ),
-                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option3", user.uid)),
-                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option3", user.uid)),
-                        widget.questionModel.option3ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option3", user.uid)) : Container(),
+                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.option3, user.uid)),
+                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.option3, user.uid)),
+                        widget.questionModel.option3ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.option3, user.uid)) : Container(),
                       ],
                     ),
 
@@ -465,9 +476,9 @@ class _EditQuestionState extends State<EditQuestion> {
                             widget.questionModel.option4 = val;
                           },
                         ),
-                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, "option4", user.uid)),
-                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, "option4", user.uid)),
-                        widget.questionModel.option4ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage("option4", user.uid)) : Container(),
+                        textFieldStackButtonCamera(() => _pickImage(ImageSource.camera, fieldsToUploadImage.option4, user.uid)),
+                        textFieldStackButtonImages(() => _pickImage(ImageSource.gallery, fieldsToUploadImage.option4, user.uid)),
+                        widget.questionModel.option4ImageUrl != null ? textFieldStackButtonTimes(() =>  _clearImage(fieldsToUploadImage.option4, user.uid)) : Container(),
                       ],
                     ),
                   ],

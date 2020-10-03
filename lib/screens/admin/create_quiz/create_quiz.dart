@@ -10,6 +10,7 @@ import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/screens/shared_screens/quiz_details_tile.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/services/image_uploader.dart';
+import 'package:q_and_a/shared/constants.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -59,7 +60,7 @@ class _CreateQuizState extends State<CreateQuiz> {
       } else if(quizImage != null) {
         ImageUploader imageUploader = ImageUploader();
         imageUploader.file = quizImage;
-        imageUploader.field = "quizzes";
+        imageUploader.field = enumToString(fieldsToUploadImage.quizzes);
         imageUploader.quizId = quizId;
         imageUploader.userId = widget.currentUser.uid;
         imageUploader.isFromCreateQuiz = true;
@@ -100,7 +101,7 @@ class _CreateQuizState extends State<CreateQuiz> {
       if(quizImage != null) {
         ImageUploader imageUploader = ImageUploader();
         imageUploader.file = quizImage;
-        imageUploader.field = "quizzes";
+        imageUploader.field = enumToString(fieldsToUploadImage.quizzes);
         imageUploader.quizId = quizId;
         imageUploader.userId = widget.currentUser.uid;
         imageUploader.isFromCreateQuiz = true;
@@ -180,7 +181,7 @@ class _CreateQuizState extends State<CreateQuiz> {
 
   void _clearImage() {
     ImageUploader imageUploader = ImageUploader();
-    imageUploader.field = "quizzes";
+    imageUploader.field = enumToString(fieldsToUploadImage.quizzes);
     imageUploader.quizId = quizId;
     imageUploader.userId = widget.currentUser.uid;
     imageUploader.isFromCreateQuiz = true;

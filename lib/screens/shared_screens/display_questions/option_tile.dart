@@ -18,6 +18,13 @@ class OptionTile extends StatefulWidget {
 
 class _OptionTileState extends State<OptionTile> {
 
+
+  @override
+  void initState() {
+    print("INIT OPTION TILE");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -30,6 +37,7 @@ class _OptionTileState extends State<OptionTile> {
             onTap: () {},
             child: Container(
               child: CachedNetworkImage(
+                useOldImageOnUrlChange: false,
                 imageUrl: widget.optionImageUrl,
                 imageBuilder: (context, imageProvider) {
                   return Column(
@@ -64,27 +72,26 @@ class _OptionTileState extends State<OptionTile> {
           widget.optionImageUrl != null || widget.optionCaption != null ? SizedBox(height: 5,) : Container(),
           Align(
             alignment: Alignment.topLeft,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    width: 35,
-                    height: 35,
-                    decoration: BoxDecoration(
-                      color: widget.optionColor,
-                      border: Border.all(
-                        color: Colors.black87,
-                        width: 2.0,
-                      ),
-                      borderRadius: BorderRadius.circular(30.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.center,
+                  width: 35,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    color: widget.optionColor,
+                    border: Border.all(
+                      color: Colors.black87,
+                      width: 2.0,
                     ),
-                    child: Text(widget.label, style: TextStyle(fontSize: 18.0,),),
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
-                  SizedBox(width: 10,),
-                  GestureDetector(
+                  child: Text(widget.label, style: TextStyle(fontSize: 18.0,),),
+                ),
+                SizedBox(width: 10,),
+                Flexible(
+                  child: GestureDetector(
                     // INFO : This onTap is used to overwrite parent widgets' onTap function
                     onTap: () {},
                     child: Container(
@@ -94,8 +101,8 @@ class _OptionTileState extends State<OptionTile> {
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
