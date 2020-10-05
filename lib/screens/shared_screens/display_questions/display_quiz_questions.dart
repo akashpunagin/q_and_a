@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:q_and_a/models/question_model.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
@@ -131,6 +130,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
 
   }
+
   @override
   void initState() {
     super.initState();
@@ -142,7 +142,8 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
   Widget build(BuildContext context) {
 
     final user = Provider.of<UserModel>(context);
-
+    print("USER ID ${user.uid}");
+    print("TEACHER ID ${widget.teacherId}");
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -157,7 +158,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
         actions: <Widget>[
           widget.fromStudent == true ? FlatButton.icon(
             onPressed: () {
-
               Map<String, dynamic> quizResult = {
                 "student" : user.displayName,
                 "nCorrect" : widget.quizModel.nCorrect,
@@ -195,13 +195,14 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
         ],
       ),
       body: StreamBuilder(
-        stream: user.uid != widget.teacherId ?
-        databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : widget.teacherId) :
-        databaseService.getQuizQuestionDetails(quizId : widget.quizModel.quizId, userId : user.uid),
-        builder: (context, snapshots) {
-          if(snapshots.data == null) {
+        stream: databaseService.getQuizQuestionDetails(
+          quizId: widget.quizModel.quizId,
+          userId: user.uid != widget.teacherId ? widget.teacherId : user.uid
+        ),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshots) {
+          if(snapshots.data == null || !snapshots.hasData) {
             return Loading(loadingText: "Just a moment, wait for questions to load from '${widget.quizModel.topic}'",);
-          } else if(snapshots.data.documents.length == 0) {
+          } else if(snapshots.data.docs.length == 0) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -222,8 +223,9 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
               ],
             );
           } else {
+            print("SEE HERE ${snapshots.data.docs[0].data()}");
             return Column(
-              children: <Widget>[
+              children: [
                 widget.fromStudent == true ? Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -253,7 +255,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     elevation: 5,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15))
+                        borderRadius: BorderRadius.all(Radius.circular(15))
                     ),
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -272,26 +274,30 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: snapshots.data.documents.length,
+                      itemCount: snapshots.data.docs.length,
                       itemBuilder: (context, index) {
-                        widget.quizModel.nTotal = snapshots.data.documents.length;
-                        widget.quizModel.nNotAttempted = snapshots.data.documents.length;
-                        return Column(
-                          children: [
-                            QuestionTile(
-                              questionModel: _getQuestionModelFromStream(snapshots.data.documents[index]),
-                              index: index,
-                              quizModel: widget.quizModel,
-                              fromStudent: widget.fromStudent,
-                              teacherId: widget.teacherId,
-                              setDisplayQuestionsState: setDisplayQuestionsState,
-                              showEditSnackBar: showEditedSnackBar,
-                            ),
-                          ],
+                        widget.quizModel.nTotal = snapshots.data.docs.length;
+                        widget.quizModel.nNotAttempted = snapshots.data.docs.length;
+
+                        print( _getQuestionModelFromStream(snapshots.data.docs[index]).question);
+                        print("quizModel - ${widget.quizModel}");
+                        print("from student -  ${widget.fromStudent}");
+                        print("TEACHER ID -  ${widget.teacherId}");
+                        // return Text("Hi");
+
+                        return QuestionTile(
+                          questionModel: _getQuestionModelFromStream(snapshots.data.docs[index]),
+                          index: index,
+                          quizModel: widget.quizModel,
+                          fromStudent: widget.fromStudent,
+                          teacherId: widget.teacherId,
+                          setDisplayQuestionsState: setDisplayQuestionsState,
+                          showEditSnackBar: showEditedSnackBar,
                         );
                       }
                   ),
                 ),
+
               ],
             );
           }

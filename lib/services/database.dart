@@ -323,15 +323,15 @@ class DatabaseService {
 
   }
 
-  deleteQuizSubmissions({String userId}) {
-    return userDetailsCollection
-        .doc(userId)
-        .collection(quizResultSubmissionTitle)
-        .get().then((snapshot) {
-      for(DocumentSnapshot doc in snapshot.docs) {
-        doc.reference.delete();
-      }
-    });
-  }
+  // deleteQuizSubmissions({String userId}) {
+  //   return userDetailsCollection
+  //       .doc(userId)
+  //       .collection(quizResultSubmissionTitle)
+  //       .get().then((snapshot) {
+  //     for(DocumentSnapshot doc in snapshot.docs) {
+  //       doc.reference.delete();
+  //     }
+  //   });
+  // }
 
 }

@@ -69,8 +69,9 @@ class _QuestionTileState extends State<QuestionTile> {
               userId: widget.teacherId,
               quizId: widget.quizModel.quizId,
               questionId: widget.questionModel.questionId,
-            );
-            Navigator.pop(context);
+            ).then((value) {
+              Navigator.pop(context);
+            });
           },
           gradient: LinearGradient(colors: [
             Colors.blue[500],
@@ -238,30 +239,36 @@ class _QuestionTileState extends State<QuestionTile> {
                     onTap: () {
                       _onTrueOrFalseOptionTap(true);
                     },
-                    child: OptionTile(
-                      option: "True",
-                      label: _labels[0],
-                      optionColor: widget.questionModel.isAnswered ?
-                      widget.questionModel.selectedOption == true.toString() ?
-                      widget.questionModel.isCorrect ? _colors['colorIfCorrect']
-                          : _colors['colorIfWrong']
-                          : _colors['colorIfAnswered']
-                          : _colors['defaultColor'],
+                    child: Container(
+                      width: 100,
+                      child: OptionTile(
+                        option: "True",
+                        label: _labels[0],
+                        optionColor: widget.questionModel.isAnswered ?
+                        widget.questionModel.selectedOption == true.toString() ?
+                        widget.questionModel.isCorrect ? _colors['colorIfCorrect']
+                            : _colors['colorIfWrong']
+                            : _colors['colorIfAnswered']
+                            : _colors['defaultColor'],
+                      ),
                     ),
                   ),
                   GestureDetector(
                     onTap: () {
                       _onTrueOrFalseOptionTap(false);
                     },
-                    child: OptionTile(
-                      option: "False",
-                      label: _labels[1],
-                      optionColor: widget.questionModel.isAnswered ?
-                      widget.questionModel.selectedOption == false.toString() ?
-                      widget.questionModel.isCorrect ? _colors['colorIfCorrect']
-                          : _colors['colorIfWrong']
-                          : _colors['colorIfAnswered']
-                          : _colors['defaultColor'],
+                    child: Container(
+                      width: 100,
+                      child: OptionTile(
+                        option: "False",
+                        label: _labels[1],
+                        optionColor: widget.questionModel.isAnswered ?
+                        widget.questionModel.selectedOption == false.toString() ?
+                        widget.questionModel.isCorrect ? _colors['colorIfCorrect']
+                            : _colors['colorIfWrong']
+                            : _colors['colorIfAnswered']
+                            : _colors['defaultColor'],
+                      ),
                     ),
                   ),
                 ],

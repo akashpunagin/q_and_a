@@ -34,14 +34,14 @@ class _QuizSubmissionsState extends State<QuizSubmissions> {
         iconTheme: IconThemeData(
             color: Colors.black54
         ),
-        actions: [
-          FlatButton(
-            child: Text("Clear all", style: TextStyle(fontSize: 15, color: Colors.black54),),
-            onPressed: () {
-              databaseService.deleteQuizSubmissions(userId: widget.teacherId);
-            },
-          )
-        ],
+        // actions: [
+        //   FlatButton(
+        //     child: Text("Clear all", style: TextStyle(fontSize: 15, color: Colors.black54),),
+        //     onPressed: () {
+        //       databaseService.deleteQuizSubmissions(userId: widget.teacherId);
+        //     },
+        //   )
+        // ],
       ),
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),

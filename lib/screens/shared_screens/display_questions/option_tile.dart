@@ -63,40 +63,36 @@ class _OptionTileState extends State<OptionTile> {
             ),
           ) : Container(),
           widget.optionImageUrl != null || widget.optionCaption != null ? SizedBox(height: 5,) : Container(),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.center,
-                  width: 35,
-                  height: 35,
-                  decoration: BoxDecoration(
-                    color: widget.optionColor,
-                    border: Border.all(
-                      color: Colors.black87,
-                      width: 2.0,
-                    ),
-                    borderRadius: BorderRadius.circular(30.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                alignment: Alignment.center,
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  color: widget.optionColor,
+                  border: Border.all(
+                    color: Colors.black87,
+                    width: 2.0,
                   ),
-                  child: Text(widget.label, style: TextStyle(fontSize: 18.0,),),
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
-                SizedBox(width: 10,),
-                Flexible(
-                  child: GestureDetector(
-                    // INFO : This onTap is used to overwrite parent widgets' onTap function
-                    onTap: () {},
-                    child: Container(
-                      child: Text(
-                        widget.option,
-                        style: TextStyle(fontSize: 19.0, color: Colors.black.withOpacity(0.8)),
-                      ),
-                    ),
+                child: Text(widget.label, style: TextStyle(fontSize: 18.0,),),
+              ),
+              SizedBox(width: 10,),
+              Flexible(
+                fit: FlexFit.loose,
+                child: GestureDetector(
+                  // INFO : This onTap is used to overwrite parent widgets' onTap function
+                  onTap: () {},
+                  child: Text(
+                    widget.option,
+                    style: TextStyle(fontSize: 19.0, color: Colors.black.withOpacity(0.8)),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
