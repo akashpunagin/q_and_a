@@ -22,11 +22,8 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
 
   final AuthService authService = AuthService();
   final DatabaseService databaseService = DatabaseService();
-  final GoogleSignIn googleSignIn = GoogleSignIn();
   bool _isLoading = false;
 
-  int navBarIndex = 0 ;
-  List<String> userRole = ["Teacher", "Student"];
   Map<String, dynamic> userMap = {};
 
   showErrorSigningInAlert() {
@@ -150,11 +147,12 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                   borderRadius: true,
                   moveIndicatorFromBottom: 180.0,
                   noRadiusForIndicator: true,
-                  animationDuration: Duration(seconds: 2),
+                  animationDuration: Duration(seconds: 1),
+                  autoplayDuration: Duration(seconds: 3),
                   boxFit: BoxFit.contain,
                 )
             ),
-            blueButton(context: context, label: "Google Sign Up", onPressed: _signUp),
+            blueButton(context: context, label: "Google Sign Up/Sign In", onPressed: _signUp),
           ],
         ),
       ),
