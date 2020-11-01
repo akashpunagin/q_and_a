@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:q_and_a/models/user_model.dart';
 
@@ -11,20 +13,21 @@ class DatabaseService {
   static String teachersCollectionTitle = "teachers"; // teachers of students
   static String studentsCollectionTitle = "students"; // students of teachers
   static String quizResultSubmissionTitle = "quiz_submissions"; // quiz submissions of student
+  static String tokensCollectionTitle = "tokens";  // tokens of student or teacher
 
   //Collection Reference
-  final CollectionReference userDetailsCollection = FirebaseFirestore.instance.collection(userCollectionTitle);
+  final CollectionReference usersCollection = FirebaseFirestore.instance.collection(userCollectionTitle);
 
   // Adding to database
 
   Future<void> addUserWithDetails({Map userData}) async {
-    await userDetailsCollection.doc(userData['uid']).set(userData).catchError((e){
+    await usersCollection.doc(userData['uid']).set(userData).catchError((e){
       print(e.toString());
     });
   }
 
   Future<void> addQuizDetails({Map quizData, String quizId, String userId}) async {
-    await userDetailsCollection
+    await usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .doc(quizId)
@@ -35,7 +38,7 @@ class DatabaseService {
   }
 
   Future<void> addQuestionDetails({Map questionData, String quizId, String questionId, String userId}) async {
-    await userDetailsCollection
+    await usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .doc(quizId)
@@ -48,14 +51,14 @@ class DatabaseService {
   }
 
   Future<void> addStudentProgress({String userId, Map progressData}) async {
-    QuerySnapshot querySnapshot = await userDetailsCollection
+    QuerySnapshot querySnapshot = await usersCollection
         .where("email", isEqualTo: progressData['teacher'])
         .limit(1)
         .get();
 
     progressData['teacher'] = querySnapshot.docs[0].data()["displayName"];
 
-    await userDetailsCollection
+    await usersCollection
         .doc(userId)
         .collection(studentProgressCollectionTitle)
         .doc()
@@ -70,7 +73,7 @@ class DatabaseService {
 
 
   Future<void> addQuizSubmissionDetails({String teacherId, Map quizResultData}) async {
-    await userDetailsCollection
+    await usersCollection
         .doc(teacherId)
         .collection(quizResultSubmissionTitle)
         .doc()
@@ -86,7 +89,7 @@ class DatabaseService {
 
 
   Future<void> addTeacher({String userId, Map teacherData}) async {
-    await userDetailsCollection
+    await usersCollection
         .doc(userId)
         .collection(teachersCollectionTitle)
         .add(teacherData);
@@ -95,7 +98,7 @@ class DatabaseService {
   // Get data from database
 
   Stream<QuerySnapshot> getStudents({String userId})  {
-    return userDetailsCollection
+    return usersCollection
         .doc(userId)
         .collection(studentsCollectionTitle)
         .snapshots();
@@ -103,14 +106,14 @@ class DatabaseService {
 
 
   Stream<QuerySnapshot> getQuizDetails({String userId})  {
-    return userDetailsCollection
+    return usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .snapshots();
   }
 
   Stream<QuerySnapshot> getQuizQuestionDetails({String quizId, String userId}) {
-    return userDetailsCollection
+    return usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .doc(quizId)
@@ -119,7 +122,7 @@ class DatabaseService {
   }
 
   Future<QuerySnapshot> getQuizQuestionDocuments({String quizId, String userId}) {
-    return userDetailsCollection
+    return usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .doc(quizId)
@@ -128,7 +131,7 @@ class DatabaseService {
   }
 
   Future<QuerySnapshot> getStudentProgress({String userId}) {
-    return userDetailsCollection
+    return usersCollection
         .doc(userId)
         .collection(studentProgressCollectionTitle)
         .orderBy('createAt', descending: true)
@@ -136,7 +139,7 @@ class DatabaseService {
   }
 
   Stream<QuerySnapshot> getQuizSubmissionDetails({String teacherId}) {
-    return userDetailsCollection
+    return usersCollection
         .doc(teacherId)
         .collection(quizResultSubmissionTitle)
         .orderBy('createAt', descending: true)
@@ -146,28 +149,28 @@ class DatabaseService {
 
   // Get user from database
   DocumentReference getUserWithUserId(String userId) {
-    return userDetailsCollection.doc(userId);
+    return usersCollection.doc(userId);
   }
 
   Stream<QuerySnapshot> getUserWithField({String fieldKey, String fieldValue, int limit}) {
-    return limit == null ? userDetailsCollection
+    return limit == null ? usersCollection
         .where(fieldKey, isEqualTo: fieldValue)
         .snapshots() :
-    userDetailsCollection
+    usersCollection
         .where(fieldKey, isEqualTo: fieldValue)
         .limit(1)
         .snapshots();
   }
 
   Future<QuerySnapshot> getUserDocumentWithField({String fieldKey, String fieldValue, int limit}) {
-    return userDetailsCollection
+    return usersCollection
         .where(fieldKey, isEqualTo: fieldValue)
         .limit(1)
         .get();
   }
 
   Stream<QuerySnapshot> getTeachersOfUser({String userId})  {
-    return userDetailsCollection
+    return usersCollection
         .doc(userId)
         .collection(teachersCollectionTitle)
         .snapshots();
@@ -176,7 +179,7 @@ class DatabaseService {
   // Update data in database
 
   Future<void> updateQuizDetails({Map quizData, String quizId, String userId}) async {
-    await userDetailsCollection
+    await usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .doc(quizId)
@@ -195,7 +198,7 @@ class DatabaseService {
           'email' : studentModel.email,
           'photoUrl' : studentModel.photoUrl,
         };
-        userDetailsCollection
+        usersCollection
           .doc(value.docs[0].id)
           .collection(studentsCollectionTitle)
           .add(userMap);
@@ -205,14 +208,14 @@ class DatabaseService {
     if(currentTeacherEmail != null) {
       // delete student from current teacher
       getUserDocumentWithField(fieldKey: "email", fieldValue: currentTeacherEmail, limit: 1).then((value) async {
-        QuerySnapshot result = await userDetailsCollection
+        QuerySnapshot result = await usersCollection
           .doc(value.docs[0].id)
           .collection(studentsCollectionTitle)
           .where('email', isEqualTo: studentModel.email)
           .limit(1)
           .get();
         if(result.docs.length > 0) {
-          userDetailsCollection
+          usersCollection
             .doc(value.docs[0].id)
             .collection(studentsCollectionTitle)
             .doc(result.docs[0].id)
@@ -222,7 +225,7 @@ class DatabaseService {
     }
 
     // update teacherEmail field of student
-    return userDetailsCollection.doc(studentModel.uid)
+    return usersCollection.doc(studentModel.uid)
         .update({"teacherEmail": newTeacherEmail})
         .catchError((e) {
       print(e.toString());
@@ -232,10 +235,10 @@ class DatabaseService {
   updateStudentTotals({String userId, int nCorrect, int nWrong, int nNotAttempted}) {
     checkFieldAndUpdate({DocumentSnapshot result, int field, String totalField}) {
       if(result.data().containsKey(totalField) == true) {
-        userDetailsCollection.doc(userId)
+        usersCollection.doc(userId)
             .update({totalField : result.data()[totalField] + field});
       } else {
-        userDetailsCollection.doc(userId)
+        usersCollection.doc(userId)
             .update({totalField : field});
       }
     }
@@ -252,7 +255,7 @@ class DatabaseService {
 
   Future<bool> isUserExists({String userId}) async {
     try {
-      var doc = await userDetailsCollection.doc(userId).get();
+      var doc = await usersCollection.doc(userId).get();
 
       if ( doc.exists ) {
         return true;
@@ -265,12 +268,15 @@ class DatabaseService {
     }
   }
 
-  Future<void> updateDeviceToken({String userId, String deviceToken}) {
-    return userDetailsCollection.doc(userId)
-        .update({"deviceToken": deviceToken})
-        .catchError((e) {
-      print(e.toString());
-    });
+  Future<void> updateUserDeviceToken({String userId, String deviceToken}) async {
+    await usersCollection.doc(userId)
+      .collection(tokensCollectionTitle)
+      .doc(deviceToken)
+      .set({
+        'token': deviceToken,
+        'createdAt': FieldValue.serverTimestamp(),
+        'platform': Platform.operatingSystem
+      });
   }
 
 
@@ -279,7 +285,7 @@ class DatabaseService {
   // Delete from database
   deleteQuizDetails({String userId, String quizId}) {
 
-    userDetailsCollection
+    usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .doc(quizId)
@@ -290,7 +296,7 @@ class DatabaseService {
           }
     });
 
-    userDetailsCollection
+    usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .doc(quizId)
@@ -298,7 +304,7 @@ class DatabaseService {
   }
 
   Future deleteQuestionDetails({String userId, String quizId, String questionId}) {
-    return userDetailsCollection
+    return usersCollection
         .doc(userId)
         .collection(quizCollectionTitle)
         .doc(quizId)
@@ -308,14 +314,14 @@ class DatabaseService {
   }
 
   Future<void> removeTeacher({String userId, String teacherEmail}) async {
-    QuerySnapshot result = await userDetailsCollection
+    QuerySnapshot result = await usersCollection
         .doc(userId)
         .collection(teachersCollectionTitle)
         .where("email", isEqualTo: teacherEmail)
         .limit(1)
         .get();
 
-    return userDetailsCollection
+    return usersCollection
         .doc(userId)
         .collection(teachersCollectionTitle)
         .doc(result.docs[0].reference.id)

@@ -23,7 +23,6 @@ class _AdminState extends State<Admin> {
   int navBarIndex = 0 ;
 
   final AuthService authService = AuthService();
-  final DatabaseService databaseService = DatabaseService();
   UserModel currentUser;
   TeacherModel teacherModel = TeacherModel();
   bool isShowHomeAdminAlerts = true;
