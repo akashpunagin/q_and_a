@@ -30,14 +30,14 @@ class _WrapperState extends State<Wrapper> {
      return await _firebaseMessaging.getToken();
   }
 
-  _showNotificationAlert({String title, String desc, Function onOpenButtonPressed}) {
+  _showNotificationAlert({String title, String desc, String subject, String teacherId}) {
     Alert(
       context: context,
       style: alertStyle,
       type: AlertType.info,
       title: title,
       desc: desc,
-      buttons: onOpenButtonPressed == null ? [
+      buttons: subject == null ? [
         DialogButton(
           child: Text(
             "Okay",
@@ -55,7 +55,13 @@ class _WrapperState extends State<Wrapper> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            onOpenButtonPressed();
+            if (subject!= null && subject == "new_quiz_submission") {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => QuizSubmissions(teacherId: teacherId)
+              )).then((value) {
+                Navigator.of(context).pop();
+              });
+            }
           },
           width: 120,
         ),
@@ -73,30 +79,15 @@ class _WrapperState extends State<Wrapper> {
     ).show();
   }
 
-  _checkAndNavigateToQuizSubmission(String subject, String teacherId) {
-    if (subject != null && subject == "new_quiz_submission") {
-      return Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) => QuizSubmissions(teacherId: teacherId,)
-      ));
-    }
-  }
-
   _configureFirebaseMessaging() async {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
-        print("TRUE: ${message['data']['subject'] != null}");
-        print("TRUE: ${message['data']['subject'] == "new_quiz_submission"}");
         _showNotificationAlert(
           title: message['notification']['title'],
           desc: message['notification']['body'],
-          onOpenButtonPressed: message['data']['subject'] != null && message['data']['subject'] == "new_quiz_submission" ? () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => QuizSubmissions(teacherId: message['data']['teacherId'])
-            )).then((value) {
-              Navigator.of(context).pop();
-            });
-          } : null,
+          subject: message['data']['subject'] ?? null,
+          teacherId: message['data']['teacherId'] ?? null,
         );
       },
       onLaunch: (Map<String, dynamic> message) async {
