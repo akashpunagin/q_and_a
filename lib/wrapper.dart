@@ -122,8 +122,6 @@ class _WrapperState extends State<Wrapper> {
     );
   }
 
-
-
   setWrapperState() {
     setState(() { });
   }
@@ -132,10 +130,6 @@ class _WrapperState extends State<Wrapper> {
   void initState() {
     _configureFirebaseMessaging();
     if (Platform.isIOS) {
-      // StreamSubscription iosSubscription;
-      // iosSubscription = _fcm.onIosSettingsRegistered.listen((data) {
-      //   // save the token  OR subscribe to a topic here
-      // });
       _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings());
     }
     super.initState();

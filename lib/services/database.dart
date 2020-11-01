@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:q_and_a/models/user_model.dart';
 
 class DatabaseService {
@@ -148,6 +149,7 @@ class DatabaseService {
 
 
   // Get user from database
+
   DocumentReference getUserWithUserId(String userId) {
     return usersCollection.doc(userId);
   }
@@ -327,6 +329,14 @@ class DatabaseService {
         .doc(result.docs[0].reference.id)
         .delete();
 
+  }
+
+  Future<void> removeUserToken({@required String userId, @required String token}) {
+    return usersCollection
+        .doc(userId)
+        .collection(tokensCollectionTitle)
+        .doc(token)
+        .delete();
   }
 
   // deleteQuizSubmissions({String userId}) {
