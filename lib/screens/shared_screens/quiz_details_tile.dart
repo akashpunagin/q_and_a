@@ -76,7 +76,6 @@ class _QuizDetailsTileState extends State<QuizDetailsTile> {
     return GestureDetector(
       onTap: () {
         if (widget.fromStudent == true) {
-          // displayMailSendAlert(context);
           Navigator.pushReplacement(context, MaterialPageRoute(
               builder: (context) => DisplayQuizQuestions(
                 quizId: widget.quizModel.quizId,

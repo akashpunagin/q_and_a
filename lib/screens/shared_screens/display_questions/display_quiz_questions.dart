@@ -140,8 +140,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
   Widget build(BuildContext context) {
 
     final user = Provider.of<UserModel>(context);
-    print("USER ID ${user.uid}");
-    print("TEACHER ID ${widget.teacherId}");
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -172,8 +170,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                 displaySelectGmailAlert(context: context, onPressed: () {
                   _submitQuiz(user);
                 });
-              }).catchError((err) {
-                print("ERROR $err");
               });
             },
             label: Text("Submit", style: TextStyle(fontSize: 17, color: Colors.black87),),
@@ -221,7 +217,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
               ],
             );
           } else {
-            print("SEE HERE ${snapshots.data.docs[0].data()}");
             return Column(
               children: [
                 widget.fromStudent == true ? Container(
@@ -276,13 +271,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                       itemBuilder: (context, index) {
                         widget.quizModel.nTotal = snapshots.data.docs.length;
                         widget.quizModel.nNotAttempted = snapshots.data.docs.length;
-
-                        print( _getQuestionModelFromStream(snapshots.data.docs[index]).question);
-                        print("quizModel - ${widget.quizModel}");
-                        print("from student -  ${widget.fromStudent}");
-                        print("TEACHER ID -  ${widget.teacherId}");
-                        // return Text("Hi");
-
                         return QuestionTile(
                           questionModel: _getQuestionModelFromStream(snapshots.data.docs[index]),
                           index: index,
@@ -295,7 +283,6 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                       }
                   ),
                 ),
-
               ],
             );
           }

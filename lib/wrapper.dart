@@ -30,7 +30,7 @@ class _WrapperState extends State<Wrapper> {
      return await _firebaseMessaging.getToken();
   }
 
-  _showNotificationAlert({String title, String desc, String subject, String teacherId}) {
+  _showNotificationAlert({BuildContext context, String title, String desc, String subject, String teacherId}) {
     Alert(
       context: context,
       style: alertStyle,
@@ -82,7 +82,9 @@ class _WrapperState extends State<Wrapper> {
   _configureFirebaseMessaging() async {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
+        print("onMessage, $message");
         _showNotificationAlert(
+          context: context,
           title: message['notification']['title'],
           desc: message['notification']['body'],
           subject: message['data']['subject'] ?? null,

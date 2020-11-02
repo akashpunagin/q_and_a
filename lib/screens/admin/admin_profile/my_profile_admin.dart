@@ -94,7 +94,6 @@ class _MyProfileAdminState extends State<MyProfileAdmin> {
                             context: context,
                             label: "View Quiz Submissions",
                             onPressed: () {
-                              // print("## $teacherId");
                               Navigator.push(context, MaterialPageRoute(
                                   builder: (context) => QuizSubmissions(teacherId: widget.currentUser.uid,)
                               ));
