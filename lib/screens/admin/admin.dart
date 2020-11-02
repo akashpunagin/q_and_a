@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/admin/display_students/student_details.dart';
 import 'package:q_and_a/screens/admin/admin_profile/my_profile_admin.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/auth.dart';
-import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';

@@ -6,7 +6,6 @@ import 'package:q_and_a/shared/constants.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class SignUpGoogle extends StatefulWidget {

@@ -10,7 +10,6 @@ import 'package:q_and_a/services/auth.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:q_and_a/services/image_uploader.dart';
 import 'package:q_and_a/shared/constants.dart';
 import 'package:q_and_a/shared/functions.dart';

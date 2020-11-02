@@ -1,6 +1,5 @@
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/models/user_model.dart';
-import 'package:q_and_a/screens/not_admin/home/home_not_admin.dart';
 import 'package:q_and_a/screens/not_admin/not_admin.dart';
 import 'package:q_and_a/screens/shared_screens/results_tile.dart';
 import 'package:q_and_a/screens/shared_screens/info_display.dart';
@@ -8,12 +7,11 @@ import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:q_and_a/shared/widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class StudentProgress extends StatefulWidget {
 
-  StudentModel currentUser;
+  final StudentModel currentUser;
   StudentProgress({this.currentUser});
 
   @override

@@ -4,7 +4,6 @@ import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/screens/admin/create_quiz/edit_question.dart';
 import 'package:q_and_a/screens/shared_screens/display_questions/option_tile.dart';
 import 'package:q_and_a/services/database.dart';
-import 'package:q_and_a/services/image_uploader.dart';
 import 'package:q_and_a/shared/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';

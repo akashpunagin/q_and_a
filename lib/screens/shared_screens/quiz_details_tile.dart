@@ -2,14 +2,11 @@ import 'dart:io';
 
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/screens/shared_screens/display_questions/display_quiz_questions.dart';
-import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
-import 'package:q_and_a/services/image_uploader.dart';
 import 'package:q_and_a/shared/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:q_and_a/shared/functions.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 

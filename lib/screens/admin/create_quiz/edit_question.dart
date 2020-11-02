@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:q_and_a/models/question_model.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
-import 'package:q_and_a/screens/shared_screens/display_questions/display_quiz_questions.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/services/image_uploader.dart';

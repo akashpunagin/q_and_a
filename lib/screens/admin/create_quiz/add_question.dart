@@ -42,7 +42,6 @@ class _AddQuestionState extends State<AddQuestion> {
   String option2 = "";
   String option3 = "";
   String option4 = "";
-  // String userId = "";
   String questionImageUrl;
   String option1ImageUrl;
   String option2ImageUrl;

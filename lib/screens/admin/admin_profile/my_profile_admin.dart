@@ -1,12 +1,9 @@
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:q_and_a/models/user_model.dart';
 import 'package:q_and_a/screens/admin/admin_profile/quiz_submissions.dart';
-import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:q_and_a/shared/widgets.dart';
 
 class MyProfileAdmin extends StatefulWidget {

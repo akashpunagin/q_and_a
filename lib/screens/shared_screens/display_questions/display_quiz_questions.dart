@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:q_and_a/models/question_model.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/models/user_model.dart';
@@ -10,7 +9,6 @@ import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/services/send_email.dart';
-import 'package:q_and_a/shared/constants.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

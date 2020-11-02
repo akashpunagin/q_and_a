@@ -6,9 +6,7 @@ import 'package:q_and_a/screens/shared_screens/info_display.dart';
 import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/auth.dart';
 import 'package:q_and_a/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:q_and_a/shared/widgets.dart';
 
 class HomeNotAdmin extends StatefulWidget {

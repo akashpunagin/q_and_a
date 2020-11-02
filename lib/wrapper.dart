@@ -82,7 +82,6 @@ class _WrapperState extends State<Wrapper> {
   _configureFirebaseMessaging() async {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
         _showNotificationAlert(
           title: message['notification']['title'],
           desc: message['notification']['body'],
@@ -91,24 +90,8 @@ class _WrapperState extends State<Wrapper> {
         );
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch OPEN: $message");
-        if (message['data']['subject'] != null && message['data']['subject'] == "new_quiz_submission") {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => QuizSubmissions(teacherId: message['data']['teacherId'])
-          )).then((value) {
-            Navigator.of(context).pop();
-          });
-        }
       },
       onResume: (Map<String, dynamic> message) async {
-        print("OnResume OPEN: $message");
-        if (message['data']['subject'] != null && message['data']['subject'] == "new_quiz_submission") {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => QuizSubmissions(teacherId: message['data']['teacherId'])
-          )).then((value) {
-            Navigator.of(context).pop();
-          });
-        }
       },
     );
   }
