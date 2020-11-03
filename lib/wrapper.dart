@@ -79,10 +79,9 @@ class _WrapperState extends State<Wrapper> {
     ).show();
   }
 
-  _configureFirebaseMessaging() async {
+  _configureFirebaseMessaging(BuildContext context) async {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print("onMessage, $message");
         _showNotificationAlert(
           context: context,
           title: message['notification']['title'],
@@ -104,7 +103,6 @@ class _WrapperState extends State<Wrapper> {
 
   @override
   void initState() {
-    _configureFirebaseMessaging();
     if (Platform.isIOS) {
       _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings());
     }
@@ -113,7 +111,7 @@ class _WrapperState extends State<Wrapper> {
 
   @override
   Widget build(BuildContext context) {
-
+    _configureFirebaseMessaging(context);
     final user = Provider.of<UserModel>(context);
 
     if (user == null){
