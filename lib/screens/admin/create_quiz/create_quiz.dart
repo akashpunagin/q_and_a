@@ -247,6 +247,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                   children: <Widget>[
                     TextFormField(
                       validator: (val) => val.isEmpty ? "Enter Topic" : null,
+                      textCapitalization: TextCapitalization.words,
                       initialValue: quizModel.topic,
                       decoration: InputDecoration(
                           hintText: "Quiz Topic"
@@ -260,6 +261,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                     SizedBox(height: 8,),
                     TextFormField(
                       validator: (val) => val.isEmpty ? "Enter Description" : null,
+                      textCapitalization: TextCapitalization.sentences,
                       initialValue: quizModel.description,
                       decoration: InputDecoration(
                           hintText: "Quiz Description"

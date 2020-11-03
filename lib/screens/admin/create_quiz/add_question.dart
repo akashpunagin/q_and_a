@@ -382,6 +382,7 @@ class _AddQuestionState extends State<AddQuestion> {
                           _imageQuestion != null ? Container(
                             width: MediaQuery.of(context).size.width / 2,
                             child: TextFormField(
+                              textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
                                 hintText: "Caption (Question)",
                                 helperText: "Optional",
@@ -395,6 +396,7 @@ class _AddQuestionState extends State<AddQuestion> {
                             alignment: Alignment.centerRight,
                             children: [
                               TextFormField(
+                                textCapitalization: TextCapitalization.sentences,
                                 validator: (val) => val.isEmpty ? "Enter Question" : null,
                                 decoration: InputDecoration(
                                   hintText: "Question",
@@ -423,6 +425,7 @@ class _AddQuestionState extends State<AddQuestion> {
                               _imageOption1 != null ? Container(
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   decoration: InputDecoration(
                                     hintText: "Caption (Option 1)",
                                     helperText: "Optional",
@@ -436,6 +439,7 @@ class _AddQuestionState extends State<AddQuestion> {
                                 alignment: Alignment.centerRight,
                                 children: [
                                   TextFormField(
+                                    textCapitalization: TextCapitalization.sentences,
                                     validator: (val) => val.isEmpty ? "Enter Option" : null,
                                     decoration: InputDecoration(
                                       hintText: "Correct Option",
@@ -460,6 +464,7 @@ class _AddQuestionState extends State<AddQuestion> {
                               _imageOption2 != null ? Container(
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   decoration: InputDecoration(
                                     hintText: "Caption (Option 2)",
                                     helperText: "Optional",
@@ -473,6 +478,7 @@ class _AddQuestionState extends State<AddQuestion> {
                                 alignment: Alignment.centerRight,
                                 children: [
                                   TextFormField(
+                                    textCapitalization: TextCapitalization.sentences,
                                     validator: (val) => val.isEmpty ? "Enter Option" : null,
                                     decoration: InputDecoration(
                                       hintText: "Option 2",
@@ -497,6 +503,7 @@ class _AddQuestionState extends State<AddQuestion> {
                               _imageOption3 != null ? Container(
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   decoration: InputDecoration(
                                     hintText: "Caption (Option 3)",
                                     helperText: "Optional",
@@ -510,6 +517,7 @@ class _AddQuestionState extends State<AddQuestion> {
                                 alignment: Alignment.centerRight,
                                 children: [
                                   TextFormField(
+                                    textCapitalization: TextCapitalization.sentences,
                                     validator: (val) => val.isEmpty ? "Enter Option" : null,
                                     decoration: InputDecoration(
                                       hintText: "Option 3",
@@ -534,6 +542,7 @@ class _AddQuestionState extends State<AddQuestion> {
                               _imageOption4 != null ? Container(
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   decoration: InputDecoration(
                                     hintText: "Caption (Option 4)",
                                     helperText: "Optional",
@@ -547,6 +556,7 @@ class _AddQuestionState extends State<AddQuestion> {
                                 alignment: Alignment.centerRight,
                                 children: [
                                   TextFormField(
+                                    textCapitalization: TextCapitalization.sentences,
                                     validator: (val) => val.isEmpty ? "Enter Option" : null,
                                     decoration: InputDecoration(
                                       hintText: "Option 4",

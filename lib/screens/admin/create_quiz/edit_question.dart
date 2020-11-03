@@ -238,6 +238,7 @@ class _EditQuestionState extends State<EditQuestion> {
                 widget.questionModel.questionImageUrl != null ? Container(
                   width: MediaQuery.of(context).size.width / 2,
                   child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     initialValue: widget.questionModel.questionImageCaption != null ? widget.questionModel.questionImageCaption : null,
                     decoration: InputDecoration(
                       hintText: "Caption (Question)",
@@ -252,6 +253,7 @@ class _EditQuestionState extends State<EditQuestion> {
                   alignment: Alignment.centerRight,
                   children: [
                     TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
                       initialValue: widget.questionModel.question,
                       validator: (val) => val.isEmpty ? "Enter Question" : null,
                       decoration: InputDecoration(
@@ -302,6 +304,7 @@ class _EditQuestionState extends State<EditQuestion> {
                     widget.questionModel.option1ImageUrl != null ? Container(
                       width: MediaQuery.of(context).size.width / 2,
                       child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
                         initialValue: widget.questionModel.option1ImageCaption != null ? widget.questionModel.option1ImageCaption : null,
                         decoration: InputDecoration(
                           hintText: "Caption (Option 1)",
@@ -316,6 +319,7 @@ class _EditQuestionState extends State<EditQuestion> {
                       alignment: Alignment.centerRight,
                       children: [
                         TextFormField(
+                          textCapitalization: TextCapitalization.sentences,
                           initialValue: widget.questionModel.option1,
                           validator: (val) => val.isEmpty ? "Enter Option" : null,
                           decoration: InputDecoration(
@@ -349,6 +353,7 @@ class _EditQuestionState extends State<EditQuestion> {
                     widget.questionModel.option2ImageUrl != null ? Container(
                       width: MediaQuery.of(context).size.width / 2,
                       child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
                         initialValue: widget.questionModel.option2ImageCaption != null ? widget.questionModel.option2ImageCaption : null,
                         decoration: InputDecoration(
                           hintText: "Caption (Option 2)",
@@ -363,6 +368,7 @@ class _EditQuestionState extends State<EditQuestion> {
                       alignment: Alignment.centerRight,
                       children: [
                         TextFormField(
+                          textCapitalization: TextCapitalization.sentences,
                           initialValue: widget.questionModel.option2,
                           validator: (val) => val.isEmpty ? "Enter Option" : null,
                           decoration: InputDecoration(
@@ -396,6 +402,7 @@ class _EditQuestionState extends State<EditQuestion> {
                     widget.questionModel.option3ImageUrl != null ? Container(
                       width: MediaQuery.of(context).size.width / 2,
                       child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
                         initialValue: widget.questionModel.option3ImageCaption != null ? widget.questionModel.option3ImageCaption : null,
                         decoration: InputDecoration(
                           hintText: "Caption (Option 3)",
@@ -410,6 +417,7 @@ class _EditQuestionState extends State<EditQuestion> {
                       alignment: Alignment.centerRight,
                       children: [
                         TextFormField(
+                          textCapitalization: TextCapitalization.sentences,
                           initialValue: widget.questionModel.option3,
                           validator: (val) => val.isEmpty ? "Enter Option" : null,
                           decoration: InputDecoration(
@@ -443,6 +451,7 @@ class _EditQuestionState extends State<EditQuestion> {
                     widget.questionModel.option4ImageUrl != null ? Container(
                       width: MediaQuery.of(context).size.width / 2,
                       child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
                         initialValue: widget.questionModel.option4ImageCaption != null ? widget.questionModel.option4ImageCaption : null,
                         decoration: InputDecoration(
                           hintText: "Caption (Option 4)",
@@ -457,6 +466,7 @@ class _EditQuestionState extends State<EditQuestion> {
                       alignment: Alignment.centerRight,
                       children: [
                         TextFormField(
+                          textCapitalization: TextCapitalization.sentences,
                           initialValue: widget.questionModel.option4,
                           validator: (val) => val.isEmpty ? "Enter Option" : null,
                           decoration: InputDecoration(
