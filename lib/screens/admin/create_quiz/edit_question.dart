@@ -36,6 +36,16 @@ class _EditQuestionState extends State<EditQuestion> {
   bool _isLoading = false;
   bool isButtonEnabled = true;
 
+  _isOptionsUnique(String currentOption, int currentOptionIndex) {
+    var optionsList = [
+      widget.questionModel.option1,
+      widget.questionModel.option2,
+      widget.questionModel.option3,
+      widget.questionModel.option4
+    ];
+    return  optionsList.indexWhere((element) => element == currentOption) != currentOptionIndex;
+  }
+
   _editQuestion(String userId) async {
     if(_formKey.currentState.validate()){
       setState(() {
@@ -321,7 +331,15 @@ class _EditQuestionState extends State<EditQuestion> {
                         TextFormField(
                           textCapitalization: TextCapitalization.sentences,
                           initialValue: widget.questionModel.option1,
-                          validator: (val) => val.isEmpty ? "Enter Option" : null,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return "Enter Option";
+                            } else if (_isOptionsUnique(val, 0)) {
+                              return "Please enter unique options";
+                            } else {
+                              return null;
+                            }
+                          },
                           decoration: InputDecoration(
                             hintText: "Correct Option",
                             helperText: "Correct Option",
@@ -370,7 +388,15 @@ class _EditQuestionState extends State<EditQuestion> {
                         TextFormField(
                           textCapitalization: TextCapitalization.sentences,
                           initialValue: widget.questionModel.option2,
-                          validator: (val) => val.isEmpty ? "Enter Option" : null,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return "Enter Option";
+                            } else if (_isOptionsUnique(val, 1)) {
+                              return "Please enter unique options";
+                            } else {
+                              return null;
+                            }
+                          },
                           decoration: InputDecoration(
                             hintText: "Option 2",
                             helperText: "Option 2",
@@ -419,7 +445,15 @@ class _EditQuestionState extends State<EditQuestion> {
                         TextFormField(
                           textCapitalization: TextCapitalization.sentences,
                           initialValue: widget.questionModel.option3,
-                          validator: (val) => val.isEmpty ? "Enter Option" : null,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return "Enter Option";
+                            } else if (_isOptionsUnique(val, 2)) {
+                              return "Please enter unique options";
+                            } else {
+                              return null;
+                            }
+                          },
                           decoration: InputDecoration(
                             hintText: "Option 3",
                             helperText: "Option 3",
@@ -468,7 +502,15 @@ class _EditQuestionState extends State<EditQuestion> {
                         TextFormField(
                           textCapitalization: TextCapitalization.sentences,
                           initialValue: widget.questionModel.option4,
-                          validator: (val) => val.isEmpty ? "Enter Option" : null,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return "Enter Option";
+                            } else if (_isOptionsUnique(val, 3)) {
+                              return "Please enter unique options";
+                            } else {
+                              return null;
+                            }
+                          },
                           decoration: InputDecoration(
                             hintText: "Option 4",
                             helperText: "Option 4",
