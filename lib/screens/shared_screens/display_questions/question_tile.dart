@@ -3,6 +3,7 @@ import 'package:q_and_a/models/question_model.dart';
 import 'package:q_and_a/models/quiz_model.dart';
 import 'package:q_and_a/screens/admin/create_quiz/edit_question.dart';
 import 'package:q_and_a/screens/shared_screens/display_questions/option_tile.dart';
+import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/shared/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -32,6 +33,7 @@ class _QuestionTileState extends State<QuestionTile> {
   DatabaseService databaseService = DatabaseService();
   List<String> _labels = ["A", "B", "C", "D"];
   List<OptionModel> _options = [];
+  bool _isLoading = false;
 
   Map<String, Color> _colors = {
     "defaultColor" : Colors.transparent,
@@ -54,23 +56,28 @@ class _QuestionTileState extends State<QuestionTile> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            deleteStorageImagesOfQuiz(
-                teacherId: widget.teacherId,
-                quizId: widget.quizModel.quizId,
-                questionId: widget.questionModel.questionId,
-                questionImageUrl: widget.questionModel.questionImageUrl,
-                option1ImageUrl: widget.questionModel.option1ImageUrl,
-                option2ImageUrl: widget.questionModel.option2ImageUrl,
-                option3ImageUrl: widget.questionModel.option3ImageUrl,
-                option4ImageUrl: widget.questionModel.option4ImageUrl,
-            );
-            databaseService.deleteQuestionDetails(
-              userId: widget.teacherId,
-              quizId: widget.quizModel.quizId,
-              questionId: widget.questionModel.questionId,
-            ).then((value) {
-              Navigator.pop(context);
+            setState(() {
+              _isLoading = true;
             });
+            // deleteStorageImagesOfQuiz(
+            //     teacherId: widget.teacherId,
+            //     quizId: widget.quizModel.quizId,
+            //     questionId: widget.questionModel.questionId,
+            //     questionImageUrl: widget.questionModel.questionImageUrl,
+            //     option1ImageUrl: widget.questionModel.option1ImageUrl,
+            //     option2ImageUrl: widget.questionModel.option2ImageUrl,
+            //     option3ImageUrl: widget.questionModel.option3ImageUrl,
+            //     option4ImageUrl: widget.questionModel.option4ImageUrl,
+            // );
+            // Navigator.pop(context);
+            // databaseService.deleteQuestionDetails(
+            //   userId: widget.teacherId,
+            //   quizId: widget.quizModel.quizId,
+            //   questionId: widget.questionModel.questionId,
+            // ).then((value) {
+            //   // todo
+            //   // Navigator.pop(context);
+            // });
           },
           gradient: LinearGradient(colors: [
             Colors.blue[500],
@@ -191,7 +198,10 @@ class _QuestionTileState extends State<QuestionTile> {
       elevation: 5,
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       color: Colors.white70.withOpacity(0.95),
-      child: Container(
+      child: _isLoading ? Container(
+          padding: EdgeInsets.symmetric(vertical: 30),
+          child: Loading(loadingText: "Deleting",)
+      ) : Container(
         margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
