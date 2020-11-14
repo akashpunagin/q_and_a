@@ -5,6 +5,7 @@ import 'package:q_and_a/screens/shared_screens/loading.dart';
 import 'package:q_and_a/services/database.dart';
 import 'package:q_and_a/services/image_uploader.dart';
 import 'package:q_and_a/shared/constants.dart';
+import 'package:q_and_a/shared/functions.dart';
 import 'package:q_and_a/shared/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,11 @@ class AddQuestion extends StatefulWidget {
 
   @override
   _AddQuestionState createState() => _AddQuestionState();
+}
+
+enum questionType {
+  Multiple_Choice_Question,
+  True_Or_False,
 }
 
 class _AddQuestionState extends State<AddQuestion> {
@@ -54,14 +60,23 @@ class _AddQuestionState extends State<AddQuestion> {
   String option4ImageCaption;
   String questionId = "";
   bool _isLoading = false;
-  List<String> questionType = ["Multiple Choice Question", "True / False"];
-  String selectedQuestionType;
+  questionType selectedQuestionType;
   bool trueOrFalse = true;
   bool isButtonEnabled = true;
+
 
   _isOptionsUnique(String currentOption, int currentOptionIndex) {
     var optionsList = [option1, option2, option3, option4];
     return  optionsList.indexWhere((element) => element == currentOption) != currentOptionIndex;
+  }
+
+  addQuestionMarkToQuestion() {
+    if (!question.endsWith(".") && !question.endsWith("?")) {
+      question = "$question?";
+    }
+
+    print(question);
+
   }
 
   _addQuestion(String userId) async {
@@ -74,6 +89,10 @@ class _AddQuestionState extends State<AddQuestion> {
         _imageOption3 = null;
         _imageOption4 = null;
       });
+
+      if (selectedQuestionType == questionType.Multiple_Choice_Question) {
+        addQuestionMarkToQuestion();
+      }
 
       Map<String,dynamic> questionData = {
         "question" : question,
@@ -92,9 +111,10 @@ class _AddQuestionState extends State<AddQuestion> {
         "option3ImageCaption" : option3ImageCaption,
         "option4ImageCaption" : option4ImageCaption,
         "questionId" : questionId,
-        "isTrueOrFalseType" : selectedQuestionType == questionType[0] ? false : true,
+        "isTrueOrFalseType" : selectedQuestionType == questionType.Multiple_Choice_Question ? false : true,
         "trueOrFalseAnswer" : trueOrFalse,
       };
+
 
       await databaseService.addQuestionDetails(
         questionData: questionData,
@@ -276,7 +296,7 @@ class _AddQuestionState extends State<AddQuestion> {
 
   @override
   void initState() {
-    selectedQuestionType = questionType[0];
+    selectedQuestionType = questionType.Multiple_Choice_Question;
     setNewQuestionId();
     super.initState();
   }
@@ -315,7 +335,7 @@ class _AddQuestionState extends State<AddQuestion> {
                       color: Colors.blueAccent,
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    child: DropdownButton<String>(
+                    child: DropdownButton<questionType>(
                       iconSize: 40,
                       icon: Icon(Icons.arrow_drop_down, color: Colors.white,),
                       style: TextStyle(fontSize: 18, color: Colors.white),
@@ -323,13 +343,13 @@ class _AddQuestionState extends State<AddQuestion> {
                       elevation: 0,
                       dropdownColor: Colors.blueAccent,
                       value: selectedQuestionType,
-                      items: questionType.map((String value) {
-                        return new DropdownMenuItem<String>(
+                      items: questionType.values.map((questionType value) {
+                        return new DropdownMenuItem<questionType>(
                           value: value,
-                          child: new Text(value),
+                          child: new Text(questionEnumToString(value)),
                         );
                       }).toList(),
-                      onChanged: (val) {
+                      onChanged: (questionType val) {
                         setState(() {
                           selectedQuestionType = val;
                         });
@@ -420,7 +440,7 @@ class _AddQuestionState extends State<AddQuestion> {
 
                           SizedBox(height: 15,),
 
-                          selectedQuestionType == questionType[0] ? Column(
+                          selectedQuestionType == questionType.Multiple_Choice_Question ? Column(
                             children: [
                               SizedBox(height: 30.0,),
                               _imageOption1 != null ? Align(child: Text("Correct Option", style: TextStyle(fontSize: 22, color: Colors.black54),), alignment: Alignment.topLeft,) : Container(),

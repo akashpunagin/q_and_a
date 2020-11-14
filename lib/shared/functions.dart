@@ -42,3 +42,5 @@ deleteStorageImagesOfQuiz({
     imageUploader.deleteUploaded();
   }
 }
+
+questionEnumToString(Object o) => o.toString().split('.').last.replaceAll("_", " ");
