@@ -59,6 +59,11 @@ class _AddQuestionState extends State<AddQuestion> {
   bool trueOrFalse = true;
   bool isButtonEnabled = true;
 
+  _isOptionsUnique(String currentOption, int currentOptionIndex) {
+    var optionsList = [option1, option2, option3, option4];
+    return  optionsList.indexWhere((element) => element == currentOption) != currentOptionIndex;
+  }
+
   _addQuestion(String userId) async {
     if(_formKey.currentState.validate()){
       setState(() {
@@ -440,7 +445,15 @@ class _AddQuestionState extends State<AddQuestion> {
                                 children: [
                                   TextFormField(
                                     textCapitalization: TextCapitalization.sentences,
-                                    validator: (val) => val.isEmpty ? "Enter Option" : null,
+                                    validator: (val) {
+                                      if (val.isEmpty) {
+                                        return "Enter Option";
+                                      } else if (_isOptionsUnique(val, 0)) {
+                                        return "Please enter unique options";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
                                     decoration: InputDecoration(
                                       hintText: "Correct Option",
                                       helperText: option1 != "" ? "Correct Option" : "",
@@ -479,7 +492,15 @@ class _AddQuestionState extends State<AddQuestion> {
                                 children: [
                                   TextFormField(
                                     textCapitalization: TextCapitalization.sentences,
-                                    validator: (val) => val.isEmpty ? "Enter Option" : null,
+                                    validator: (val) {
+                                      if (val.isEmpty) {
+                                        return "Enter Option";
+                                      } else if (_isOptionsUnique(val, 1)) {
+                                        return "Please enter unique options";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
                                     decoration: InputDecoration(
                                       hintText: "Option 2",
                                       helperText: option2 != "" ? "Option 2" : "",
@@ -518,7 +539,15 @@ class _AddQuestionState extends State<AddQuestion> {
                                 children: [
                                   TextFormField(
                                     textCapitalization: TextCapitalization.sentences,
-                                    validator: (val) => val.isEmpty ? "Enter Option" : null,
+                                    validator: (val) {
+                                      if (val.isEmpty) {
+                                        return "Enter Option";
+                                      } else if (_isOptionsUnique(val, 2)) {
+                                        return "Please enter unique options";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
                                     decoration: InputDecoration(
                                       hintText: "Option 3",
                                       helperText: option3 != "" ? "Option 3" : "",
@@ -557,7 +586,15 @@ class _AddQuestionState extends State<AddQuestion> {
                                 children: [
                                   TextFormField(
                                     textCapitalization: TextCapitalization.sentences,
-                                    validator: (val) => val.isEmpty ? "Enter Option" : null,
+                                    validator: (val) {
+                                      if (val.isEmpty) {
+                                        return "Enter Option";
+                                      } else if (_isOptionsUnique(val, 3)) {
+                                        return "Please enter unique options";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
                                     decoration: InputDecoration(
                                       hintText: "Option 4",
                                       helperText: option4 != "" ? "Option 4" : "",
