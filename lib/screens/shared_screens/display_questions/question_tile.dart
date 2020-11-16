@@ -22,7 +22,8 @@ class QuestionTile extends StatefulWidget {
   final String teacherId;
   final Function setDisplayQuestionsState;
   final Function showEditSnackBar;
-  QuestionTile({this.showEditSnackBar, this.questionModel, this.index, this.quizModel, this.fromStudent, this.teacherId, this.setDisplayQuestionsState});
+  final Function refreshQuestions;
+  QuestionTile({this.showEditSnackBar, this.questionModel, this.index, this.quizModel, this.fromStudent, this.teacherId, this.setDisplayQuestionsState, this.refreshQuestions});
 
   @override
   _QuestionTileState createState() => _QuestionTileState();
@@ -33,7 +34,6 @@ class _QuestionTileState extends State<QuestionTile> {
   DatabaseService databaseService = DatabaseService();
   List<String> _labels = ["A", "B", "C", "D"];
   List<OptionModel> _options = [];
-  bool _isLoading = false;
 
   Map<String, Color> _colors = {
     "defaultColor" : Colors.transparent,
@@ -56,28 +56,25 @@ class _QuestionTileState extends State<QuestionTile> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            setState(() {
-              _isLoading = true;
+            Navigator.pop(context);
+            deleteStorageImagesOfQuiz(
+                teacherId: widget.teacherId,
+                quizId: widget.quizModel.quizId,
+                questionId: widget.questionModel.questionId,
+                questionImageUrl: widget.questionModel.questionImageUrl,
+                option1ImageUrl: widget.questionModel.option1ImageUrl,
+                option2ImageUrl: widget.questionModel.option2ImageUrl,
+                option3ImageUrl: widget.questionModel.option3ImageUrl,
+                option4ImageUrl: widget.questionModel.option4ImageUrl,
+            );
+            databaseService.deleteQuestionDetails(
+              userId: widget.teacherId,
+              quizId: widget.quizModel.quizId,
+              questionId: widget.questionModel.questionId,
+            ).then((value) {
+              widget.refreshQuestions();
+              widget.setDisplayQuestionsState();
             });
-            // deleteStorageImagesOfQuiz(
-            //     teacherId: widget.teacherId,
-            //     quizId: widget.quizModel.quizId,
-            //     questionId: widget.questionModel.questionId,
-            //     questionImageUrl: widget.questionModel.questionImageUrl,
-            //     option1ImageUrl: widget.questionModel.option1ImageUrl,
-            //     option2ImageUrl: widget.questionModel.option2ImageUrl,
-            //     option3ImageUrl: widget.questionModel.option3ImageUrl,
-            //     option4ImageUrl: widget.questionModel.option4ImageUrl,
-            // );
-            // Navigator.pop(context);
-            // databaseService.deleteQuestionDetails(
-            //   userId: widget.teacherId,
-            //   quizId: widget.quizModel.quizId,
-            //   questionId: widget.questionModel.questionId,
-            // ).then((value) {
-            //   // todo
-            //   // Navigator.pop(context);
-            // });
           },
           gradient: LinearGradient(colors: [
             Colors.blue[500],
@@ -198,10 +195,7 @@ class _QuestionTileState extends State<QuestionTile> {
       elevation: 5,
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       color: Colors.white70.withOpacity(0.95),
-      child: _isLoading ? Container(
-          padding: EdgeInsets.symmetric(vertical: 30),
-          child: Loading(loadingText: "Deleting",)
-      ) : Container(
+      child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

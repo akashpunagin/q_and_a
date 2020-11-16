@@ -32,6 +32,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
   DatabaseService databaseService = new DatabaseService();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<String> _alerts = ["Once you submit the quiz, an email will be sent to your teacher about your progress", "Note that for each question, you can select your answer only once.\nAll the best!"];
+  Stream<QuerySnapshot> questionStream;
 
   Question _getQuestionModelFromStream(DocumentSnapshot questionSnapshot) {
     Question questionModel = new Question();
@@ -129,6 +130,23 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
 
   }
 
+  Stream<QuerySnapshot> fetchQuesQuestionDetails(UserModel user) {
+    return databaseService.getQuizQuestionDetails(
+        quizId: widget.quizModel.quizId,
+        userId: user.uid != widget.teacherId ? widget.teacherId : user.uid
+    );
+  }
+
+  UserModel getUserProvider() {
+    return Provider.of<UserModel>(context, listen: false);
+  }
+
+  refreshQuestions() {
+    setState(() {
+      questionStream = fetchQuesQuestionDetails(getUserProvider());
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -139,7 +157,9 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<UserModel>(context);
+    final user = getUserProvider();
+    questionStream = fetchQuesQuestionDetails(user);
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -189,10 +209,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
         ],
       ),
       body: StreamBuilder(
-        stream: databaseService.getQuizQuestionDetails(
-          quizId: widget.quizModel.quizId,
-          userId: user.uid != widget.teacherId ? widget.teacherId : user.uid
-        ),
+        stream: questionStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshots) {
           if(snapshots.data == null || !snapshots.hasData) {
             return Loading(loadingText: "Just a moment, wait for questions to load from '${widget.quizModel.topic}'",);
@@ -279,6 +296,7 @@ class _DisplayQuizQuestionsState extends State<DisplayQuizQuestions> {
                           teacherId: widget.teacherId,
                           setDisplayQuestionsState: setDisplayQuestionsState,
                           showEditSnackBar: showEditedSnackBar,
+                          refreshQuestions: refreshQuestions,
                         );
                       }
                   ),
